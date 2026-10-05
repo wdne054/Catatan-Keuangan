@@ -492,12 +492,7 @@ export default function Home() {
           </p>
         </div>
 
-        <div className="mascot-placeholder">
-          <span className="theme-leaf theme-leaf-left">🌿</span>
-          <img src="/jasdor-mascot.webp" alt="Maskot Jasdor" />
-          <span className="theme-flower">🌸</span>
-        </div>
-      </header>
+        </div>\n      </header>
 
       <section className="balance-card">
         <div className="balance-top">
