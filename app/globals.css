@@ -1622,3 +1622,35 @@ main {
   .header h1 { font-size: 27px; }
   .balance-card h2 { font-size: 36px; }
 }
+
+
+/* Final spacing polish — fewer ornaments, wider Jasdor Girl message */
+.category-decoration-art { display: none !important; }
+.category-decoration::before,
+.category-decoration::after { display: none !important; }
+.category-decoration {
+  min-height: 76px !important;
+  justify-content: center !important;
+  align-items: center !important;
+  padding: 10px 14px !important;
+  gap: 0 !important;
+}
+.category-decoration > div:last-child {
+  width: 100% !important;
+  margin: 0 !important;
+}
+.category-decoration strong {
+  font-size: 13px !important;
+  letter-spacing: .1px;
+  white-space: nowrap;
+}
+.category-decoration small {
+  margin-top: 4px !important;
+  font-size: 9px !important;
+  white-space: nowrap;
+}
+.chart-card::before,
+.header::after,
+.mascot-placeholder::after,
+.theme-leaf,
+.theme-flower { display: none !important; }
