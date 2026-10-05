@@ -2141,3 +2141,157 @@ main::after {
   white-space: normal !important;
   text-align: center !important;
 }
+
+
+/* FINAL GARDEN THEME — targeted visual override only */
+html, body {
+  min-height: 100%;
+}
+
+body {
+  background:
+    linear-gradient(rgba(248,245,232,.10), rgba(248,245,232,.10)),
+    url("https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07?auto=format&fit=crop&w=1600&q=88")
+    center top / cover fixed no-repeat !important;
+}
+
+main {
+  background: transparent !important;
+}
+
+main::before,
+main::after {
+  content: none !important;
+  display: none !important;
+}
+
+.header {
+  position: relative !important;
+  min-height: 176px !important;
+  margin-bottom: 18px !important;
+  padding: 24px 154px 20px 24px !important;
+  border-radius: 34px !important;
+  background: rgba(255,250,240,.96) !important;
+  border: 2px solid rgba(255,255,255,.98) !important;
+  box-shadow: 0 14px 30px rgba(67,55,40,.16) !important;
+  overflow: hidden !important;
+}
+
+.header > div:first-child {
+  position: relative !important;
+  z-index: 5 !important;
+}
+
+.header .eyebrow {
+  font-family: "Mochiy Pop One", sans-serif !important;
+  font-size: 12px !important;
+  letter-spacing: 1px !important;
+  color: #e9939b !important;
+}
+
+.header h1 {
+  font-family: "Mochiy Pop One", sans-serif !important;
+  font-size: clamp(25px, 7vw, 34px) !important;
+  line-height: 1.18 !important;
+  color: #70422f !important;
+  white-space: nowrap !important;
+  letter-spacing: -1.2px !important;
+}
+
+.header .date-text {
+  font-family: "Nunito", sans-serif !important;
+  font-size: 18px !important;
+  font-weight: 800 !important;
+  color: #6d695c !important;
+  margin-top: 9px !important;
+}
+
+.mascot-placeholder {
+  position: absolute !important;
+  right: -2px !important;
+  bottom: -4px !important;
+  width: 156px !important;
+  height: 170px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  z-index: 6 !important;
+  overflow: visible !important;
+}
+
+.mascot-placeholder img {
+  display: block !important;
+  width: 156px !important;
+  height: 170px !important;
+  object-fit: contain !important;
+  object-position: center bottom !important;
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  filter: drop-shadow(0 8px 7px rgba(71,52,39,.16)) !important;
+}
+
+.mascot-placeholder .theme-leaf,
+.mascot-placeholder .theme-flower {
+  display: none !important;
+}
+
+.category-decoration {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  align-items: center !important;
+  min-height: 94px !important;
+  gap: 2px !important;
+  padding: 9px 10px !important;
+  border: 2px dashed #e8c1c6 !important;
+  border-radius: 24px !important;
+  background: rgba(255,250,245,.94) !important;
+}
+
+.category-decoration-art {
+  min-height: 36px !important;
+  gap: 7px !important;
+}
+
+.category-decoration-art span {
+  font-size: 21px !important;
+}
+
+.category-decoration > div:last-child {
+  margin: 0 !important;
+  text-align: center !important;
+}
+
+.category-decoration strong {
+  font-family: "Mochiy Pop One", sans-serif !important;
+  font-size: 11px !important;
+  line-height: 1.35 !important;
+  color: #765047 !important;
+  white-space: normal !important;
+}
+
+@media (max-width: 380px) {
+  .header {
+    min-height: 158px !important;
+    padding: 18px 116px 16px 17px !important;
+  }
+
+  .header h1 {
+    font-size: 20px !important;
+    letter-spacing: -1px !important;
+  }
+
+  .header .date-text {
+    font-size: 15px !important;
+  }
+
+  .mascot-placeholder,
+  .mascot-placeholder img {
+    width: 116px !important;
+    height: 132px !important;
+  }
+}
