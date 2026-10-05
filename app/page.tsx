@@ -39,6 +39,22 @@ const getDateKey = (date = new Date()) => {
   return `${year}-${month}-${day}`;
 };
 
+const commandMap: Record<string, Category> = {
+  MC: "Merchant",
+  MM: "Modal Merchant",
+  OT: "OTP",
+  VS: "VSPhone",
+  CS: "Cash Out",
+};
+
+const categoryCommand: Record<Category, string> = {
+  Merchant: "MC",
+  "Modal Merchant": "MM",
+  OTP: "OT",
+  VSPhone: "VS",
+  "Cash Out": "CS",
+};
+
 const parseAmount = (value: string) => {
   const clean = value
     .toLowerCase()
@@ -56,6 +72,28 @@ const parseAmount = (value: string) => {
   }
 
   return Number(clean);
+};
+
+const parseTransactionCommand = (
+  value: string,
+  fallbackCategory: Category | null,
+) => {
+  const normalized = value.trim().toUpperCase();
+  const parts = normalized.split(/\s+/);
+  const possibleCommand = parts[0];
+  const commandCategory = commandMap[possibleCommand];
+
+  if (commandCategory) {
+    return {
+      category: commandCategory,
+      amount: parseAmount(parts.slice(1).join(" ")),
+    };
+  }
+
+  return {
+    category: fallbackCategory,
+    amount: parseAmount(value),
+  };
 };
 
 const getCategoryType = (category: Category) =>
@@ -172,11 +210,18 @@ export default function Home() {
       .reduce((total, item) => total + item.amount, 0);
 
   const saveTransaction = () => {
-    const numericAmount = parseAmount(amount);
+    const parsed = parseTransactionCommand(amount, selectedCategory);
 
-    if (!selectedCategory || !numericAmount || numericAmount <= 0) {
+    if (
+      !parsed.category ||
+      !parsed.amount ||
+      parsed.amount <= 0
+    ) {
       return;
     }
+
+    const numericAmount = parsed.amount;
+    const transactionCategory = parsed.category;
 
     if (editingId !== null) {
       setTransactions((current) =>
@@ -184,7 +229,7 @@ export default function Home() {
           item.id === editingId
             ? {
                 ...item,
-                category: selectedCategory,
+                category: transactionCategory,
                 amount: numericAmount,
               }
             : item,
@@ -194,7 +239,7 @@ export default function Home() {
       const newTransaction: Transaction = {
         id: Date.now(),
         date: today,
-        category: selectedCategory,
+        category: transactionCategory,
         amount: numericAmount,
       };
 
@@ -422,7 +467,7 @@ export default function Home() {
           </div>
 
           <div>
-            <span>Bersih hari ini</span>
+            <span>Keuntungan bersih hari ini</span>
             <strong
               className={todayNet >= 0 ? "positive" : "negative"}
             >
@@ -478,129 +523,107 @@ export default function Home() {
         </section>
       )}
 
+
       <section className="quick-section">
-        <div className="section-title">
-          <div>
-            <h2>Catat Transaksi 🌱</h2>
-            <p>Pilih kategori yang mau dicatat</p>
-          </div>
-        </div>
+        <div className="category-summary">
+          {categories.map((item) => {
+            const total = todayByCategory(item.name);
+            const command = categoryCommand[item.name];
 
-        <p className="group-label income-label">
-          💚 PEMASUKAN
-        </p>
-
-        <button
-          className={`keyword-button income ${
-            selectedCategory === "Merchant" ? "selected" : ""
-          }`}
-          onClick={() => {
-            setSelectedCategory("Merchant");
-            setAmount("");
-            setEditingId(null);
-          }}
-        >
-          <span className="keyword-icon">💰</span>
-
-          <span>
-            <strong>MERCHANT</strong>
-          </span>
-        </button>
-
-        <p className="group-label expense-label">
-          🤎 PENGELUARAN
-        </p>
-
-        <div className="keyword-grid">
-          {categories
-            .filter((item) => item.type === "expense")
-            .map((item) => (
+            return (
               <button
                 key={item.name}
-                className={`keyword-button expense ${
-                  selectedCategory === item.name
-                    ? "selected"
-                    : ""
-                }`}
+                className={`category-summary-button ${item.type} ${selectedCategory === item.name ? "selected" : ""}`}
                 onClick={() => {
                   setSelectedCategory(item.name);
+                  setAmount(`${command} `);
+                  setEditingId(null);
+                }}
+              >
+                <span className="category-summary-icon">{item.emoji}</span>
+                <span className="category-summary-name">{item.name}</span>
+                <strong>{formatRupiah(total)}</strong>
+                <small>{command}</small>
+              </button>
+            );
+          })}
+        </div>
+
+        <div className="command-box">
+          <div className="command-box-heading">
+            <div>
+              <p>CATAT CEPAT</p>
+              <h2>🌱 Masukkan Transaksi</h2>
+            </div>
+
+            {selectedCategory && (
+              <button
+                className="close-button"
+                onClick={() => {
+                  setSelectedCategory(null);
                   setAmount("");
                   setEditingId(null);
                 }}
               >
-                <span className="keyword-icon">
-                  {item.emoji}
-                </span>
-
-                <span>
-                  <strong>{item.name.toUpperCase()}</strong>
-                </span>
+                ×
               </button>
-            ))}
-        </div>
-      </section>
-
-      {selectedCategory && (
-        <section className="input-card">
-          <div className="input-heading">
-            <div>
-              <p>
-                {editingId !== null
-                  ? "EDIT TRANSAKSI"
-                  : "CATAT TRANSAKSI"}
-              </p>
-
-              <h2>
-                {
-                  categories.find(
-                    (item) => item.name === selectedCategory,
-                  )?.emoji
-                }{" "}
-                {selectedCategory}
-              </h2>
-            </div>
-
-            <button
-              className="close-button"
-              onClick={() => {
-                setSelectedCategory(null);
-                setAmount("");
-                setEditingId(null);
-              }}
-            >
-              ×
-            </button>
+            )}
           </div>
 
-          <label htmlFor="amount">
-            Nominal
-          </label>
+          <p className="command-hint">
+            Ketik kode + nominal. Contoh: <strong>MC 150k</strong>
+          </p>
+
+          <div className="command-keywords">
+            {categories.map((item) => (
+              <button
+                key={item.name}
+                type="button"
+                className={`command-chip ${item.type}`}
+                onClick={() => {
+                  setSelectedCategory(item.name);
+                  setAmount(`${categoryCommand[item.name]} `);
+                  setEditingId(null);
+                }}
+              >
+                {categoryCommand[item.name]} · {item.name}
+              </button>
+            ))}
+          </div>
 
           <input
             id="amount"
             type="text"
-            inputMode="numeric"
+            inputMode="decimal"
             autoFocus
-            placeholder="Contoh: 150000 / 150k"
+            placeholder="MC 150k"
             value={amount}
-            onChange={(event) =>
-              setAmount(event.target.value)
-            }
+            onChange={(event) => {
+              const value = event.target.value;
+              const command = value.trim().split(/\s+/)[0]?.toUpperCase();
+              const detected = commandMap[command];
+
+              if (detected) {
+                setSelectedCategory(detected);
+              }
+
+              setAmount(value);
+            }}
           />
 
           <button
             className="save-button"
             onClick={saveTransaction}
             disabled={
-              !amount || parseAmount(amount) <= 0
+              !amount ||
+              !parseTransactionCommand(amount, selectedCategory).amount ||
+              parseTransactionCommand(amount, selectedCategory).amount <= 0
             }
           >
-            {editingId !== null
-              ? "SIMPAN PERUBAHAN"
-              : `SIMPAN ${selectedCategory.toUpperCase()}`}
+            SIMPAN TRANSAKSI
           </button>
-        </section>
-      )}
+        </div>
+      </section>
 
       <section className="history-card">
         <div className="section-title">
