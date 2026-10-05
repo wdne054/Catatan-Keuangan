@@ -1292,3 +1292,333 @@ main {
     padding-top: 16px;
   }
 }
+
+
+/* =========================================================
+   JASDOR CUTE CAFE — VISIBLE REDESIGN
+   Visual-only override: keeps all existing finance functions.
+   ========================================================= */
+
+:root {
+  --cream: #fffaf2;
+  --paper: #fffdf8;
+  --brown: #5b463c;
+  --muted: #907d71;
+  --pink: #e8aeb8;
+  --pink-soft: #fff0f2;
+  --rose: #c97886;
+  --sage: #78956e;
+  --sage-soft: #edf4e8;
+  --peach: #f6d9c9;
+  --line: #eadfd6;
+  --shadow: 0 12px 30px rgba(91, 70, 60, .10);
+}
+
+body {
+  background:
+    radial-gradient(circle at 8% 8%, rgba(232,174,184,.38) 0 85px, transparent 86px),
+    radial-gradient(circle at 96% 20%, rgba(120,149,110,.25) 0 110px, transparent 111px),
+    radial-gradient(circle at 4% 78%, rgba(246,217,201,.55) 0 100px, transparent 101px),
+    #f8f1e8 !important;
+  color: var(--brown);
+}
+
+main {
+  max-width: 560px;
+  padding: 18px 15px 70px;
+}
+
+.header {
+  position: relative;
+  margin-bottom: 14px;
+  padding: 15px 16px 13px !important;
+  border: 1px solid rgba(255,255,255,.9);
+  border-radius: 28px;
+  background: rgba(255,253,248,.92);
+  box-shadow: var(--shadow);
+}
+
+.header::after {
+  position: absolute;
+  right: 92px;
+  top: 9px;
+  content: "✿";
+  color: var(--pink);
+  font-size: 20px;
+  transform: rotate(-12deg);
+}
+
+.eyebrow {
+  color: var(--rose);
+  font-size: 10px;
+  letter-spacing: 2.2px;
+}
+
+.header h1 {
+  color: #594239;
+  font-size: 31px;
+  text-shadow: 0 2px 0 #fff;
+}
+
+.date-text {
+  color: var(--muted);
+}
+
+.mascot-placeholder {
+  border: 3px solid #f0d7d9 !important;
+  border-radius: 25px !important;
+  background: linear-gradient(145deg,#fff7f5,#edf4e8) !important;
+  box-shadow: 0 8px 18px rgba(91,70,60,.10) !important;
+}
+
+.mascot-placeholder::after {
+  position: absolute;
+  right: -7px;
+  bottom: -8px;
+  content: "🌷";
+  font-size: 17px;
+}
+
+.balance-card {
+  border: 0 !important;
+  border-radius: 32px !important;
+  padding: 24px !important;
+  background:
+    radial-gradient(circle at 100% 0, rgba(232,174,184,.32) 0 105px, transparent 106px),
+    radial-gradient(circle at 0 100%, rgba(120,149,110,.20) 0 120px, transparent 121px),
+    linear-gradient(135deg,#fffdf8,#fff8f1) !important;
+  box-shadow: 0 18px 38px rgba(91,70,60,.13) !important;
+}
+
+.balance-card::before {
+  width: 190px !important;
+  height: 190px !important;
+  right: -70px !important;
+  bottom: -100px !important;
+  background: rgba(120,149,110,.14) !important;
+}
+
+.balance-card::after {
+  width: 130px !important;
+  height: 130px !important;
+  left: -55px !important;
+  top: -60px !important;
+  background: rgba(232,174,184,.16) !important;
+}
+
+.balance-top > p {
+  color: #8b6c61;
+}
+
+.mini-edit {
+  border: 1px solid #ead6d2;
+  background: #fff0f2;
+  color: #a25d6a;
+}
+
+.balance-card h2 {
+  margin-top: 5px;
+  color: #594239;
+  font-size: 42px;
+}
+
+.balance-info-grid {
+  gap: 9px !important;
+  margin-top: 19px !important;
+}
+
+.balance-info-grid > div {
+  border: 1px solid rgba(255,255,255,.8);
+  border-radius: 18px !important;
+  background: rgba(255,255,255,.72) !important;
+  box-shadow: 0 4px 12px rgba(91,70,60,.05);
+}
+
+.today-card > div {
+  border: 1px solid rgba(255,255,255,.8);
+  border-radius: 21px !important;
+  background: #fffaf6 !important;
+  box-shadow: var(--shadow) !important;
+}
+
+.quick-section,
+.history-card,
+.input-card,
+.chart-card,
+.recap-card,
+.all-history-card {
+  border: 1px solid #eee1d8 !important;
+  border-radius: 29px !important;
+  background: rgba(255,253,248,.96) !important;
+  box-shadow: var(--shadow) !important;
+}
+
+.section-title h2,
+.input-heading h2,
+.command-box-heading h2 {
+  color: #594239;
+  font-size: 23px;
+}
+
+.section-title p,
+.command-hint {
+  color: var(--muted);
+}
+
+.group-label {
+  margin-top: 18px;
+}
+
+.income-label { color: #64865b !important; }
+.expense-label { color: #aa6b72 !important; }
+
+.category-summary {
+  gap: 10px !important;
+}
+
+.category-summary-button {
+  min-height: 76px;
+  border: 2px solid transparent;
+  border-radius: 22px !important;
+  padding: 11px !important;
+  box-shadow: 0 7px 15px rgba(91,70,60,.07) !important;
+}
+
+.category-summary-button.income {
+  background: linear-gradient(145deg,#f1f7ed,#e5f0df) !important;
+  color: #4f7449 !important;
+}
+
+.category-summary-button.expense {
+  background: linear-gradient(145deg,#fff1ef,#f8e5e3) !important;
+  color: #965761 !important;
+}
+
+.category-summary-button.selected {
+  border-color: currentColor !important;
+  box-shadow: 0 8px 18px rgba(91,70,60,.12) !important;
+}
+
+.category-summary-icon {
+  width: 44px !important;
+  height: 44px !important;
+  border-radius: 15px !important;
+  background: rgba(255,255,255,.82) !important;
+}
+
+.category-decoration {
+  border: 2px dashed #e9cfd0 !important;
+  border-radius: 22px !important;
+  background:
+    radial-gradient(circle at 95% 5%,#ffe4e9 0,transparent 34%),
+    radial-gradient(circle at 0 100%,#e7f1df 0,transparent 38%),
+    #fff8f5 !important;
+}
+
+.command-box {
+  border: 2px solid #eadbd2 !important;
+  border-radius: 26px !important;
+  background:
+    radial-gradient(circle at 100% 0,#ffe7eb 0,transparent 32%),
+    radial-gradient(circle at 0 100%,#edf5e8 0,transparent 35%),
+    #fffdf8 !important;
+  box-shadow: 0 10px 24px rgba(91,70,60,.07) !important;
+}
+
+.command-box-heading p {
+  color: #ba6e7c !important;
+}
+
+.command-chip {
+  border: 1px solid rgba(255,255,255,.9);
+  box-shadow: 0 3px 8px rgba(91,70,60,.05);
+}
+
+.command-box input,
+.input-card input {
+  border: 2px solid #eadfd7 !important;
+  border-radius: 19px !important;
+  background: #fffefa !important;
+  color: #594239 !important;
+}
+
+.command-box input:focus,
+.input-card input:focus {
+  border-color: #dfaab3 !important;
+  box-shadow: 0 0 0 4px rgba(232,174,184,.16);
+}
+
+.save-button {
+  border-radius: 19px !important;
+  background: linear-gradient(135deg,#78956e,#66865f) !important;
+  box-shadow: 0 9px 18px rgba(102,134,95,.23) !important;
+  letter-spacing: .2px;
+}
+
+.transaction-item {
+  margin: 5px 0;
+  padding: 10px 9px !important;
+  border: 1px solid #f0e6df;
+  border-radius: 17px;
+  background: #fffaf6;
+}
+
+.transaction-emoji {
+  background: #fff0f1 !important;
+}
+
+.chart-card {
+  background:
+    radial-gradient(circle at 100% 0,#edf5e9 0,transparent 34%),
+    radial-gradient(circle at 0 100%,#fff0f2 0,transparent 30%),
+    #fffdf8 !important;
+}
+
+.chart-summary strong {
+  color: #ba6e7c !important;
+  font-size: 29px !important;
+}
+
+.chart-periods,
+.recap-tabs {
+  background: #f6eee8 !important;
+  border: 1px solid #eadfd6 !important;
+}
+
+.chart-periods button.active,
+.recap-tabs button.active {
+  background: #fff !important;
+  color: #a55e6a !important;
+  box-shadow: 0 4px 10px rgba(91,70,60,.09) !important;
+}
+
+.recap-grid > div {
+  border: 1px solid #eee3da;
+  border-radius: 18px !important;
+  background: #fffaf6 !important;
+}
+
+.recap-grid > div.net-box {
+  background: #edf5e9 !important;
+}
+
+.empty-state {
+  border: 2px dashed #ead8d3 !important;
+  border-radius: 21px !important;
+  background: #fff8f5 !important;
+}
+
+.all-history-card .date-history-item,
+.date-history-item {
+  margin: 5px 0;
+  padding: 11px 10px !important;
+  border: 1px solid #f0e6df;
+  border-radius: 16px;
+  background: #fffaf6;
+}
+
+@media (max-width: 380px) {
+  main { padding-left: 11px; padding-right: 11px; }
+  .header h1 { font-size: 27px; }
+  .balance-card h2 { font-size: 36px; }
+}
