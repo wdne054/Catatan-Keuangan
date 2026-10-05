@@ -552,7 +552,6 @@ export default function Home() {
         <div className="command-box">
           <div className="command-box-heading">
             <div>
-              <p>CATAT CEPAT</p>
               <h2>🌱 Masukkan Transaksi</h2>
             </div>
 
