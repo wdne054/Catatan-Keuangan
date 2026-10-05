@@ -608,7 +608,6 @@ export default function Home() {
             </div>
           </div>
         </div>
-        </div>
 
         <div className="command-box">
           <div className="command-box-heading">
