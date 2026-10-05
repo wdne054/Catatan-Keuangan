@@ -166,15 +166,7 @@ h1 {
 .balance-info-grid > div {
   padding: 9px 10px;
   border-radius: 15px;
-  background: rgba(247, 245, 238, 0.85);
-}
-
-.balance-info-grid > div:nth-child(3) {
-  background: #e9f0e4;
-}
-
-.balance-info-grid > div:nth-child(4) {
-  background: #f8ece8;
+  background: #f3f1ea;
 }
 
 .balance-info-grid span {
@@ -760,17 +752,11 @@ h1 {
   white-space: nowrap;
 }
 
-.category-summary-button small {
-  position: absolute;
-  right: 11px;
-  top: 9px;
-  margin-top: -2px;
-  font-size: 10px;
-  font-weight: 800;
-  opacity: 0.48;
+.category-summary-button:last-child {
+  grid-column: auto;
 }
 
-.command-box {
+ .command-box {
   position: relative;
   overflow: hidden;
   padding: 18px;
