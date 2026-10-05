@@ -478,25 +478,11 @@ export default function Home() {
         </section>
       )}
 
-      <section className="today-card">
-        <div>
-          <span>💰 Merchant</span>
-          <strong className="positive">
-            {formatRupiah(merchantToday)}
-          </strong>
-        </div>
-
-        <div>
-          <span>📦 Modal Merchant</span>
-          <strong>{formatRupiah(modalToday)}</strong>
-        </div>
-      </section>
-
       <section className="quick-section">
         <div className="section-title">
           <div>
-            <h2>Catat Cepat 🌱</h2>
-            <p>Tinggal klik kata kuncinya</p>
+            <h2>Catat Transaksi 🌱</h2>
+            <p>Pilih kategori yang mau dicatat</p>
           </div>
         </div>
 
@@ -518,7 +504,6 @@ export default function Home() {
 
           <span>
             <strong>MERCHANT</strong>
-            <small>Pemasukan Jasdor</small>
           </span>
         </button>
 
@@ -549,16 +534,6 @@ export default function Home() {
 
                 <span>
                   <strong>{item.name.toUpperCase()}</strong>
-
-                  <small>
-                    {item.name === "Modal Merchant"
-                      ? "Modal harian"
-                      : item.name === "VSPhone"
-                        ? "Biaya VSPhone"
-                        : item.name === "OTP"
-                          ? "Biaya OTP"
-                          : "Pengeluaran lainnya"}
-                  </small>
                 </span>
               </button>
             ))}
@@ -631,9 +606,7 @@ export default function Home() {
         <div className="section-title">
           <div>
             <h2>Transaksi Hari Ini</h2>
-            <p>
-              {todayTransactions.length} transaksi
-            </p>
+            <p>{todayTransactions.length} transaksi</p>
           </div>
         </div>
 
