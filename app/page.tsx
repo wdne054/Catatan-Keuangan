@@ -59,9 +59,7 @@ const parseAmount = (value: string) => {
   const clean = value
     .toLowerCase()
     .replace(/\s/g, "")
-    .replace(/rp/g, "")
-    .replace(/\./g, "")
-    .replace(/,/g, "");
+    .replace(/rp/g, "");
 
   if (clean.endsWith("jt")) {
     return Number(clean.replace("jt", "")) * 1000000;
@@ -71,7 +69,14 @@ const parseAmount = (value: string) => {
     return Number(clean.replace("k", "")) * 1000;
   }
 
-  return Number(clean);
+  // Input cepat: 1 = 1.000, 10 = 10.000, 100 = 100.000.
+  // Desimal tetap dipakai sebagai ribuan: 1.5 = 1.500, 100.1 = 100.100.
+  if (/^\d+(?:\.\d+)?$/.test(clean)) {
+    return Number(clean) * 1000;
+  }
+
+  const normalized = clean.replace(/\./g, "").replace(/,/g, "");
+  return Number(normalized);
 };
 
 const parseTransactionCommand = (
@@ -197,12 +202,18 @@ export default function Home() {
     .filter((item) => getCategoryType(item.category) === "expense")
     .reduce((total, item) => total + item.amount, 0);
 
-  const todayNet = todayIncome - todayExpense;
+  const saldoKeluarHariIni =
+    modalToday + otpToday + vsphoneToday + cashOutToday;
 
-  const saldoAkhirHariIni = saldoPertamaHariIni + todayNet;
+  const keuntunganHariIni = merchantToday - modalToday - otpToday - vsphoneToday - cashOutToday;
 
   const currentBalance =
     initialBalance + getNet(transactions);
+
+  const saldoAkhirHariIni =
+    currentBalance + merchantToday - saldoKeluarHariIni;
+
+  const todayNet = keuntunganHariIni;
 
   const todayByCategory = (category: Category) =>
     todayTransactions
@@ -462,23 +473,25 @@ export default function Home() {
 
         <div className="balance-info-grid">
           <div>
-            <span>Saldo pertama hari ini</span>
-            <strong>{formatRupiah(saldoPertamaHariIni)}</strong>
-          </div>
-
-          <div>
-            <span>Keuntungan bersih hari ini</span>
-            <strong
-              className={todayNet >= 0 ? "positive" : "negative"}
-            >
-              {todayNet >= 0 ? "+" : "-"}
-              {formatRupiah(todayNet)}
+            <span>🌿 Keuntungan</span>
+            <strong className={keuntunganHariIni >= 0 ? "positive" : "negative"}>
+              {keuntunganHariIni >= 0 ? "+" : "-"}{formatRupiah(keuntunganHariIni)}
             </strong>
           </div>
 
           <div>
-            <span>Saldo akhir hari ini</span>
+            <span>💰 Merchant</span>
+            <strong className="positive">{formatRupiah(merchantToday)}</strong>
+          </div>
+
+          <div>
+            <span>💳 Saldo Akhir</span>
             <strong>{formatRupiah(saldoAkhirHariIni)}</strong>
+          </div>
+
+          <div>
+            <span>💸 Saldo Keluar</span>
+            <strong className="negative">{formatRupiah(saldoKeluarHariIni)}</strong>
           </div>
         </div>
       </section>
@@ -569,33 +582,12 @@ export default function Home() {
             )}
           </div>
 
-          <p className="command-hint">
-            Ketik kode + nominal. Contoh: <strong>MC 150k</strong>
-          </p>
-
-          <div className="command-keywords">
-            {categories.map((item) => (
-              <button
-                key={item.name}
-                type="button"
-                className={`command-chip ${item.type}`}
-                onClick={() => {
-                  setSelectedCategory(item.name);
-                  setAmount(`${categoryCommand[item.name]} `);
-                  setEditingId(null);
-                }}
-              >
-                {categoryCommand[item.name]} · {item.name}
-              </button>
-            ))}
-          </div>
-
           <input
             id="amount"
             type="text"
             inputMode="decimal"
             autoFocus
-            placeholder="MC 150k"
+            placeholder="MC 1.5  •  MM 10  •  OT 100"
             value={amount}
             onChange={(event) => {
               const value = event.target.value;
