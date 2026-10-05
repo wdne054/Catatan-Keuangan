@@ -7,129 +7,384 @@ type Category =
   | "Modal Merchant"
   | "OTP"
   | "VSPhone"
-  | "Pribadi/Jajan";
+  | "Cash Out";
 
 type Transaction = {
   id: number;
   date: string;
   category: Category;
-  type: "income" | "expense";
   amount: number;
 };
 
 const categories: {
   name: Category;
-  type: "income" | "expense";
   emoji: string;
+  type: "income" | "expense";
 }[] = [
-  { name: "Merchant", type: "income", emoji: "💰" },
-  { name: "Modal Merchant", type: "expense", emoji: "📦" },
-  { name: "OTP", type: "expense", emoji: "🔐" },
-  { name: "VSPhone", type: "expense", emoji: "📱" },
-  { name: "Pribadi/Jajan", type: "expense", emoji: "🍜" },
+  { name: "Merchant", emoji: "💰", type: "income" },
+  { name: "Modal Merchant", emoji: "📦", type: "expense" },
+  { name: "OTP", emoji: "🔐", type: "expense" },
+  { name: "VSPhone", emoji: "📱", type: "expense" },
+  { name: "Cash Out", emoji: "💸", type: "expense" },
 ];
 
 const formatRupiah = (value: number) =>
-  `Rp${value.toLocaleString("id-ID")}`;
+  `Rp${Math.abs(value).toLocaleString("id-ID")}`;
 
-const getToday = () => {
-  const now = new Date();
-  const year = now.getFullYear();
-  const month = String(now.getMonth() + 1).padStart(2, "0");
-  const day = String(now.getDate()).padStart(2, "0");
+const getDateKey = (date = new Date()) => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
 
   return `${year}-${month}-${day}`;
 };
 
+const parseAmount = (value: string) => {
+  const clean = value
+    .toLowerCase()
+    .replace(/\s/g, "")
+    .replace(/rp/g, "")
+    .replace(/\./g, "")
+    .replace(/,/g, "");
+
+  if (clean.endsWith("jt")) {
+    return Number(clean.replace("jt", "")) * 1000000;
+  }
+
+  if (clean.endsWith("k")) {
+    return Number(clean.replace("k", "")) * 1000;
+  }
+
+  return Number(clean);
+};
+
+const getCategoryType = (category: Category) =>
+  category === "Merchant" ? "income" : "expense";
+
+const getNet = (transactions: Transaction[]) =>
+  transactions.reduce((total, item) => {
+    return total + (getCategoryType(item.category) === "income"
+      ? item.amount
+      : -item.amount);
+  }, 0);
+
 export default function Home() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [initialBalance, setInitialBalance] = useState(0);
+
   const [selectedCategory, setSelectedCategory] =
     useState<Category | null>(null);
+
   const [amount, setAmount] = useState("");
+  const [editingId, setEditingId] = useState<number | null>(null);
+
+  const [activeTab, setActiveTab] = useState<
+    "harian" | "mingguan" | "bulanan"
+  >("harian");
+
+  const [showBalanceEditor, setShowBalanceEditor] = useState(false);
+  const [balanceInput, setBalanceInput] = useState("");
+
   const [loaded, setLoaded] = useState(false);
 
-  const today = getToday();
+  const today = getDateKey();
 
   useEffect(() => {
-    const saved = localStorage.getItem("catatan-keuangan-transactions");
+    const savedTransactions = localStorage.getItem(
+      "jasdor-keuangan-transactions",
+    );
 
-    if (saved) {
+    const savedInitialBalance = localStorage.getItem(
+      "jasdor-keuangan-initial-balance",
+    );
+
+    if (savedTransactions) {
       try {
-        setTransactions(JSON.parse(saved));
+        setTransactions(JSON.parse(savedTransactions));
       } catch {
         setTransactions([]);
       }
+    }
+
+    if (savedInitialBalance) {
+      setInitialBalance(Number(savedInitialBalance) || 0);
     }
 
     setLoaded(true);
   }, []);
 
   useEffect(() => {
-    if (loaded) {
-      localStorage.setItem(
-        "catatan-keuangan-transactions",
-        JSON.stringify(transactions),
-      );
-    }
-  }, [transactions, loaded]);
+    if (!loaded) return;
+
+    localStorage.setItem(
+      "jasdor-keuangan-transactions",
+      JSON.stringify(transactions),
+    );
+
+    localStorage.setItem(
+      "jasdor-keuangan-initial-balance",
+      String(initialBalance),
+    );
+  }, [transactions, initialBalance, loaded]);
+
+  const sortedTransactions = useMemo(
+    () =>
+      [...transactions].sort((a, b) => {
+        if (a.date !== b.date) {
+          return b.date.localeCompare(a.date);
+        }
+
+        return b.id - a.id;
+      }),
+    [transactions],
+  );
 
   const todayTransactions = useMemo(
     () => transactions.filter((item) => item.date === today),
     [transactions, today],
   );
 
-  const totalIncome = transactions
-    .filter((item) => item.type === "income")
-    .reduce((total, item) => total + item.amount, 0);
+  const beforeToday = useMemo(
+    () => transactions.filter((item) => item.date < today),
+    [transactions, today],
+  );
 
-  const totalExpense = transactions
-    .filter((item) => item.type === "expense")
-    .reduce((total, item) => total + item.amount, 0);
-
-  const currentBalance = totalIncome - totalExpense;
+  const saldoPertamaHariIni = initialBalance + getNet(beforeToday);
 
   const todayIncome = todayTransactions
-    .filter((item) => item.type === "income")
+    .filter((item) => getCategoryType(item.category) === "income")
     .reduce((total, item) => total + item.amount, 0);
 
   const todayExpense = todayTransactions
-    .filter((item) => item.type === "expense")
+    .filter((item) => getCategoryType(item.category) === "expense")
     .reduce((total, item) => total + item.amount, 0);
 
   const todayNet = todayIncome - todayExpense;
 
+  const saldoAkhirHariIni = saldoPertamaHariIni + todayNet;
+
+  const currentBalance =
+    initialBalance + getNet(transactions);
+
+  const todayByCategory = (category: Category) =>
+    todayTransactions
+      .filter((item) => item.category === category)
+      .reduce((total, item) => total + item.amount, 0);
+
   const saveTransaction = () => {
-    const numericAmount = Number(amount);
+    const numericAmount = parseAmount(amount);
 
     if (!selectedCategory || !numericAmount || numericAmount <= 0) {
       return;
     }
 
-    const categoryInfo = categories.find(
-      (item) => item.name === selectedCategory,
+    if (editingId !== null) {
+      setTransactions((current) =>
+        current.map((item) =>
+          item.id === editingId
+            ? {
+                ...item,
+                category: selectedCategory,
+                amount: numericAmount,
+              }
+            : item,
+        ),
+      );
+    } else {
+      const newTransaction: Transaction = {
+        id: Date.now(),
+        date: today,
+        category: selectedCategory,
+        amount: numericAmount,
+      };
+
+      setTransactions((current) => [newTransaction, ...current]);
+    }
+
+    setSelectedCategory(null);
+    setAmount("");
+    setEditingId(null);
+  };
+
+  const editTransaction = (item: Transaction) => {
+    setEditingId(item.id);
+    setSelectedCategory(item.category);
+    setAmount(String(item.amount));
+    window.scrollTo({
+      top: document.body.scrollHeight,
+      behavior: "smooth",
+    });
+  };
+
+  const deleteTransaction = (id: number) => {
+    const confirmed = window.confirm(
+      "Hapus transaksi ini? Saldo akan otomatis dihitung ulang.",
     );
 
-    if (!categoryInfo) return;
+    if (!confirmed) return;
 
-    const newTransaction: Transaction = {
-      id: Date.now(),
-      date: today,
-      category: selectedCategory,
-      type: categoryInfo.type,
-      amount: numericAmount,
-    };
-
-    setTransactions((current) => [newTransaction, ...current]);
-    setAmount("");
-    setSelectedCategory(null);
+    setTransactions((current) =>
+      current.filter((item) => item.id !== id),
+    );
   };
+
+  const saveInitialBalance = () => {
+    const numericAmount = parseAmount(balanceInput);
+
+    if (numericAmount < 0 || Number.isNaN(numericAmount)) return;
+
+    setInitialBalance(numericAmount);
+    setBalanceInput("");
+    setShowBalanceEditor(false);
+  };
+
+  const merchantToday = todayByCategory("Merchant");
+  const modalToday = todayByCategory("Modal Merchant");
+  const otpToday = todayByCategory("OTP");
+  const vsphoneToday = todayByCategory("VSPhone");
+  const cashOutToday = todayByCategory("Cash Out");
+
+  const formatDate = (date: string) =>
+    new Date(`${date}T00:00:00`).toLocaleDateString("id-ID", {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+    });
+
+  const startOfWeek = (date: Date) => {
+    const result = new Date(date);
+    const day = result.getDay();
+    const diff = day === 0 ? -6 : 1 - day;
+
+    result.setDate(result.getDate() + diff);
+    result.setHours(0, 0, 0, 0);
+
+    return result;
+  };
+
+  const weeklyTransactions = useMemo(() => {
+    const start = startOfWeek(new Date());
+
+    const end = new Date(start);
+    end.setDate(start.getDate() + 6);
+
+    return transactions.filter((item) => {
+      const date = new Date(`${item.date}T00:00:00`);
+      return date >= start && date <= end;
+    });
+  }, [transactions]);
+
+  const monthlyTransactions = useMemo(() => {
+    const now = new Date();
+    const month = now.getMonth();
+    const year = now.getFullYear();
+
+    return transactions.filter((item) => {
+      const date = new Date(`${item.date}T00:00:00`);
+      return (
+        date.getMonth() === month &&
+        date.getFullYear() === year
+      );
+    });
+  }, [transactions]);
+
+  const recapData =
+    activeTab === "harian"
+      ? todayTransactions
+      : activeTab === "mingguan"
+        ? weeklyTransactions
+        : monthlyTransactions;
+
+  const recapIncome = recapData
+    .filter((item) => item.category === "Merchant")
+    .reduce((total, item) => total + item.amount, 0);
+
+  const recapModal = recapData
+    .filter((item) => item.category === "Modal Merchant")
+    .reduce((total, item) => total + item.amount, 0);
+
+  const recapOtp = recapData
+    .filter((item) => item.category === "OTP")
+    .reduce((total, item) => total + item.amount, 0);
+
+  const recapVsphone = recapData
+    .filter((item) => item.category === "VSPhone")
+    .reduce((total, item) => total + item.amount, 0);
+
+  const recapCashOut = recapData
+    .filter((item) => item.category === "Cash Out")
+    .reduce((total, item) => total + item.amount, 0);
+
+  const recapNet =
+    recapIncome -
+    recapModal -
+    recapOtp -
+    recapVsphone -
+    recapCashOut;
+
+  const chartDays = useMemo(() => {
+    const days: {
+      date: string;
+      label: string;
+      value: number;
+    }[] = [];
+
+    const now = new Date();
+
+    for (let i = 6; i >= 0; i--) {
+      const date = new Date(now);
+      date.setDate(now.getDate() - i);
+
+      const key = getDateKey(date);
+
+      const value = transactions
+        .filter(
+          (item) =>
+            item.date === key && item.category === "Merchant",
+        )
+        .reduce((total, item) => total + item.amount, 0);
+
+      days.push({
+        date: key,
+        label: date.toLocaleDateString("id-ID", {
+          day: "numeric",
+          month: "short",
+        }),
+        value,
+      });
+    }
+
+    return days;
+  }, [transactions]);
+
+  const chartMax = Math.max(
+    ...chartDays.map((item) => item.value),
+    1,
+  );
+
+  const chartWidth = 320;
+  const chartHeight = 150;
+
+  const chartPoints = chartDays.map((item, index) => {
+    const x =
+      chartDays.length === 1
+        ? chartWidth / 2
+        : (index / (chartDays.length - 1)) * chartWidth;
+
+    const y =
+      chartHeight -
+      (item.value / chartMax) * (chartHeight - 20);
+
+    return `${x},${y}`;
+  });
 
   return (
     <main>
       <header className="header">
         <div>
           <p className="eyebrow">CATATAN HARIAN</p>
-          <h1>Catatan Keuangan</h1>
+          <h1>Jasdorby_esaashop</h1>
+
           <p className="date-text">
             {new Date().toLocaleDateString("id-ID", {
               weekday: "long",
@@ -144,41 +399,110 @@ export default function Home() {
       </header>
 
       <section className="balance-card">
-        <p>💳 SALDO SAAT INI</p>
+        <div className="balance-top">
+          <p>💳 SALDO SAAT INI</p>
+
+          <button
+            className="mini-edit"
+            onClick={() => {
+              setBalanceInput(String(initialBalance));
+              setShowBalanceEditor(true);
+            }}
+          >
+            ⚙️ Atur
+          </button>
+        </div>
+
         <h2>{formatRupiah(currentBalance)}</h2>
 
-        <div className="balance-line">
-          <span>
-            Bersih hari ini{" "}
-            <strong className={todayNet >= 0 ? "positive" : "negative"}>
+        <div className="balance-info-grid">
+          <div>
+            <span>Saldo pertama hari ini</span>
+            <strong>{formatRupiah(saldoPertamaHariIni)}</strong>
+          </div>
+
+          <div>
+            <span>Bersih hari ini</span>
+            <strong
+              className={todayNet >= 0 ? "positive" : "negative"}
+            >
               {todayNet >= 0 ? "+" : "-"}
-              {formatRupiah(Math.abs(todayNet))}
+              {formatRupiah(todayNet)}
             </strong>
-          </span>
+          </div>
+
+          <div>
+            <span>Saldo akhir hari ini</span>
+            <strong>{formatRupiah(saldoAkhirHariIni)}</strong>
+          </div>
         </div>
       </section>
 
+      {showBalanceEditor && (
+        <section className="input-card balance-editor">
+          <div className="input-heading">
+            <div>
+              <p>SALDO AWAL SISTEM</p>
+              <h2>💰 Atur Saldo Awal</h2>
+            </div>
+
+            <button
+              className="close-button"
+              onClick={() => setShowBalanceEditor(false)}
+            >
+              ×
+            </button>
+          </div>
+
+          <label htmlFor="initial-balance">
+            Saldo pertama sebelum mulai mencatat
+          </label>
+
+          <input
+            id="initial-balance"
+            type="text"
+            inputMode="numeric"
+            placeholder="Contoh: 500000"
+            value={balanceInput}
+            onChange={(event) =>
+              setBalanceInput(event.target.value)
+            }
+          />
+
+          <button
+            className="save-button"
+            onClick={saveInitialBalance}
+          >
+            SIMPAN SALDO AWAL
+          </button>
+        </section>
+      )}
+
       <section className="today-card">
         <div>
-          <span>💰 Pemasukan</span>
-          <strong>{formatRupiah(todayIncome)}</strong>
+          <span>💰 Merchant</span>
+          <strong className="positive">
+            {formatRupiah(merchantToday)}
+          </strong>
         </div>
 
         <div>
-          <span>💸 Pengeluaran</span>
-          <strong>{formatRupiah(todayExpense)}</strong>
+          <span>📦 Modal Merchant</span>
+          <strong>{formatRupiah(modalToday)}</strong>
         </div>
       </section>
 
       <section className="quick-section">
         <div className="section-title">
           <div>
-            <h2>Catat Cepat</h2>
-            <p>Tinggal klik sesuai kebutuhanmu</p>
+            <h2>Catat Cepat 🌱</h2>
+            <p>Tinggal klik kata kuncinya</p>
           </div>
         </div>
 
-        <p className="group-label income-label">💚 PEMASUKAN</p>
+        <p className="group-label income-label">
+          💚 PEMASUKAN
+        </p>
 
         <button
           className={`keyword-button income ${
@@ -187,16 +511,20 @@ export default function Home() {
           onClick={() => {
             setSelectedCategory("Merchant");
             setAmount("");
+            setEditingId(null);
           }}
         >
           <span className="keyword-icon">💰</span>
+
           <span>
             <strong>MERCHANT</strong>
-            <small>Catat pemasukan jasa/order</small>
+            <small>Pemasukan Jasdor</small>
           </span>
         </button>
 
-        <p className="group-label expense-label">❤️ PENGELUARAN</p>
+        <p className="group-label expense-label">
+          🤎 PENGELUARAN
+        </p>
 
         <div className="keyword-grid">
           {categories
@@ -205,22 +533,31 @@ export default function Home() {
               <button
                 key={item.name}
                 className={`keyword-button expense ${
-                  selectedCategory === item.name ? "selected" : ""
+                  selectedCategory === item.name
+                    ? "selected"
+                    : ""
                 }`}
                 onClick={() => {
                   setSelectedCategory(item.name);
                   setAmount("");
+                  setEditingId(null);
                 }}
               >
-                <span className="keyword-icon">{item.emoji}</span>
+                <span className="keyword-icon">
+                  {item.emoji}
+                </span>
+
                 <span>
                   <strong>{item.name.toUpperCase()}</strong>
+
                   <small>
                     {item.name === "Modal Merchant"
-                      ? "Modal harian merchant"
-                      : item.name === "Pribadi/Jajan"
-                        ? "Pengeluaran pribadi"
-                        : `Catat ${item.name}`}
+                      ? "Modal harian"
+                      : item.name === "VSPhone"
+                        ? "Biaya VSPhone"
+                        : item.name === "OTP"
+                          ? "Biaya OTP"
+                          : "Pengeluaran lainnya"}
                   </small>
                 </span>
               </button>
@@ -232,10 +569,18 @@ export default function Home() {
         <section className="input-card">
           <div className="input-heading">
             <div>
-              <p>CATAT TRANSAKSI</p>
+              <p>
+                {editingId !== null
+                  ? "EDIT TRANSAKSI"
+                  : "CATAT TRANSAKSI"}
+              </p>
+
               <h2>
-                {categories.find((item) => item.name === selectedCategory)
-                  ?.emoji}{" "}
+                {
+                  categories.find(
+                    (item) => item.name === selectedCategory,
+                  )?.emoji
+                }{" "}
                 {selectedCategory}
               </h2>
             </div>
@@ -245,30 +590,39 @@ export default function Home() {
               onClick={() => {
                 setSelectedCategory(null);
                 setAmount("");
+                setEditingId(null);
               }}
             >
               ×
             </button>
           </div>
 
-          <label htmlFor="amount">Nominal</label>
+          <label htmlFor="amount">
+            Nominal
+          </label>
 
           <input
             id="amount"
-            type="number"
+            type="text"
             inputMode="numeric"
             autoFocus
-            placeholder="Contoh: 150000"
+            placeholder="Contoh: 150000 / 150k"
             value={amount}
-            onChange={(event) => setAmount(event.target.value)}
+            onChange={(event) =>
+              setAmount(event.target.value)
+            }
           />
 
           <button
             className="save-button"
             onClick={saveTransaction}
-            disabled={!amount || Number(amount) <= 0}
+            disabled={
+              !amount || parseAmount(amount) <= 0
+            }
           >
-            SIMPAN {selectedCategory.toUpperCase()}
+            {editingId !== null
+              ? "SIMPAN PERUBAHAN"
+              : `SIMPAN ${selectedCategory.toUpperCase()}`}
           </button>
         </section>
       )}
@@ -277,7 +631,9 @@ export default function Home() {
         <div className="section-title">
           <div>
             <h2>Transaksi Hari Ini</h2>
-            <p>{todayTransactions.length} transaksi</p>
+            <p>
+              {todayTransactions.length} transaksi
+            </p>
           </div>
         </div>
 
@@ -285,30 +641,320 @@ export default function Home() {
           <div className="empty-state">
             <span>🌱</span>
             <p>Belum ada transaksi hari ini.</p>
-            <small>Klik kata kunci di atas untuk mulai mencatat.</small>
+            <small>
+              Klik kata kunci di atas untuk mulai.
+            </small>
           </div>
         ) : (
           <div className="transaction-list">
-            {todayTransactions.map((item) => (
-              <div className="transaction-item" key={item.id}>
-                <div>
-                  <strong>{item.category}</strong>
-                  <small>
-                    {item.type === "income" ? "Pemasukan" : "Pengeluaran"}
-                  </small>
-                </div>
+            {todayTransactions.map((item) => {
+              const type = getCategoryType(item.category);
 
-                <strong
-                  className={item.type === "income" ? "positive" : "negative"}
+              const categoryInfo = categories.find(
+                (category) =>
+                  category.name === item.category,
+              );
+
+              return (
+                <div
+                  className="transaction-item"
+                  key={item.id}
                 >
-                  {item.type === "income" ? "+" : "-"}
-                  {formatRupiah(item.amount)}
-                </strong>
-              </div>
-            ))}
+                  <div className="transaction-left">
+                    <span className="transaction-emoji">
+                      {categoryInfo?.emoji}
+                    </span>
+
+                    <div>
+                      <strong>{item.category}</strong>
+
+                      <small>
+                        {formatDate(item.date)}
+                      </small>
+                    </div>
+                  </div>
+
+                  <div className="transaction-right">
+                    <strong
+                      className={
+                        type === "income"
+                          ? "positive"
+                          : "negative"
+                      }
+                    >
+                      {type === "income" ? "+" : "-"}
+                      {formatRupiah(item.amount)}
+                    </strong>
+
+                    <div className="transaction-actions">
+                      <button
+                        onClick={() =>
+                          editTransaction(item)
+                        }
+                      >
+                        ✏️
+                      </button>
+
+                      <button
+                        onClick={() =>
+                          deleteTransaction(item.id)
+                        }
+                      >
+                        🗑️
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </section>
+
+      <section className="chart-card">
+        <div className="section-title">
+          <div>
+            <h2>Naik Turun Rezeki 💸</h2>
+            <p>Pemasukan Merchant 7 hari terakhir</p>
+          </div>
+        </div>
+
+        <div className="chart-summary">
+          <strong>
+            {formatRupiah(
+              chartDays.reduce(
+                (total, item) =>
+                  total + item.value,
+                0,
+              ),
+            )}
+          </strong>
+
+          <span>Total Merchant 7 hari</span>
+        </div>
+
+        <div className="chart-wrapper">
+          <svg
+            viewBox={`0 0 ${chartWidth} ${chartHeight}`}
+            preserveAspectRatio="none"
+          >
+            <defs>
+              <linearGradient
+                id="merchantFill"
+                x1="0"
+                y1="0"
+                x2="0"
+                y2="1"
+              >
+                <stop
+                  offset="0%"
+                  stopColor="#b7caae"
+                  stopOpacity="0.45"
+                />
+
+                <stop
+                  offset="100%"
+                  stopColor="#b7caae"
+                  stopOpacity="0"
+                />
+              </linearGradient>
+            </defs>
+
+            <polyline
+              points={`0,${chartHeight} ${chartPoints.join(
+                " ",
+              )} ${chartWidth},${chartHeight}`}
+              fill="url(#merchantFill)"
+              stroke="none"
+            />
+
+            <polyline
+              points={chartPoints.join(" ")}
+              fill="none"
+              stroke="#6f8b67"
+              strokeWidth="4"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+
+            {chartDays.map((item, index) => {
+              const point = chartPoints[index]
+                .split(",")
+                .map(Number);
+
+              return (
+                <circle
+                  key={item.date}
+                  cx={point[0]}
+                  cy={point[1]}
+                  r="5"
+                  fill="#fffdf8"
+                  stroke="#6f8b67"
+                  strokeWidth="3"
+                />
+              );
+            })}
+          </svg>
+        </div>
+
+        <div className="chart-labels">
+          {chartDays.map((item) => (
+            <span key={item.date}>
+              {item.label}
+            </span>
+          ))}
+        </div>
+      </section>
+
+      <section className="recap-card">
+        <div className="section-title">
+          <div>
+            <h2>Rekap Keuangan 📊</h2>
+            <p>Lihat perkembangan Jasdor</p>
+          </div>
+        </div>
+
+        <div className="recap-tabs">
+          <button
+            className={
+              activeTab === "harian" ? "active" : ""
+            }
+            onClick={() => setActiveTab("harian")}
+          >
+            Harian
+          </button>
+
+          <button
+            className={
+              activeTab === "mingguan" ? "active" : ""
+            }
+            onClick={() => setActiveTab("mingguan")}
+          >
+            Mingguan
+          </button>
+
+          <button
+            className={
+              activeTab === "bulanan" ? "active" : ""
+            }
+            onClick={() => setActiveTab("bulanan")}
+          >
+            Bulanan
+          </button>
+        </div>
+
+        <div className="recap-grid">
+          <div>
+            <span>💰 Merchant</span>
+            <strong className="positive">
+              {formatRupiah(recapIncome)}
+            </strong>
+          </div>
+
+          <div>
+            <span>📦 Modal Merchant</span>
+            <strong>
+              {formatRupiah(recapModal)}
+            </strong>
+          </div>
+
+          <div>
+            <span>🔐 OTP</span>
+            <strong>
+              {formatRupiah(recapOtp)}
+            </strong>
+          </div>
+
+          <div>
+            <span>📱 VSPhone</span>
+            <strong>
+              {formatRupiah(recapVsphone)}
+            </strong>
+          </div>
+
+          <div>
+            <span>💸 Cash Out</span>
+            <strong>
+              {formatRupiah(recapCashOut)}
+            </strong>
+          </div>
+
+          <div className="net-box">
+            <span>🌿 Bersih</span>
+            <strong
+              className={
+                recapNet >= 0
+                  ? "positive"
+                  : "negative"
+              }
+            >
+              {recapNet >= 0 ? "+" : "-"}
+              {formatRupiah(recapNet)}
+            </strong>
+          </div>
+        </div>
+      </section>
+
+      <section className="all-history-card">
+        <div className="section-title">
+          <div>
+            <h2>Riwayat Semua Hari 🌷</h2>
+            <p>Transaksi sebelumnya tetap tersimpan</p>
+          </div>
+        </div>
+
+        {sortedTransactions.length === 0 ? (
+          <div className="empty-state">
+            <span>🪴</span>
+            <p>Belum ada riwayat.</p>
+          </div>
+        ) : (
+          <div className="date-history">
+            {Array.from(
+              new Set(
+                sortedTransactions.map(
+                  (item) => item.date,
+                ),
+              ),
+            ).map((date) => {
+              const dayTransactions =
+                sortedTransactions.filter(
+                  (item) => item.date === date,
+                );
+
+              const net = getNet(dayTransactions);
+
+              return (
+                <div
+                  className="date-history-item"
+                  key={date}
+                >
+                  <div>
+                    <strong>
+                      {formatDate(date)}
+                    </strong>
+
+                    <small>
+                      {dayTransactions.length} transaksi
+                    </small>
+                  </div>
+
+                  <strong
+                    className={
+                      net >= 0
+                        ? "positive"
+                        : "negative"
+                    }
+                  >
+                    {net >= 0 ? "+" : "-"}
+                    {formatRupiah(net)}
+                  </strong>
+                </div>
+              );
+            })}
           </div>
         )}
       </section>
     </main>
   );
-  }
+                       }
