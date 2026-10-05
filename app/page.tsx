@@ -131,8 +131,31 @@ export default function Home() {
   const [balanceInput, setBalanceInput] = useState("");
 
   const [loaded, setLoaded] = useState(false);
+  const [currentDate, setCurrentDate] = useState(() => new Date());
+  const [entryDate, setEntryDate] = useState(getDateKey());
 
-  const today = getDateKey();
+  const today = getDateKey(currentDate);
+
+  useEffect(() => {
+    const updateCurrentDate = () => setCurrentDate(new Date());
+    updateCurrentDate();
+
+    const timer = window.setInterval(updateCurrentDate, 30000);
+    const handleVisibility = () => {
+      if (document.visibilityState === "visible") updateCurrentDate();
+    };
+
+    document.addEventListener("visibilitychange", handleVisibility);
+
+    return () => {
+      window.clearInterval(timer);
+      document.removeEventListener("visibilitychange", handleVisibility);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!editingId) setEntryDate(today);
+  }, [today, editingId]);
 
   useEffect(() => {
     const savedTransactions = localStorage.getItem(
@@ -238,7 +261,7 @@ export default function Home() {
     } else {
       const newTransaction: Transaction = {
         id: Date.now(),
-        date: today,
+        date: entryDate || today,
         category: transactionCategory,
         amount: numericAmount,
       };
@@ -253,6 +276,7 @@ export default function Home() {
 
   const editTransaction = (item: Transaction) => {
     setEditingId(item.id);
+    setEntryDate(item.date);
     setSelectedCategory(item.category);
     setAmount(String(item.amount));
     window.scrollTo({
@@ -322,7 +346,7 @@ export default function Home() {
   };
 
   const weeklyTransactions = useMemo(() => {
-    const start = startOfWeek(new Date());
+    const start = startOfWeek(new Date(currentDate));
 
     const end = new Date(start);
     end.setDate(start.getDate() + 6);
@@ -331,10 +355,10 @@ export default function Home() {
       const date = new Date(`${item.date}T00:00:00`);
       return date >= start && date <= end;
     });
-  }, [transactions]);
+  }, [transactions, currentDate]);
 
   const monthlyTransactions = useMemo(() => {
-    const now = new Date();
+    const now = new Date(currentDate);
     const month = now.getMonth();
     const year = now.getFullYear();
 
@@ -345,7 +369,7 @@ export default function Home() {
         date.getFullYear() === year
       );
     });
-  }, [transactions]);
+  }, [transactions, currentDate]);
 
   const recapData =
     activeTab === "harian"
@@ -388,7 +412,7 @@ export default function Home() {
       value: number;
     }[] = [];
 
-    const now = new Date();
+    const now = new Date(currentDate);
     const start = new Date(now);
 
     const periodDays = chartPeriod === "7hari"
@@ -423,7 +447,7 @@ export default function Home() {
     }
 
     return days;
-  }, [transactions, chartPeriod]);
+  }, [transactions, chartPeriod, currentDate]);
 
   const chartMax = Math.max(
     ...chartDays.map((item) => item.value),
@@ -454,7 +478,7 @@ export default function Home() {
           <h1>Jasdorby_esaashop</h1>
 
           <p className="date-text">
-            {new Date().toLocaleDateString("id-ID", {
+            {currentDate.toLocaleDateString("id-ID", {
               weekday: "long",
               day: "numeric",
               month: "long",
@@ -563,6 +587,7 @@ export default function Home() {
                 className={`category-summary-button ${item.type} ${selectedCategory === item.name ? "selected" : ""}`}
                 onClick={() => {
                   setSelectedCategory(item.name);
+                  setEntryDate(today);
                   setAmount("");
                   setEditingId(null);
                 }}
@@ -596,6 +621,7 @@ export default function Home() {
                 className="close-button"
                 onClick={() => {
                   setSelectedCategory(null);
+                  setEntryDate(today);
                   setAmount("");
                   setEditingId(null);
                 }}
@@ -604,6 +630,17 @@ export default function Home() {
               </button>
             )}
           </div>
+
+          <label htmlFor="entry-date" className="date-input-label">
+            📅 Tanggal transaksi
+          </label>
+          <input
+            id="entry-date"
+            type="date"
+            value={entryDate}
+            max={today}
+            onChange={(event) => setEntryDate(event.target.value)}
+          />
 
           <input
             id="amount"
