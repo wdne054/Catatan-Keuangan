@@ -2053,3 +2053,91 @@ main {
     letter-spacing: -1.2px !important;
   }
 }
+
+
+/* =========================================================
+   GARDEN REFERENCE POLISH — visual only
+   Keeps the existing mascot, date, finance logic and layout.
+   ========================================================= */
+
+body {
+  background:
+    radial-gradient(circle at 7% 12%, rgba(255, 198, 205, .90) 0 8px, transparent 9px),
+    radial-gradient(circle at 10% 10%, rgba(255, 240, 177, .78) 0 4px, transparent 5px),
+    radial-gradient(circle at 94% 18%, rgba(255, 214, 223, .88) 0 9px, transparent 10px),
+    radial-gradient(circle at 91% 16%, rgba(255, 240, 180, .76) 0 4px, transparent 5px),
+    radial-gradient(circle at 4% 48%, rgba(246, 182, 198, .82) 0 8px, transparent 9px),
+    radial-gradient(circle at 96% 62%, rgba(255, 225, 157, .86) 0 8px, transparent 9px),
+    radial-gradient(circle at 8% 82%, rgba(255, 204, 215, .88) 0 9px, transparent 10px),
+    radial-gradient(circle at 92% 87%, rgba(250, 193, 201, .86) 0 8px, transparent 9px),
+    linear-gradient(135deg, #dfead4 0%, #f4eedf 43%, #d9e6cf 100%) !important;
+  background-attachment: fixed;
+}
+
+main::before {
+  background-image:
+    radial-gradient(circle at 7% 20%, rgba(255, 255, 255, .95) 0 13px, rgba(255, 190, 203, .92) 14px 20px, transparent 21px),
+    radial-gradient(circle at 93% 28%, rgba(255, 255, 255, .95) 0 12px, rgba(255, 219, 133, .90) 13px 19px, transparent 20px),
+    radial-gradient(circle at 5% 73%, rgba(255, 255, 255, .95) 0 12px, rgba(248, 178, 198, .90) 13px 19px, transparent 20px),
+    radial-gradient(circle at 95% 82%, rgba(255, 255, 255, .95) 0 12px, rgba(255, 204, 131, .90) 13px 19px, transparent 20px),
+    linear-gradient(180deg, rgba(206, 225, 191, .28), rgba(255, 248, 231, .12));
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  opacity: .55;
+  filter: saturate(1.02);
+}
+
+main::after {
+  background:
+    radial-gradient(ellipse at 10% 96%, rgba(93, 126, 77, .20) 0 7%, transparent 8%),
+    radial-gradient(ellipse at 90% 96%, rgba(93, 126, 77, .20) 0 7%, transparent 8%),
+    linear-gradient(180deg, transparent 0 84%, rgba(106, 143, 84, .16) 85% 100%);
+  opacity: .8;
+}
+
+.mascot-placeholder {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  overflow: visible !important;
+}
+
+.mascot-placeholder img {
+  background: transparent !important;
+  mix-blend-mode: normal !important;
+  filter: drop-shadow(0 7px 8px rgba(78, 59, 48, .12));
+}
+
+.category-decoration {
+  min-height: 94px !important;
+  padding: 10px 12px !important;
+  border: 2px dashed #e8bdc5 !important;
+  border-radius: 24px !important;
+  background:
+    radial-gradient(circle at 95% 0, rgba(255, 224, 230, .95) 0, transparent 38%),
+    radial-gradient(circle at 0 100%, rgba(225, 240, 216, .95) 0, transparent 42%),
+    #fffaf5 !important;
+}
+
+.category-decoration-art {
+  display: flex !important;
+  min-height: 39px !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+}
+
+.category-decoration-art span {
+  font-size: 22px !important;
+}
+
+.category-decoration strong {
+  display: block !important;
+  color: #765047 !important;
+  font-family: "Mochiy Pop One", sans-serif !important;
+  font-size: 12px !important;
+  line-height: 1.35 !important;
+  white-space: normal !important;
+  text-align: center !important;
+}
