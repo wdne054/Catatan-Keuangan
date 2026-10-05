@@ -902,3 +902,129 @@ h1 {
   font-weight: 700;
   opacity: .65;
 }
+
+
+/* Jasdor Girl garden theme */
+.mascot-placeholder {
+  position: relative;
+  overflow: visible;
+  border-color: #d6e3ce;
+  background: #fffaf4;
+}
+
+.mascot-placeholder img {
+  width: 52px;
+  height: 66px;
+  display: block;
+  object-fit: cover;
+  object-position: center;
+  border-radius: 17px;
+  transform: translateY(7px);
+  box-shadow: 0 6px 12px rgba(73, 61, 49, 0.08);
+}
+
+.theme-leaf,
+.theme-flower {
+  position: absolute;
+  z-index: 2;
+  pointer-events: none;
+  font-size: 15px;
+}
+
+.theme-leaf-left {
+  left: -9px;
+  bottom: -7px;
+  transform: rotate(-18deg);
+}
+
+.theme-flower {
+  right: -9px;
+  top: -9px;
+  font-size: 14px;
+}
+
+.category-decoration {
+  position: relative;
+  overflow: hidden;
+  min-height: 78px;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 8px 10px;
+  background:
+    radial-gradient(circle at 100% 0, #f7dce3 0, transparent 32%),
+    radial-gradient(circle at 0 100%, #e4efd9 0, transparent 38%),
+    #fff8f5;
+}
+
+.category-decoration::before {
+  position: absolute;
+  right: -9px;
+  top: 8px;
+  content: "🍃";
+  font-size: 18px;
+  transform: rotate(20deg);
+}
+
+.category-decoration-art {
+  width: 100%;
+  min-height: 37px;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+
+.category-decoration-art img {
+  width: 31px;
+  height: 42px;
+  display: block;
+  object-fit: cover;
+  object-position: center;
+  border-radius: 10px;
+  box-shadow: 0 3px 8px rgba(73, 61, 49, 0.1);
+}
+
+.category-decoration-art .category-decoration-bow,
+.category-decoration-art .category-decoration-flower {
+  position: static;
+  margin: 0;
+  font-size: 16px;
+}
+
+.category-decoration > div:last-child {
+  width: 100%;
+  min-width: 0;
+  display: block;
+  text-align: center;
+}
+
+.category-decoration strong {
+  font-size: 11px;
+}
+
+.category-decoration small {
+  font-size: 8px;
+}
+
+.chart-card {
+  position: relative;
+}
+
+.chart-card::before {
+  position: absolute;
+  top: 10px;
+  right: 16px;
+  content: "🌿  🌸";
+  font-size: 15px;
+  opacity: .7;
+  pointer-events: none;
+}
+
+@media (max-width: 380px) {
+  .mascot-placeholder img {
+    width: 49px;
+    height: 62px;
+  }
+}
