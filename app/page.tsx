@@ -606,11 +606,11 @@ export default function Home() {
 
           <div className="category-decoration" aria-hidden="true">
             <div className="category-decoration-art">
-              <span>🍣</span><span>🍰</span><span>🍜</span><span>☕</span>
+              <span>🌷</span><span>🌿</span><span>🎀</span><span>🌸</span>
             </div>
             <div>
-              <strong>Jajan duu</strong>
-              <small>catat kemudian ✨</small>
+              <strong>Jasdor Girl</strong>
+              <small>semangat catat cuan ✨</small>
             </div>
           </div>
         </div>
