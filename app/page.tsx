@@ -423,7 +423,7 @@ export default function Home() {
 
     // Semua grafik dimulai dari 1 Oktober 2026.
     // Setelah itu tanggal bergerak otomatis mengikuti hari sekarang.
-    const chartStart = new Date("2026-10-01T00:00:00");
+    const chartStart = new Date(now.getFullYear(), now.getMonth(), 1);
     const rollingStart = new Date(now);
     rollingStart.setDate(now.getDate() - periodDays + 1);
 
