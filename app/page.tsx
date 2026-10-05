@@ -414,7 +414,6 @@ export default function Home() {
     }[] = [];
 
     const now = new Date(currentDate);
-    const start = new Date(now);
 
     const periodDays = chartPeriod === "7hari"
       ? 7
@@ -422,10 +421,14 @@ export default function Home() {
         ? 14
         : 30;
 
-    // Rolling window: 7 hari = hari ini + 6 hari sebelumnya,
-    // 14 hari = hari ini + 13 hari sebelumnya, dst.
-    // Tidak dibatasi tanggal 1 supaya pergantian bulan tetap benar.
-    start.setDate(now.getDate() - periodDays + 1);
+    // Semua grafik dimulai dari 1 Oktober 2026.
+    // Setelah itu tanggal bergerak otomatis mengikuti hari sekarang.
+    const chartStart = new Date("2026-10-01T00:00:00");
+    const rollingStart = new Date(now);
+    rollingStart.setDate(now.getDate() - periodDays + 1);
+
+    const start =
+      rollingStart < chartStart ? chartStart : rollingStart;
 
     for (let date = new Date(start); date <= now; date.setDate(date.getDate() + 1)) {
       const currentDate = new Date(date);
@@ -491,7 +494,7 @@ export default function Home() {
 
         <div className="mascot-placeholder">
           <span className="theme-leaf theme-leaf-left">🌿</span>
-          <img src="/jasdor-mascot.svg" alt="Jasdor Girl" />
+          <img src="/jasdor-mascot.svg" alt="Maskot Jasdor" />
           <span className="theme-flower">🌸</span>
         </div>
       </header>
@@ -603,11 +606,11 @@ export default function Home() {
 
           <div className="category-decoration" aria-hidden="true">
             <div className="category-decoration-art">
-              <span>🌷</span><span>🌿</span><span>🎀</span><span>🌸</span>
+              <span>🍣</span><span>🍰</span><span>🍜</span><span>☕</span>
             </div>
             <div>
-              <strong>Jasdor Girl</strong>
-              <small>semangat catat cuan ✨</small>
+              <strong>Jajan duu</strong>
+              <small>catat kemudian ✨</small>
             </div>
           </div>
         </div>
