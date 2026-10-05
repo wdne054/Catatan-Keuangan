@@ -118,6 +118,10 @@ export default function Home() {
     "harian" | "mingguan" | "bulanan"
   >("harian");
 
+  const [chartPeriod, setChartPeriod] = useState<
+    "7hari" | "bulanIni" | "30hari"
+  >("7hari");
+
   const [showBalanceEditor, setShowBalanceEditor] = useState(false);
   const [balanceInput, setBalanceInput] = useState("");
 
@@ -380,12 +384,19 @@ export default function Home() {
     }[] = [];
 
     const now = new Date();
+    const start = new Date(now);
 
-    for (let i = 0; i < 7; i++) {
-      const date = new Date(now);
-      date.setDate(now.getDate() - i);
+    if (chartPeriod === "bulanIni") {
+      start.setDate(1);
+    } else if (chartPeriod === "30hari") {
+      start.setDate(now.getDate() - 29);
+    } else {
+      start.setDate(now.getDate() - 6);
+    }
 
-      const key = getDateKey(date);
+    for (let date = new Date(start); date <= now; date.setDate(date.getDate() + 1)) {
+      const currentDate = new Date(date);
+      const key = getDateKey(currentDate);
 
       const value = transactions
         .filter(
@@ -396,7 +407,7 @@ export default function Home() {
 
       days.push({
         date: key,
-        label: date.toLocaleDateString("id-ID", {
+        label: currentDate.toLocaleDateString("id-ID", {
           day: "numeric",
           month: "short",
         }),
@@ -405,7 +416,7 @@ export default function Home() {
     }
 
     return days;
-  }, [transactions]);
+  }, [transactions, chartPeriod]);
 
   const chartMax = Math.max(
     ...chartDays.map((item) => item.value),
@@ -558,9 +569,7 @@ export default function Home() {
 
           <div className="category-decoration" aria-hidden="true">
             <div className="category-decoration-art">
-              <span className="category-decoration-flower">🌷</span>
-              <img src="/jasdor-mascot.svg" alt="" />
-              <span className="category-decoration-bow">🎀</span>
+              <span>🌷</span><span>🌿</span><span>🎀</span><span>🌸</span>
             </div>
             <div>
               <strong>Jasdor Girl</strong>
@@ -724,7 +733,13 @@ export default function Home() {
             )}
           </strong>
 
-          <span>Total Merchant 7 hari</span>
+          <span>
+            {chartPeriod === "7hari"
+              ? "Merchant 7 hari • dari terlama → hari ini"
+              : chartPeriod === "bulanIni"
+                ? "Merchant bulan ini • 1 → hari ini"
+                : "Merchant 30 hari • dari terlama → hari ini"}
+          </span>
         </div>
 
         <div className="chart-wrapper">
@@ -792,11 +807,40 @@ export default function Home() {
         </div>
 
         <div className="chart-labels">
-          {chartDays.map((item) => (
-            <span key={item.date}>
-              {item.label}
-            </span>
-          ))}
+          {chartDays.map((item, index) => {
+            const showLabel =
+              chartDays.length <= 7 ||
+              index === 0 ||
+              index === chartDays.length - 1 ||
+              index % Math.ceil(chartDays.length / 6) === 0;
+
+            return (
+              <span key={item.date} className={showLabel ? "" : "chart-label-hidden"}>
+                {showLabel ? item.label : ""}
+              </span>
+            );
+          })}
+        </div>
+
+        <div className="chart-periods" aria-label="Periode grafik">
+          <button
+            className={chartPeriod === "7hari" ? "active" : ""}
+            onClick={() => setChartPeriod("7hari")}
+          >
+            7 Hari
+          </button>
+          <button
+            className={chartPeriod === "bulanIni" ? "active" : ""}
+            onClick={() => setChartPeriod("bulanIni")}
+          >
+            Bulan Ini
+          </button>
+          <button
+            className={chartPeriod === "30hari" ? "active" : ""}
+            onClick={() => setChartPeriod("30hari")}
+          >
+            30 Hari
+          </button>
         </div>
       </section>
 
