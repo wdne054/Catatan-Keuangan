@@ -12,6 +12,7 @@ body {
 
 body {
   min-height: 100vh;
+  font-family: "Nunito", sans-serif;
   background:
     radial-gradient(circle at 10% 5%, #e8eedf 0, transparent 25%),
     radial-gradient(circle at 90% 30%, #f5e2df 0, transparent 23%),
@@ -1793,7 +1794,7 @@ main {
 
 .balance-card {
   border: 2px solid rgba(255,255,255,.95) !important;
-  border-radius: 34px !important;
+  border-radius: 30px !important;
   padding: 24px 22px !important;
   background:
     radial-gradient(circle at 100% 0, rgba(245,207,211,.68) 0 115px, transparent 116px),
@@ -2011,13 +2012,13 @@ main {
   }
 
   .date-text {
-    font-size: 15px !important;
+    font-size: 14px !important;
   }
 
   .mascot-placeholder,
   .mascot-placeholder img {
-    width: 116px !important;
-    height: 132px !important;
+    width: 108px !important;
+    height: 122px !important;
   }
 
   .mascot-placeholder {
@@ -2167,9 +2168,9 @@ main::after {
 
 .header {
   position: relative !important;
-  min-height: 176px !important;
+  min-height: 150px !important;
   margin-bottom: 18px !important;
-  padding: 24px 154px 20px 24px !important;
+  padding: 20px 132px 18px 22px !important;
   border-radius: 34px !important;
   background: rgba(255,250,240,.96) !important;
   border: 2px solid rgba(255,255,255,.98) !important;
@@ -2184,8 +2185,8 @@ main::after {
 
 .header .eyebrow {
   font-family: "Mochiy Pop One", sans-serif !important;
-  font-size: 12px !important;
-  letter-spacing: 1px !important;
+  font-size: 10px !important;
+  letter-spacing: .7px !important;
   color: #e9939b !important;
 }
 
@@ -2208,10 +2209,10 @@ main::after {
 
 .mascot-placeholder {
   position: absolute !important;
-  right: -2px !important;
-  bottom: -4px !important;
-  width: 156px !important;
-  height: 170px !important;
+  right: -8px !important;
+  bottom: -17px !important;
+  width: 132px !important;
+  height: 145px !important;
   padding: 0 !important;
   margin: 0 !important;
   background: transparent !important;
@@ -2223,8 +2224,8 @@ main::after {
 
 .mascot-placeholder img {
   display: block !important;
-  width: 156px !important;
-  height: 170px !important;
+  width: 132px !important;
+  height: 145px !important;
   object-fit: contain !important;
   object-position: center bottom !important;
   background: transparent !important;
@@ -2258,7 +2259,7 @@ main::after {
 }
 
 .category-decoration-art span {
-  font-size: 21px !important;
+  font-size: 19px !important;
 }
 
 .category-decoration > div:last-child {
@@ -2268,7 +2269,7 @@ main::after {
 
 .category-decoration strong {
   font-family: "Mochiy Pop One", sans-serif !important;
-  font-size: 11px !important;
+  font-size: 10px !important;
   line-height: 1.35 !important;
   color: #765047 !important;
   white-space: normal !important;
@@ -2276,13 +2277,13 @@ main::after {
 
 @media (max-width: 380px) {
   .header {
-    min-height: 158px !important;
-    padding: 18px 116px 16px 17px !important;
+    min-height: 138px !important;
+    padding: 17px 105px 15px 17px !important;
   }
 
   .header h1 {
     font-size: 20px !important;
-    letter-spacing: -1px !important;
+    letter-spacing: -.7px !important;
   }
 
   .header .date-text {
