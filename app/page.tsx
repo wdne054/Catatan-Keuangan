@@ -211,7 +211,7 @@ export default function Home() {
     initialBalance + getNet(transactions);
 
   const saldoAkhirHariIni =
-    currentBalance + merchantToday - saldoKeluarHariIni;
+    saldoPertamaHariIni + merchantToday - saldoKeluarHariIni;
 
   const todayNet = keuntunganHariIni;
 
@@ -469,7 +469,7 @@ export default function Home() {
           </button>
         </div>
 
-        <h2>{formatRupiah(currentBalance)}</h2>
+        <h2>{formatRupiah(saldoPertamaHariIni)}</h2>
 
         <div className="balance-info-grid">
           <div>
