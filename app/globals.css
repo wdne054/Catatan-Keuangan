@@ -1102,3 +1102,95 @@ body::before {
     font-size: 10px;
   }
 }
+
+
+/* Final mascot + chart polish */
+.header {
+  align-items: flex-start;
+}
+
+.header > div:first-child {
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.header h1 {
+  max-width: 205px;
+}
+
+.mascot-placeholder {
+  width: 76px;
+  height: 76px;
+  flex: 0 0 76px;
+  border-radius: 23px;
+  overflow: visible;
+}
+
+.mascot-placeholder img {
+  width: 68px;
+  height: 78px;
+  object-fit: cover;
+  object-position: center;
+  border-radius: 20px;
+  transform: translateY(7px);
+}
+
+.category-decoration {
+  gap: 3px;
+}
+
+.category-decoration-art {
+  gap: 7px;
+  min-height: 34px;
+}
+
+.category-decoration-art span {
+  font-size: 18px;
+}
+
+.category-decoration > div:last-child {
+  margin-top: 2px;
+}
+
+.category-decoration strong,
+.category-decoration small {
+  display: block;
+  width: 100%;
+  text-align: center;
+}
+
+.category-decoration strong {
+  line-height: 1.15;
+  margin-bottom: 2px;
+}
+
+.category-decoration small {
+  line-height: 1.1;
+}
+
+.chart-labels {
+  display: flex;
+  gap: 0;
+}
+
+.chart-labels span {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+@media (max-width: 380px) {
+  .header h1 {
+    max-width: 175px;
+  }
+
+  .mascot-placeholder {
+    width: 70px;
+    height: 70px;
+    flex-basis: 70px;
+  }
+
+  .mascot-placeholder img {
+    width: 62px;
+    height: 72px;
+  }
+}
