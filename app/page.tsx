@@ -542,22 +542,19 @@ export default function Home() {
         <div className="category-summary">
           {categories.map((item) => {
             const total = todayByCategory(item.name);
-            const command = categoryCommand[item.name];
-
             return (
               <button
                 key={item.name}
                 className={`category-summary-button ${item.type} ${selectedCategory === item.name ? "selected" : ""}`}
                 onClick={() => {
                   setSelectedCategory(item.name);
-                  setAmount(`${command} `);
+                  setAmount("");
                   setEditingId(null);
                 }}
               >
                 <span className="category-summary-icon">{item.emoji}</span>
                 <span className="category-summary-name">{item.name}</span>
                 <strong>{formatRupiah(total)}</strong>
-                <small>{command}</small>
               </button>
             );
           })}
@@ -588,7 +585,7 @@ export default function Home() {
             type="text"
             inputMode="decimal"
             autoFocus
-            placeholder="MC 1.5  •  MM 10  •  OT 100"
+            placeholder=""
             value={amount}
             onChange={(event) => {
               const value = event.target.value;
@@ -630,7 +627,7 @@ export default function Home() {
             <span>🌱</span>
             <p>Belum ada transaksi hari ini.</p>
             <small>
-              Klik kata kunci di atas untuk mulai.
+              Pilih kategori di atas, lalu masukkan nominalnya.
             </small>
           </div>
         ) : (
