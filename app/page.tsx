@@ -491,12 +491,6 @@ export default function Home() {
             })}
           </p>
         </div>
-
-        <div className="mascot-placeholder">
-          <span className="theme-leaf theme-leaf-left">🌿</span>
-          <img src="/jasdor-mascot.svg" alt="Jasdor Girl" />
-          <span className="theme-flower">🌸</span>
-        </div>
       </header>
 
       <section className="balance-card">
@@ -608,11 +602,12 @@ export default function Home() {
             <div className="category-decoration-art">
               <span>🍜</span><span>🍣</span><span>🧋</span><span>🍦</span>
             </div>
-            <div>
+            <div className="category-decoration-copy">
               <strong>Jajan dulu, Catat kemudian</strong>
               <small>🍜 🍣 🧋 🍦</small>
             </div>
           </div>
+        </div>
         </div>
 
         <div className="command-box">
