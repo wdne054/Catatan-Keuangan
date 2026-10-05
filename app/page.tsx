@@ -793,19 +793,17 @@ export default function Home() {
                 .split(",")
                 .map(Number);
 
-              return (
-                {chartDays.length <= 14 && (
-                  <circle
-                    key={item.date}
-                    cx={point[0]}
-                    cy={point[1]}
-                    r="4"
-                    fill="#fffdf8"
-                    stroke="#6f8b67"
-                    strokeWidth="2.5"
-                  />
-                )}
-              );
+              return chartDays.length <= 14 ? (
+                <circle
+                  key={item.date}
+                  cx={point[0]}
+                  cy={point[1]}
+                  r="4"
+                  fill="#fffdf8"
+                  stroke="#6f8b67"
+                  strokeWidth="2.5"
+                />
+              ) : null;
             })}
           </svg>
         </div>
