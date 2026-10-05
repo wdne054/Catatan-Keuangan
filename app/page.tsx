@@ -381,7 +381,7 @@ export default function Home() {
 
     const now = new Date();
 
-    for (let i = 6; i >= 0; i--) {
+    for (let i = 0; i < 7; i++) {
       const date = new Date(now);
       date.setDate(now.getDate() - i);
 
@@ -445,7 +445,11 @@ export default function Home() {
           </p>
         </div>
 
-        <div className="mascot-placeholder">🌿</div>
+        <div className="mascot-placeholder">
+          <span className="theme-leaf theme-leaf-left">🌿</span>
+          <img src="/jasdor-mascot.svg" alt="Jasdor Girl" />
+          <span className="theme-flower">🌸</span>
+        </div>
       </header>
 
       <section className="balance-card">
@@ -553,8 +557,11 @@ export default function Home() {
           })}
 
           <div className="category-decoration" aria-hidden="true">
-            <span className="category-decoration-bow">🎀</span>
-            <span className="category-decoration-flower">🌷</span>
+            <div className="category-decoration-art">
+              <span className="category-decoration-flower">🌷</span>
+              <img src="/jasdor-mascot.svg" alt="" />
+              <span className="category-decoration-bow">🎀</span>
+            </div>
             <div>
               <strong>Jasdor Girl</strong>
               <small>semangat catat cuan ✨</small>
@@ -702,7 +709,7 @@ export default function Home() {
         <div className="section-title">
           <div>
             <h2>Naik Turun Rezeki 💸</h2>
-            <p>Pemasukan Merchant 7 hari terakhir</p>
+            <p>Pemasukan Merchant • mulai hari ini</p>
           </div>
         </div>
 
