@@ -491,8 +491,6 @@ export default function Home() {
             })}
           </p>
         </div>
-
-        </div>
       </header>
 
       <section className="balance-card">
