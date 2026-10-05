@@ -47,13 +47,6 @@ const commandMap: Record<string, Category> = {
   CS: "Cash Out",
 };
 
-const categoryCommand: Record<Category, string> = {
-  Merchant: "MC",
-  "Modal Merchant": "MM",
-  OTP: "OT",
-  VSPhone: "VS",
-  "Cash Out": "CS",
-};
 
 const parseAmount = (value: string) => {
   const clean = value
