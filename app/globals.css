@@ -853,3 +853,52 @@ h1 {
     grid-template-columns: 1fr;
   }
 }
+
+
+.category-summary-button .category-summary-name {
+  overflow: visible;
+  text-overflow: clip;
+  white-space: normal;
+  line-height: 1.15;
+  overflow-wrap: anywhere;
+}
+
+.category-decoration {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+  padding: 10px 11px;
+  border: 2px dashed #ead8d4;
+  border-radius: 20px;
+  background: #fff8f5;
+  color: #76584f;
+}
+
+.category-decoration-bow,
+.category-decoration-flower {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  font-size: 22px;
+}
+
+.category-decoration-flower { margin-left: -7px; }
+
+.category-decoration div {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.category-decoration strong {
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.category-decoration small {
+  font-size: 9px;
+  font-weight: 700;
+  opacity: .65;
+}
