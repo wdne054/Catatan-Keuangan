@@ -119,7 +119,7 @@ export default function Home() {
   >("harian");
 
   const [chartPeriod, setChartPeriod] = useState<
-    "7hari" | "bulanIni" | "30hari"
+    "7hari" | "14hari" | "30hari"
   >("7hari");
 
   const [showBalanceEditor, setShowBalanceEditor] = useState(false);
@@ -386,13 +386,15 @@ export default function Home() {
     const now = new Date();
     const start = new Date(now);
 
-    if (chartPeriod === "bulanIni") {
-      start.setDate(1);
-    } else if (chartPeriod === "30hari") {
-      start.setDate(now.getDate() - 29);
-    } else {
-      start.setDate(now.getDate() - 6);
-    }
+    const periodDays = chartPeriod === "7hari"
+      ? 7
+      : chartPeriod === "14hari"
+        ? 14
+        : 30;
+
+    start.setDate(
+      Math.max(1, now.getDate() - periodDays + 1),
+    );
 
     for (let date = new Date(start); date <= now; date.setDate(date.getDate() + 1)) {
       const currentDate = new Date(date);
@@ -736,8 +738,8 @@ export default function Home() {
           <span>
             {chartPeriod === "7hari"
               ? "Merchant 7 hari • dari terlama → hari ini"
-              : chartPeriod === "bulanIni"
-                ? "Merchant bulan ini • 1 → hari ini"
+              : chartPeriod === "14hari"
+                ? "Merchant 14 hari • dari terlama → hari ini"
                 : "Merchant 30 hari • dari terlama → hari ini"}
           </span>
         </div>
@@ -792,15 +794,17 @@ export default function Home() {
                 .map(Number);
 
               return (
-                <circle
-                  key={item.date}
-                  cx={point[0]}
-                  cy={point[1]}
-                  r="5"
-                  fill="#fffdf8"
-                  stroke="#6f8b67"
-                  strokeWidth="3"
-                />
+                {chartDays.length <= 14 && (
+                  <circle
+                    key={item.date}
+                    cx={point[0]}
+                    cy={point[1]}
+                    r="4"
+                    fill="#fffdf8"
+                    stroke="#6f8b67"
+                    strokeWidth="2.5"
+                  />
+                )}
               );
             })}
           </svg>
@@ -830,10 +834,10 @@ export default function Home() {
             7 Hari
           </button>
           <button
-            className={chartPeriod === "bulanIni" ? "active" : ""}
-            onClick={() => setChartPeriod("bulanIni")}
+            className={chartPeriod === "14hari" ? "active" : ""}
+            onClick={() => setChartPeriod("14hari")}
           >
-            Bulan Ini
+            14 Hari
           </button>
           <button
             className={chartPeriod === "30hari" ? "active" : ""}
