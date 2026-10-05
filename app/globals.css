@@ -1194,3 +1194,101 @@ body::before {
     height: 72px;
   }
 }
+
+
+/* Cute cafe finishing touches */
+main {
+  position: relative;
+}
+
+.header {
+  padding: 4px 4px 2px;
+}
+
+.header h1 {
+  font-family: "Baloo 2", sans-serif;
+  letter-spacing: -0.8px;
+}
+
+.balance-card,
+.quick-section,
+.history-card,
+.input-card,
+.chart-card,
+.recap-card,
+.all-history-card {
+  backdrop-filter: blur(8px);
+}
+
+.balance-card {
+  border: 2px solid #eee7da;
+}
+
+.balance-card h2,
+.section-title h2,
+.input-heading h2,
+.command-box-heading h2 {
+  font-family: "Baloo 2", sans-serif;
+}
+
+.category-summary-button,
+.keyword-button {
+  box-shadow: 0 5px 12px rgba(73, 61, 49, 0.045);
+}
+
+.category-summary-button.income {
+  background: linear-gradient(145deg, #eef5e9, #e5efe0);
+}
+
+.category-summary-button.expense {
+  background: linear-gradient(145deg, #fbf0ec, #f7e8e3);
+}
+
+.command-box {
+  border-color: #e4dccd;
+}
+
+.command-box input,
+.input-card input {
+  background: #fffefa;
+}
+
+.save-button {
+  background: #6f8b67;
+  border-radius: 18px;
+}
+
+.save-button:active,
+.mini-edit:active,
+.close-button:active {
+  transform: scale(0.97);
+}
+
+.chart-card {
+  border-color: #e6e1d6;
+}
+
+.recap-tabs,
+.chart-periods {
+  border: 1px solid #e8e2d8;
+}
+
+.empty-state {
+  border: 1px dashed #d9dfd1;
+  background: #fafbf6;
+}
+
+.transaction-item {
+  padding: 13px 2px;
+}
+
+.transaction-actions button {
+  border: 1px solid #ece6dc;
+  background: #fffdf8;
+}
+
+@media (max-width: 380px) {
+  main {
+    padding-top: 16px;
+  }
+}
