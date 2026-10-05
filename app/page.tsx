@@ -202,19 +202,6 @@ export default function Home() {
     .filter((item) => getCategoryType(item.category) === "expense")
     .reduce((total, item) => total + item.amount, 0);
 
-  const saldoKeluarHariIni =
-    modalToday + otpToday + vsphoneToday + cashOutToday;
-
-  const keuntunganHariIni = merchantToday - modalToday - otpToday - vsphoneToday - cashOutToday;
-
-  const currentBalance =
-    initialBalance + getNet(transactions);
-
-  const saldoAkhirHariIni =
-    saldoPertamaHariIni + merchantToday - saldoKeluarHariIni;
-
-  const todayNet = keuntunganHariIni;
-
   const todayByCategory = (category: Category) =>
     todayTransactions
       .filter((item) => item.category === category)
@@ -299,6 +286,20 @@ export default function Home() {
   const otpToday = todayByCategory("OTP");
   const vsphoneToday = todayByCategory("VSPhone");
   const cashOutToday = todayByCategory("Cash Out");
+
+  const saldoKeluarHariIni =
+    modalToday + otpToday + vsphoneToday + cashOutToday;
+
+  const keuntunganHariIni =
+    merchantToday - modalToday - otpToday - vsphoneToday - cashOutToday;
+
+  const currentBalance =
+    initialBalance + getNet(transactions);
+
+  const saldoAkhirHariIni =
+    saldoPertamaHariIni + merchantToday - saldoKeluarHariIni;
+
+  const todayNet = keuntunganHariIni;
 
   const formatDate = (date: string) =>
     new Date(`${date}T00:00:00`).toLocaleDateString("id-ID", {
