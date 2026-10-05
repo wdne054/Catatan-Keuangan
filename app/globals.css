@@ -1716,3 +1716,17 @@ main {
     font-size: 9px;
   }
 }
+
+
+/* Final tiny text polish */
+.category-decoration-art span {
+  font-size: 25px !important;
+  line-height: 1 !important;
+}
+.category-decoration-copy strong {
+  font-size: 12px !important;
+  line-height: 1.45 !important;
+}
+.date-input-label {
+  font-weight: 900 !important;
+}
