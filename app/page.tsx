@@ -551,6 +551,15 @@ export default function Home() {
               </button>
             );
           })}
+
+          <div className="category-decoration" aria-hidden="true">
+            <span className="category-decoration-bow">🎀</span>
+            <span className="category-decoration-flower">🌷</span>
+            <div>
+              <strong>Jasdor Girl</strong>
+              <small>semangat catat cuan ✨</small>
+            </div>
+          </div>
         </div>
 
         <div className="command-box">
