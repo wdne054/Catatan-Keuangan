@@ -55,21 +55,26 @@ const parseAmount = (value: string) => {
     .replace(/rp/g, "");
 
   if (clean.endsWith("jt")) {
-    return Number(clean.replace("jt", "")) * 1000000;
+    return Number(clean.replace("jt", "").replace(",", ".")) * 1000000;
   }
 
   if (clean.endsWith("k")) {
-    return Number(clean.replace("k", "")) * 1000;
+    return Number(clean.replace("k", "").replace(",", ".")) * 1000;
   }
 
-  // Input cepat: 1 = 1.000, 10 = 10.000, 100 = 100.000.
-  // Desimal tetap dipakai sebagai ribuan: 1.5 = 1.500, 100.1 = 100.100.
-  if (/^\d+(?:\.\d+)?$/.test(clean)) {
-    return Number(clean) * 1000;
+  // Input cepat satuan ribuan:
+  // 1 = 1.000 | 10 = 10.000 | 1.000 = 1.000.000
+  // 1,5 = 1.500 | 15,5 = 15.500 | 1.756,7 = 1.756.700
+  if (/^\d[\d.]*,\d+$/.test(clean)) {
+    const normalized = clean.replace(/\./g, "").replace(",", ".");
+    return Number(normalized) * 1000;
   }
 
-  const normalized = clean.replace(/\./g, "").replace(/,/g, "");
-  return Number(normalized);
+  if (/^\d[\d.]*$/.test(clean)) {
+    return Number(clean.replace(/\./g, "")) * 1000;
+  }
+
+  return Number(clean.replace(/\./g, "").replace(",", ".")) || 0;
 };
 
 const parseTransactionCommand = (
