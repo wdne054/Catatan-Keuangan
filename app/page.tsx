@@ -252,6 +252,7 @@ export default function Home() {
           item.id === editingId
             ? {
                 ...item,
+                date: entryDate || item.date,
                 category: transactionCategory,
                 amount: numericAmount,
               }
@@ -421,9 +422,10 @@ export default function Home() {
         ? 14
         : 30;
 
-    start.setDate(
-      Math.max(1, now.getDate() - periodDays + 1),
-    );
+    // Rolling window: 7 hari = hari ini + 6 hari sebelumnya,
+    // 14 hari = hari ini + 13 hari sebelumnya, dst.
+    // Tidak dibatasi tanggal 1 supaya pergantian bulan tetap benar.
+    start.setDate(now.getDate() - periodDays + 1);
 
     for (let date = new Date(start); date <= now; date.setDate(date.getDate() + 1)) {
       const currentDate = new Date(date);
