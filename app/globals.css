@@ -2014,3 +2014,13 @@ main {
     font-size: 22px !important;
   }
 }
+
+
+@media (max-width: 380px) {
+  .header h1 {
+    max-width: none !important;
+    white-space: nowrap !important;
+    font-size: 20px !important;
+    letter-spacing: -1.2px !important;
+  }
+}
