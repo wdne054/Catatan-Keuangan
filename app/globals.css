@@ -1654,3 +1654,65 @@ main {
 .mascot-placeholder::after,
 .theme-leaf,
 .theme-flower { display: none !important; }
+
+
+/* Final tiny polish: mascot removed + decoration copy stays proportional */
+.mascot-placeholder {
+  display: none !important;
+}
+
+.category-decoration {
+  min-width: 0;
+  padding: 9px 10px;
+}
+
+.category-decoration-art {
+  width: 100%;
+  gap: 7px;
+  min-height: 32px;
+  flex-wrap: nowrap;
+}
+
+.category-decoration-art span {
+  flex: 0 0 auto;
+  font-size: 18px;
+  line-height: 1;
+}
+
+.category-decoration-copy {
+  width: 100%;
+  min-width: 0;
+  text-align: center;
+}
+
+.category-decoration-copy strong {
+  display: block;
+  width: 100%;
+  font-size: 10px;
+  line-height: 1.2;
+  font-weight: 700;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.category-decoration-copy small {
+  display: block;
+  margin-top: 3px;
+  font-size: 10px;
+  line-height: 1;
+  letter-spacing: 1px;
+}
+
+@media (max-width: 380px) {
+  .category-decoration-art span {
+    font-size: 16px;
+  }
+
+  .category-decoration-copy strong {
+    font-size: 9px;
+  }
+
+  .category-decoration-copy small {
+    font-size: 9px;
+  }
+}
