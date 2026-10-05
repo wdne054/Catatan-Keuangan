@@ -494,7 +494,7 @@ export default function Home() {
 
         <div className="mascot-placeholder">
           <span className="theme-leaf theme-leaf-left">🌿</span>
-          <img src="/jasdor-mascot.svg" alt="Maskot Jasdor" />
+          <img src="/jasdor-mascot.webp" alt="Maskot Jasdor" />
           <span className="theme-flower">🌸</span>
         </div>
       </header>
@@ -606,11 +606,11 @@ export default function Home() {
 
           <div className="category-decoration" aria-hidden="true">
             <div className="category-decoration-art">
-              <span>🌷</span><span>🌿</span><span>🎀</span><span>🌸</span>
+              <span>🍣</span><span>🍜</span><span>🍰</span><span>🧋</span>
             </div>
             <div>
-              <strong>Jasdor Girl</strong>
-              <small>semangat catat cuan ✨</small>
+              <strong>Jajan dulu</strong>
+              <small>catat kemudian ✨</small>
             </div>
           </div>
         </div>
