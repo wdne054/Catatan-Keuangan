@@ -492,7 +492,8 @@ export default function Home() {
           </p>
         </div>
 
-        </div>\n      </header>
+        </div>
+      </header>
 
       <section className="balance-card">
         <div className="balance-top">
