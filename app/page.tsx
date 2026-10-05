@@ -600,11 +600,11 @@ export default function Home() {
 
           <div className="category-decoration" aria-hidden="true">
             <div className="category-decoration-art">
-              <span>🍜</span><span>🍣</span><span>🧋</span><span>🍦</span>
+              <span>🍣</span><span>🧋</span><span>🍰</span><span>🍜</span>
             </div>
             <div className="category-decoration-copy">
-              <strong>Jajan dulu, Catat kemudian</strong>
-              <small>🍜 🍣 🧋 🍦</small>
+              <strong>Jajan dulu<br />Catat kemudian</strong>
+              <small>🍣 🧋 🍰 🍜</small>
             </div>
           </div>
         </div>
@@ -760,7 +760,7 @@ export default function Home() {
       <section className="chart-card">
         <div className="section-title">
           <div>
-            <h2>Naik Turun Rezeki 💸</h2>
+            <h2>Naik-Naik Ke Puncak Gunung</h2>
             <p>Pemasukan Merchant • mulai hari ini</p>
           </div>
         </div>
