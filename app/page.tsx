@@ -889,7 +889,7 @@ export default function Home() {
                   strokeDasharray="4 5"
                 />
               );
-            })
+            });
 
             <rect
               x={plotLeft}
