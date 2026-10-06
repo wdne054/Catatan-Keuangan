@@ -464,26 +464,51 @@ export default function Home() {
     return days;
   }, [transactions, chartPeriod, currentDate]);
 
-  const chartMax = Math.max(
-    ...chartDays.map((item) => item.value),
-    1,
+  // Skala mengikuti kelipatan Rp600 ribu. Mulai dari Rp3 juta,
+  // lalu otomatis bertambah lagi jika pemasukan melewati batas.
+  const chartStep = 600000;
+  const chartMaxValue = Math.max(
+    3000000,
+    Math.ceil(
+      Math.max(...chartDays.map((item) => item.value), 0) / chartStep,
+    ) * chartStep,
   );
 
-  const chartWidth = 320;
-  const chartHeight = 150;
+  const chartWidth = 360;
+  const chartHeight = 170;
+  const plotLeft = 4;
+  const plotRight = 286;
+  const plotTop = 10;
+  const plotBottom = 150;
+  const plotWidth = plotRight - plotLeft;
+  const plotHeight = plotBottom - plotTop;
 
   const chartPoints = chartDays.map((item, index) => {
     const x =
       chartDays.length === 1
-        ? chartWidth / 2
-        : (index / (chartDays.length - 1)) * chartWidth;
+        ? plotLeft + plotWidth / 2
+        : plotLeft + (index / (chartDays.length - 1)) * plotWidth;
 
     const y =
-      chartHeight -
-      (item.value / chartMax) * (chartHeight - 20);
+      plotBottom -
+      (item.value / chartMaxValue) * plotHeight;
 
     return `${x},${y}`;
   });
+
+  const chartScaleLabels = Array.from(
+    { length: Math.round(chartMaxValue / chartStep) + 1 },
+    (_, index) => index * chartStep,
+  ).reverse();
+
+  const formatChartScale = (value: number) => {
+    if (value === 0) return "0";
+    if (value >= 1000000) {
+      const millions = value / 1000000;
+      return `${Number.isInteger(millions) ? millions : millions.toFixed(1)} jt`;
+    }
+    return `${value / 1000} rb`;
+  };
 
   return (
     <main>
@@ -816,36 +841,56 @@ export default function Home() {
         </div>
 
         <div className="chart-wrapper">
+          <div className="chart-scale" aria-hidden="true">
+            {chartScaleLabels.map((value) => (
+              <span key={value}>{formatChartScale(value)}</span>
+            ))}
+          </div>
+
           <svg
+            className="merchant-chart"
             viewBox={`0 0 ${chartWidth} ${chartHeight}`}
             preserveAspectRatio="none"
+            role="img"
+            aria-label="Grafik pemasukan Merchant"
           >
             <defs>
-              <linearGradient
-                id="merchantFill"
-                x1="0"
-                y1="0"
-                x2="0"
-                y2="1"
-              >
-                <stop
-                  offset="0%"
-                  stopColor="#b7caae"
-                  stopOpacity="0.45"
-                />
-
-                <stop
-                  offset="100%"
-                  stopColor="#b7caae"
-                  stopOpacity="0"
-                />
+              <linearGradient id="merchantFill" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#b7caae" stopOpacity="0.45" />
+                <stop offset="100%" stopColor="#b7caae" stopOpacity="0" />
               </linearGradient>
             </defs>
 
+            {chartScaleLabels.map((value, index) => {
+              const y = plotBottom - (value / chartMaxValue) * plotHeight;
+              return (
+                <line
+                  key={value}
+                  x1={plotLeft}
+                  x2={plotRight}
+                  y1={y}
+                  y2={y}
+                  stroke="#dfe7d9"
+                  strokeWidth={index === 0 || index === chartScaleLabels.length - 1 ? "1.2" : "1"}
+                  strokeDasharray={index === 0 || index === chartScaleLabels.length - 1 ? "0" : "4 5"}
+                />
+              );
+            })}
+
+            <rect
+              x={plotLeft}
+              y={plotTop}
+              width={plotWidth}
+              height={plotHeight}
+              rx="9"
+              fill="none"
+              stroke="#d8e1d2"
+              strokeWidth="1.5"
+              strokeDasharray="5 5"
+            />
+
             <polyline
-              points={`0,${chartHeight} ${chartPoints.join(
-                " ",
-              )} ${chartWidth},${chartHeight}`}
+              points={`${plotLeft},${plotBottom} ${chartPoints.join(" ")} ${plotRight},${plotBottom}`}
               fill="url(#merchantFill)"
               stroke="none"
             />
@@ -860,21 +905,18 @@ export default function Home() {
             />
 
             {chartDays.map((item, index) => {
-              const point = chartPoints[index]
-                .split(",")
-                .map(Number);
-
-              return chartDays.length <= 14 ? (
+              const point = chartPoints[index].split(",").map(Number);
+              return (
                 <circle
                   key={item.date}
                   cx={point[0]}
                   cy={point[1]}
-                  r="4"
+                  r={chartDays.length <= 14 ? "4" : "2.7"}
                   fill="#fffdf8"
                   stroke="#6f8b67"
-                  strokeWidth="2.5"
+                  strokeWidth={chartDays.length <= 14 ? "2.5" : "2"}
                 />
-              ) : null;
+              );
             })}
           </svg>
         </div>
@@ -894,7 +936,6 @@ export default function Home() {
             );
           })}
         </div>
-
         <div className="chart-periods" aria-label="Periode grafik">
           <button
             className={chartPeriod === "7hari" ? "active" : ""}
