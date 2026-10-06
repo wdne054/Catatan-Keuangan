@@ -854,10 +854,91 @@ export default function Home() {
               </linearGradient>
             </defs>
 
-            {chartDays.map((item) => (
-            <span key={item.date}>{item.label}</span>
-          ))}
-        </div>
+            {chartDays.map((item, index) => {
+              const y =
+                chartDays.length === 1
+                  ? plotBottom
+                  : plotTop + (index / (chartDays.length - 1)) * plotHeight;
+              return (
+                <line
+                  key={`horizontal-${item.date}`}
+                  x1={plotLeft}
+                  x2={plotRight}
+                  y1={y}
+                  y2={y}
+                  stroke="#dfe7d9"
+                  strokeWidth="1"
+                  strokeDasharray="4 5"
+                />
+              );
+            })}
+
+            {chartDays.map((item, index) => {
+              const x =
+                plotLeft +
+                ((index + 0.5) / Math.max(chartDays.length, 1)) * plotWidth;
+              return (
+                <line
+                  key={`vertical-${item.date}`}
+                  x1={x}
+                  x2={x}
+                  y1={plotTop}
+                  y2={plotBottom}
+                  stroke="#e3e8de"
+                  strokeWidth="1"
+                  strokeDasharray="4 5"
+                />
+              );
+            })}
+
+            <rect
+              x={plotLeft}
+              y={plotTop}
+              width={plotWidth}
+              height={plotHeight}
+              rx="9"
+              fill="none"
+              stroke="#d8e1d2"
+              strokeWidth="1.5"
+              strokeDasharray="5 5"
+            />
+
+            <polyline
+              points={`${plotLeft},${plotBottom} ${chartPoints.join(" ")} ${plotRight},${plotBottom}`}
+              fill="url(#merchantFill)"
+              stroke="none"
+            />
+
+            <polyline
+              points={chartPoints.join(" ")}
+              fill="none"
+              stroke="#6f8b67"
+              strokeWidth="4"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+
+            {chartDays.map((item, index) => {
+              const point = chartPoints[index].split(",").map(Number);
+              return (
+                <circle
+                  key={item.date}
+                  cx={point[0]}
+                  cy={point[1]}
+                  r={chartDays.length <= 14 ? "4" : "2.7"}
+                  fill="#fffdf8"
+                  stroke="#6f8b67"
+                  strokeWidth={chartDays.length <= 14 ? "2.5" : "2"}
+                />
+              );
+            })}
+          </svg>
+
+          <div className="chart-scale" aria-hidden="true">
+            {chartScaleLabels.map((value) => (
+              <span key={value}>{formatChartScale(value)}</span>
+            ))}
+          </div>
         </div>
 
         <div
@@ -866,19 +947,9 @@ export default function Home() {
             gridTemplateColumns: `repeat(${chartDays.length}, minmax(0, 1fr))`,
           }}
         >
-          {chartDays.map((item, index) => {
-            const showLabel =
-              chartDays.length <= 7 ||
-              index === 0 ||
-              index === chartDays.length - 1 ||
-              index % Math.ceil(chartDays.length / 6) === 0;
-
-            return (
-              <span key={item.date} className={showLabel ? "" : "chart-label-hidden"}>
-                {showLabel ? item.label : ""}
-              </span>
-            );
-          })}
+          {chartDays.map((item) => (
+            <span key={item.date}>{item.label}</span>
+          ))}
         </div>
         <div className="chart-periods" aria-label="Periode grafik">
           <button
