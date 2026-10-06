@@ -933,7 +933,6 @@ export default function Home() {
               );
             })}
           </svg>
-          </svg>
 
           <div className="chart-scale" aria-hidden="true">
             {chartScaleLabels.map((value) => (
