@@ -477,7 +477,7 @@ export default function Home() {
   const chartWidth = 360;
   const chartHeight = 170;
   const plotLeft = 4;
-  const plotRight = 286;
+  const plotRight = 316;
   const plotTop = 10;
   const plotBottom = 150;
   const plotWidth = plotRight - plotLeft;
@@ -841,12 +841,6 @@ export default function Home() {
         </div>
 
         <div className="chart-wrapper">
-          <div className="chart-scale" aria-hidden="true">
-            {chartScaleLabels.map((value) => (
-              <span key={value}>{formatChartScale(value)}</span>
-            ))}
-          </div>
-
           <svg
             className="merchant-chart"
             viewBox={`0 0 ${chartWidth} ${chartHeight}`}
@@ -876,6 +870,26 @@ export default function Home() {
                 />
               );
             })}
+
+            {chartDays.map((item, index) => {
+              const x =
+                chartDays.length === 1
+                  ? plotLeft + plotWidth / 2
+                  : plotLeft + (index / (chartDays.length - 1)) * plotWidth;
+
+              return (
+                <line
+                  key={`vertical-${item.date}`}
+                  x1={x}
+                  x2={x}
+                  y1={plotTop}
+                  y2={plotBottom}
+                  stroke="#e3e8de"
+                  strokeWidth="1"
+                  strokeDasharray="4 5"
+                />
+              );
+            })
 
             <rect
               x={plotLeft}
@@ -919,6 +933,13 @@ export default function Home() {
               );
             })}
           </svg>
+          </svg>
+
+          <div className="chart-scale" aria-hidden="true">
+            {chartScaleLabels.map((value) => (
+              <span key={value}>{formatChartScale(value)}</span>
+            ))}
+          </div>
         </div>
 
         <div
@@ -1122,12 +1143,31 @@ export default function Home() {
                             <small>{item.note ? item.category : "Transaksi"}</small>
                           </div>
 
-                          <strong
-                            className={type === "income" ? "positive" : "negative"}
-                          >
-                            {type === "income" ? "+" : "-"}
-                            {formatRupiah(item.amount)}
-                          </strong>
+                          <div className="date-history-transaction-right">
+                            <strong
+                              className={type === "income" ? "positive" : "negative"}
+                            >
+                              {type === "income" ? "+" : "-"}
+                              {formatRupiah(item.amount)}
+                            </strong>
+
+                            <div className="date-history-actions">
+                              <button
+                                type="button"
+                                aria-label="Edit transaksi"
+                                onClick={() => editTransaction(item)}
+                              >
+                                ✏️
+                              </button>
+                              <button
+                                type="button"
+                                aria-label="Hapus transaksi"
+                                onClick={() => deleteTransaction(item.id)}
+                              >
+                                🗑️
+                              </button>
+                            </div>
+                          </div>
                         </div>
                       );
                     })}
