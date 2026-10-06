@@ -1,0 +1,20 @@
+{
+  "name": "Catatan Harian Jasdorby_esaashop",
+  "short_name": "Catatan Elsa",
+  "description": "Catatan keuangan harian Jasdorby_esaashop",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#fffaf5",
+  "theme_color": "#6f8b67",
+  "lang": "id",
+  "icons": [
+    {
+      "src": "/pwa-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
