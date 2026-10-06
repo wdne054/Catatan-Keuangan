@@ -485,9 +485,8 @@ export default function Home() {
 
   const chartPoints = chartDays.map((item, index) => {
     const x =
-      chartDays.length === 1
-        ? plotLeft + plotWidth / 2
-        : plotLeft + (index / (chartDays.length - 1)) * plotWidth;
+      plotLeft +
+      ((index + 0.5) / Math.max(chartDays.length, 1)) * plotWidth;
 
     const y =
       plotBottom -
@@ -855,90 +854,10 @@ export default function Home() {
               </linearGradient>
             </defs>
 
-            {chartScaleLabels.map((value, index) => {
-              const y = plotBottom - (value / chartMaxValue) * plotHeight;
-              return (
-                <line
-                  key={value}
-                  x1={plotLeft}
-                  x2={plotRight}
-                  y1={y}
-                  y2={y}
-                  stroke="#dfe7d9"
-                  strokeWidth={index === 0 || index === chartScaleLabels.length - 1 ? "1.2" : "1"}
-                  strokeDasharray={index === 0 || index === chartScaleLabels.length - 1 ? "0" : "4 5"}
-                />
-              );
-            })}
-
-            {chartDays.map((item, index) => {
-              const x =
-                chartDays.length === 1
-                  ? plotLeft + plotWidth / 2
-                  : plotLeft + (index / (chartDays.length - 1)) * plotWidth;
-
-              return (
-                <line
-                  key={`vertical-${item.date}`}
-                  x1={x}
-                  x2={x}
-                  y1={plotTop}
-                  y2={plotBottom}
-                  stroke="#e3e8de"
-                  strokeWidth="1"
-                  strokeDasharray="4 5"
-                />
-              );
-            })}
-
-            <rect
-              x={plotLeft}
-              y={plotTop}
-              width={plotWidth}
-              height={plotHeight}
-              rx="9"
-              fill="none"
-              stroke="#d8e1d2"
-              strokeWidth="1.5"
-              strokeDasharray="5 5"
-            />
-
-            <polyline
-              points={`${plotLeft},${plotBottom} ${chartPoints.join(" ")} ${plotRight},${plotBottom}`}
-              fill="url(#merchantFill)"
-              stroke="none"
-            />
-
-            <polyline
-              points={chartPoints.join(" ")}
-              fill="none"
-              stroke="#6f8b67"
-              strokeWidth="4"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-
-            {chartDays.map((item, index) => {
-              const point = chartPoints[index].split(",").map(Number);
-              return (
-                <circle
-                  key={item.date}
-                  cx={point[0]}
-                  cy={point[1]}
-                  r={chartDays.length <= 14 ? "4" : "2.7"}
-                  fill="#fffdf8"
-                  stroke="#6f8b67"
-                  strokeWidth={chartDays.length <= 14 ? "2.5" : "2"}
-                />
-              );
-            })}
-          </svg>
-
-          <div className="chart-scale" aria-hidden="true">
-            {chartScaleLabels.map((value) => (
-              <span key={value}>{formatChartScale(value)}</span>
-            ))}
-          </div>
+            {chartDays.map((item) => (
+            <span key={item.date}>{item.label}</span>
+          ))}
+        </div>
         </div>
 
         <div
