@@ -512,7 +512,7 @@ export default function Home() {
           </button>
         </div>
 
-        <h2>{formatRupiah(saldoPertamaHariIni)}</h2>
+        <h2>{formatRupiah(currentBalance)}</h2>
 
         <div className="balance-info-grid">
           <div>
