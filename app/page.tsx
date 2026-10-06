@@ -317,8 +317,12 @@ export default function Home() {
   const saldoKeluarHariIni =
     modalToday + otpToday + vsphoneToday + cashOutToday;
 
-  const keuntunganHariIni =
-    merchantToday - modalToday - otpToday - vsphoneToday - cashOutToday;
+  // Cash Out hanya mengurangi saldo, bukan menghitung keuntungan usaha.
+  // Sebelum ada pemasukan, keuntungan ditampilkan 0 agar tidak terlihat minus.
+  const keuntunganHariIni = Math.max(
+    0,
+    merchantToday - modalToday - otpToday - vsphoneToday,
+  );
 
   const currentBalance =
     initialBalance + getNet(transactions);
