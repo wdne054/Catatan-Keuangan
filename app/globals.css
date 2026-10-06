@@ -1730,3 +1730,122 @@ main {
 .date-input-label {
   font-weight: 900 !important;
 }
+
+
+/* Transaction details: make the description visible like a real spending history */
+.transaction-main {
+  min-width: 0;
+}
+
+.transaction-main strong {
+  max-width: 190px;
+  overflow-wrap: anywhere;
+}
+
+.date-history-group {
+  padding: 13px 0 14px;
+  border-bottom: 1px solid #eeeae2;
+}
+
+.date-history-group:last-child {
+  border-bottom: 0;
+}
+
+.date-history-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding-bottom: 8px;
+}
+
+.date-history-heading strong {
+  display: block;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.date-history-heading small {
+  display: block;
+  margin-top: 1px;
+  font-size: 10px;
+  font-weight: 600;
+  opacity: 0.5;
+}
+
+.date-history-transactions {
+  overflow: hidden;
+  border-radius: 15px;
+  background: #faf8f3;
+}
+
+.date-history-transaction {
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 10px;
+  border-bottom: 1px solid #eeeae2;
+}
+
+.date-history-transaction:last-child {
+  border-bottom: 0;
+}
+
+.date-history-emoji {
+  display: flex;
+  width: 32px;
+  height: 32px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  background: #f1eee7;
+  font-size: 17px;
+}
+
+.date-history-detail {
+  min-width: 0;
+}
+
+.date-history-detail strong {
+  display: block;
+  overflow-wrap: anywhere;
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.date-history-detail small {
+  display: block;
+  margin-top: 2px;
+  font-size: 9px;
+  font-weight: 600;
+  opacity: 0.48;
+}
+
+.date-history-transaction > strong {
+  white-space: nowrap;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+#description {
+  margin-top: 8px;
+}
+
+#description::placeholder {
+  color: #9a9188;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+@media (max-width: 380px) {
+  .transaction-main strong {
+    max-width: 145px;
+  }
+
+  .date-history-transaction {
+    grid-template-columns: 32px minmax(0, 1fr) auto;
+    padding: 8px;
+  }
+}
