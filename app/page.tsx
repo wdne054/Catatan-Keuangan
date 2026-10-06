@@ -921,7 +921,12 @@ export default function Home() {
           </svg>
         </div>
 
-        <div className="chart-labels">
+        <div
+          className="chart-labels"
+          style={{
+            gridTemplateColumns: `repeat(${chartDays.length}, minmax(0, 1fr))`,
+          }}
+        >
           {chartDays.map((item, index) => {
             const showLabel =
               chartDays.length <= 7 ||
