@@ -323,8 +323,8 @@ export default function Home() {
   const currentBalance =
     initialBalance + getNet(transactions);
 
-  const saldoAkhirHariIni =
-    saldoPertamaHariIni + merchantToday - saldoKeluarHariIni;
+  // Saldo akhir adalah saldo berjalan setelah seluruh transaksi tercatat.
+  const saldoAkhirHariIni = currentBalance;
 
   const todayNet = keuntunganHariIni;
 
