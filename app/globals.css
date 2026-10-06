@@ -1921,3 +1921,82 @@ main {
     font-size: 8px;
   }
 }
+
+
+/* Chart grid follows every visible calendar day; scale stays on the right. */
+.chart-wrapper {
+  grid-template-columns: minmax(0, 1fr) 43px !important;
+  gap: 7px !important;
+}
+
+.chart-scale {
+  padding: 8px 0 12px !important;
+  text-align: left !important;
+}
+
+.chart-labels {
+  margin-left: 0 !important;
+  margin-right: 50px !important;
+  display: grid !important;
+  text-align: center !important;
+}
+
+.chart-labels span {
+  display: block;
+  text-align: center;
+}
+
+.date-history-transaction {
+  grid-template-columns: 34px minmax(0, 1fr) auto !important;
+}
+
+.date-history-transaction-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 5px;
+  min-width: 68px;
+}
+
+.date-history-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.date-history-actions button {
+  width: 27px;
+  height: 25px;
+  padding: 0;
+  border: 1px solid #eadfd6;
+  border-radius: 9px;
+  background: #fffdf8;
+  font-size: 12px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.date-history-actions button:active {
+  transform: scale(.94);
+}
+
+@media (max-width: 380px) {
+  .chart-wrapper {
+    grid-template-columns: minmax(0, 1fr) 39px !important;
+    gap: 5px !important;
+  }
+
+  .chart-labels {
+    margin-right: 44px !important;
+  }
+
+  .date-history-transaction-right {
+    min-width: 62px;
+  }
+
+  .date-history-actions button {
+    width: 25px;
+    height: 24px;
+    font-size: 11px;
+  }
+}
