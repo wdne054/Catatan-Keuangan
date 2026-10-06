@@ -14,6 +14,7 @@ type Transaction = {
   date: string;
   category: Category;
   amount: number;
+  note?: string;
 };
 
 const categories: {
@@ -117,6 +118,7 @@ export default function Home() {
     useState<Category | null>(null);
 
   const [amount, setAmount] = useState("");
+  const [description, setDescription] = useState("");
   const [editingId, setEditingId] = useState<number | null>(null);
 
   const [activeTab, setActiveTab] = useState<
@@ -255,6 +257,7 @@ export default function Home() {
                 date: entryDate || item.date,
                 category: transactionCategory,
                 amount: numericAmount,
+                note: description.trim() || undefined,
               }
             : item,
         ),
@@ -265,6 +268,7 @@ export default function Home() {
         date: entryDate || today,
         category: transactionCategory,
         amount: numericAmount,
+        note: description.trim() || undefined,
       };
 
       setTransactions((current) => [newTransaction, ...current]);
@@ -272,6 +276,7 @@ export default function Home() {
 
     setSelectedCategory(null);
     setAmount("");
+    setDescription("");
     setEditingId(null);
   };
 
@@ -280,6 +285,7 @@ export default function Home() {
     setEntryDate(item.date);
     setSelectedCategory(item.category);
     setAmount(String(item.amount));
+    setDescription(item.note ?? "");
     window.scrollTo({
       top: document.body.scrollHeight,
       behavior: "smooth",
@@ -426,12 +432,12 @@ export default function Home() {
         ? 14
         : 30;
 
-    // Mulai dari 1 Oktober 2026; setelah lewat panjang periode,
-    // jendela bergeser otomatis mengikuti tanggal berjalan.
-    const monthStart = new Date(now.getFullYear(), 9, 1);
+    // Pencatatan mulai 5 Oktober 2026, jadi grafik tidak pernah
+    // menampilkan tanggal 1–4 Oktober.
+    const trackingStart = new Date(2026, 9, 5);
     const rollingStart = new Date(now);
     rollingStart.setDate(now.getDate() - periodDays + 1);
-    const startDate = rollingStart < monthStart ? monthStart : rollingStart;
+    const startDate = rollingStart < trackingStart ? trackingStart : rollingStart;
     start.setTime(startDate.getTime());
 
     for (let date = new Date(start); date <= now; date.setDate(date.getDate() + 1)) {
@@ -592,6 +598,7 @@ export default function Home() {
                   setSelectedCategory(item.name);
                   setEntryDate(today);
                   setAmount("");
+                  setDescription("");
                   setEditingId(null);
                 }}
               >
@@ -626,6 +633,7 @@ export default function Home() {
                   setSelectedCategory(null);
                   setEntryDate(today);
                   setAmount("");
+                  setDescription("");
                   setEditingId(null);
                 }}
               >
@@ -663,6 +671,22 @@ export default function Home() {
 
               setAmount(value);
             }}
+          />
+
+          <label htmlFor="description" className="date-input-label">
+            📝 Keterangan transaksi
+          </label>
+          <input
+            id="description"
+            type="text"
+            inputMode="text"
+            placeholder={
+              selectedCategory === "Cash Out"
+                ? "Contoh: beli brownies"
+                : "Contoh: keterangan transaksi"
+            }
+            value={description}
+            onChange={(event) => setDescription(event.target.value)}
           />
 
           <button
@@ -715,11 +739,13 @@ export default function Home() {
                       {categoryInfo?.emoji}
                     </span>
 
-                    <div>
-                      <strong>{item.category}</strong>
+                    <div className="transaction-main">
+                      <strong>{item.note || item.category}</strong>
 
                       <small>
-                        {formatDate(item.date)}
+                        {item.note
+                          ? item.category + " · " + formatDate(item.date)
+                          : formatDate(item.date)}
                       </small>
                     </div>
                   </div>
@@ -765,7 +791,7 @@ export default function Home() {
         <div className="section-title">
           <div>
             <h2>Naik-Naik Ke Puncak Gunung</h2>
-            <p>Pemasukan Merchant • mulai hari ini</p>
+            <p>Pemasukan Merchant • mulai 5 Oktober 2026</p>
           </div>
         </div>
 
@@ -1011,29 +1037,55 @@ export default function Home() {
 
               return (
                 <div
-                  className="date-history-item"
+                  className="date-history-group"
                   key={date}
                 >
-                  <div>
-                    <strong>
-                      {formatDate(date)}
-                    </strong>
+                  <div className="date-history-heading">
+                    <div>
+                      <strong>{formatDate(date)}</strong>
+                      <small>{dayTransactions.length} transaksi</small>
+                    </div>
 
-                    <small>
-                      {dayTransactions.length} transaksi
-                    </small>
+                    <strong
+                      className={
+                        net >= 0
+                          ? "positive"
+                          : "negative"
+                      }
+                    >
+                      {net >= 0 ? "+" : "-"}
+                      {formatRupiah(net)}
+                    </strong>
                   </div>
 
-                  <strong
-                    className={
-                      net >= 0
-                        ? "positive"
-                        : "negative"
-                    }
-                  >
-                    {net >= 0 ? "+" : "-"}
-                    {formatRupiah(net)}
-                  </strong>
+                  <div className="date-history-transactions">
+                    {dayTransactions.map((item) => {
+                      const categoryInfo = categories.find(
+                        (category) => category.name === item.category,
+                      );
+                      const type = getCategoryType(item.category);
+
+                      return (
+                        <div className="date-history-transaction" key={item.id}>
+                          <span className="date-history-emoji">
+                            {categoryInfo?.emoji}
+                          </span>
+
+                          <div className="date-history-detail">
+                            <strong>{item.note || item.category}</strong>
+                            <small>{item.note ? item.category : "Transaksi"}</small>
+                          </div>
+
+                          <strong
+                            className={type === "income" ? "positive" : "negative"}
+                          >
+                            {type === "income" ? "+" : "-"}
+                            {formatRupiah(item.amount)}
+                          </strong>
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
               );
             })}
