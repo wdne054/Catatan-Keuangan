@@ -868,3 +868,149 @@ export default function Home() {
             <span key={item.date}>{item.label}</span>
           ))}
         </div>
+
+
+        <div className="chart-periods" aria-label="Periode grafik">
+          <button
+            className={chartPeriod === "7hari" ? "active" : ""}
+            onClick={() => setChartPeriod("7hari")}
+          >
+            7 Hari
+          </button>
+          <button
+            className={chartPeriod === "14hari" ? "active" : ""}
+            onClick={() => setChartPeriod("14hari")}
+          >
+            14 Hari
+          </button>
+          <button
+            className={chartPeriod === "30hari" ? "active" : ""}
+            onClick={() => setChartPeriod("30hari")}
+          >
+            30 Hari
+          </button>
+        </div>
+      </section>
+
+      <section className="recap-card">
+        <div className="section-title">
+          <div>
+            <h2>Rekap Keuangan 📊</h2>
+            <p>Lihat perkembangan Jasdor</p>
+          </div>
+        </div>
+
+        <div className="recap-tabs">
+          <button
+            className={activeTab === "harian" ? "active" : ""}
+            onClick={() => setActiveTab("harian")}
+          >
+            Harian
+          </button>
+          <button
+            className={activeTab === "mingguan" ? "active" : ""}
+            onClick={() => setActiveTab("mingguan")}
+          >
+            Mingguan
+          </button>
+          <button
+            className={activeTab === "bulanan" ? "active" : ""}
+            onClick={() => setActiveTab("bulanan")}
+          >
+            Bulanan
+          </button>
+        </div>
+
+        <div className="recap-grid">
+          <div>
+            <span>💰 Merchant</span>
+            <strong className="positive">{formatRupiah(recapIncome)}</strong>
+          </div>
+          <div>
+            <span>📦 Modal Merchant</span>
+            <strong>{formatRupiah(recapModal)}</strong>
+          </div>
+          <div>
+            <span>🔐 OTP</span>
+            <strong>{formatRupiah(recapOtp)}</strong>
+          </div>
+          <div>
+            <span>📱 VSPhone</span>
+            <strong>{formatRupiah(recapVsphone)}</strong>
+          </div>
+          <div>
+            <span>💸 Cash Out</span>
+            <strong>{formatRupiah(recapCashOut)}</strong>
+          </div>
+          <div className="net-box">
+            <span>🌿 Bersih</span>
+            <strong className={recapNet >= 0 ? "positive" : "negative"}>
+              {recapNet >= 0 ? "+" : "-"}{formatRupiah(recapNet)}
+            </strong>
+          </div>
+        </div>
+      </section>
+
+      <section className="all-history-card">
+        <div className="section-title">
+          <div>
+            <h2>Riwayat Semua Hari 🌷</h2>
+            <p>Transaksi sebelumnya tetap tersimpan</p>
+          </div>
+        </div>
+
+        {sortedTransactions.length === 0 ? (
+          <div className="empty-state">
+            <span>🪴</span>
+            <p>Belum ada riwayat.</p>
+          </div>
+        ) : (
+          <div className="date-history">
+            {Array.from(new Set(sortedTransactions.map((item) => item.date))).map((date) => {
+              const dayTransactions = sortedTransactions.filter((item) => item.date === date);
+              const net = getNet(dayTransactions);
+
+              return (
+                <div className="date-history-group" key={date}>
+                  <div className="date-history-heading">
+                    <div>
+                      <strong>{formatDate(date)}</strong>
+                      <small>{dayTransactions.length} transaksi</small>
+                    </div>
+                    <strong className={net >= 0 ? "positive" : "negative"}>
+                      {net >= 0 ? "+" : "-"}{formatRupiah(net)}
+                    </strong>
+                  </div>
+
+                  <div className="date-history-transactions">
+                    {dayTransactions.map((item) => {
+                      const categoryInfo = categories.find(
+                        (category) => category.name === item.category,
+                      );
+                      const type = getCategoryType(item.category);
+
+                      return (
+                        <div className="date-history-transaction" key={item.id}>
+                          <span className="date-history-emoji">
+                            {categoryInfo?.emoji}
+                          </span>
+                          <div className="date-history-detail">
+                            <strong>{item.note || item.category}</strong>
+                            <small>{item.note ? item.category : "Transaksi"}</small>
+                          </div>
+                          <strong className={type === "income" ? "positive" : "negative"}>
+                            {type === "income" ? "+" : "-"}{formatRupiah(item.amount)}
+                          </strong>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </section>
+    </main>
+  );
+}
