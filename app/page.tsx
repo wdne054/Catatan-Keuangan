@@ -678,9 +678,6 @@ export default function Home() {
             }}
           />
 
-          <label htmlFor="description" className="date-input-label">
-            📝 Keterangan transaksi
-          </label>
           <input
             id="description"
             type="text"
