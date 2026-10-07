@@ -509,11 +509,7 @@ h1 {
 .chart-card {
   overflow: hidden;
   background:
-    radial-gradient(
-      circle at 100% 0,
-      #edf2e8 0,
-      transparent 35%
-    ),
+    radial-gradient(circle at 100% 0, #edf2e8 0, transparent 35%),
     #fffdf8;
 }
 
@@ -679,8 +675,7 @@ h1 {
   .balance-info-grid > div:last-child {
     grid-column: auto;
   }
-    }
-
+}
 
 .category-summary {
   display: grid;
@@ -756,7 +751,7 @@ h1 {
   grid-column: auto;
 }
 
- .command-box {
+.command-box {
   position: relative;
   overflow: hidden;
   padding: 18px;
@@ -854,7 +849,6 @@ h1 {
   }
 }
 
-
 .category-summary-button .category-summary-name {
   overflow: visible;
   text-overflow: clip;
@@ -884,7 +878,9 @@ h1 {
   font-size: 22px;
 }
 
-.category-decoration-flower { margin-left: -7px; }
+.category-decoration-flower {
+  margin-left: -7px;
+}
 
 .category-decoration div {
   min-width: 0;
@@ -900,47 +896,7 @@ h1 {
 .category-decoration small {
   font-size: 9px;
   font-weight: 700;
-  opacity: .65;
-}
-
-
-/* Jasdor Girl garden theme */
-.mascot-placeholder {
-  position: relative;
-  overflow: visible;
-  border-color: #d6e3ce;
-  background: #fffaf4;
-}
-
-.mascot-placeholder img {
-  width: 52px;
-  height: 66px;
-  display: block;
-  object-fit: cover;
-  object-position: center;
-  border-radius: 17px;
-  transform: translateY(7px);
-  box-shadow: 0 6px 12px rgba(73, 61, 49, 0.08);
-}
-
-.theme-leaf,
-.theme-flower {
-  position: absolute;
-  z-index: 2;
-  pointer-events: none;
-  font-size: 15px;
-}
-
-.theme-leaf-left {
-  left: -9px;
-  bottom: -7px;
-  transform: rotate(-18deg);
-}
-
-.theme-flower {
-  right: -9px;
-  top: -9px;
-  font-size: 14px;
+  opacity: 0.65;
 }
 
 .category-decoration {
@@ -1008,29 +964,44 @@ h1 {
   font-size: 8px;
 }
 
-.chart-card {
+.mascot-placeholder {
   position: relative;
+  overflow: visible;
+  border-color: #d6e3ce;
+  background: #fffaf4;
 }
 
-.chart-card::before {
+.mascot-placeholder img {
+  width: 52px;
+  height: 66px;
+  display: block;
+  object-fit: cover;
+  object-position: center;
+  border-radius: 17px;
+  transform: translateY(7px);
+  box-shadow: 0 6px 12px rgba(73, 61, 49, 0.08);
+}
+
+.theme-leaf,
+.theme-flower {
   position: absolute;
-  top: 10px;
-  right: 16px;
-  content: "🌿  🌸";
-  font-size: 15px;
-  opacity: .7;
+  z-index: 2;
   pointer-events: none;
+  font-size: 15px;
 }
 
-@media (max-width: 380px) {
-  .mascot-placeholder img {
-    width: 49px;
-    height: 62px;
-  }
+.theme-leaf-left {
+  left: -9px;
+  bottom: -7px;
+  transform: rotate(-18deg);
 }
 
+.theme-flower {
+  right: -9px;
+  top: -9px;
+  font-size: 14px;
+}
 
-/* Full Jasdor Girl garden background */
 body {
   position: relative;
   isolation: isolate;
@@ -1103,8 +1074,6 @@ body::before {
   }
 }
 
-
-/* Final mascot + chart polish */
 .header {
   align-items: flex-start;
 }
@@ -1168,16 +1137,6 @@ body::before {
   line-height: 1.1;
 }
 
-.chart-labels {
-  display: flex;
-  gap: 0;
-}
-
-.chart-labels span {
-  flex: 1 1 0;
-  min-width: 0;
-}
-
 @media (max-width: 380px) {
   .header h1 {
     max-width: 175px;
@@ -1195,8 +1154,6 @@ body::before {
   }
 }
 
-
-/* Cute cafe finishing touches */
 main {
   position: relative;
 }
@@ -1293,204 +1250,25 @@ main {
   }
 }
 
-
-/* =========================================================
-   JASDOR CUTE CAFE — VISIBLE REDESIGN
-   Visual-only override: keeps all existing finance functions.
-   ========================================================= */
-
-:root {
-  --cream: #fffaf2;
-  --paper: #fffdf8;
-  --brown: #5b463c;
-  --muted: #907d71;
-  --pink: #e8aeb8;
-  --pink-soft: #fff0f2;
-  --rose: #c97886;
-  --sage: #78956e;
-  --sage-soft: #edf4e8;
-  --peach: #f6d9c9;
-  --line: #eadfd6;
-  --shadow: 0 12px 30px rgba(91, 70, 60, .10);
-}
-
-body {
-  background:
-    radial-gradient(circle at 8% 8%, rgba(232,174,184,.38) 0 85px, transparent 86px),
-    radial-gradient(circle at 96% 20%, rgba(120,149,110,.25) 0 110px, transparent 111px),
-    radial-gradient(circle at 4% 78%, rgba(246,217,201,.55) 0 100px, transparent 101px),
-    #f8f1e8 !important;
-  color: var(--brown);
-}
-
-main {
-  max-width: 560px;
-  padding: 18px 15px 70px;
-}
-
-.header {
-  position: relative;
-  margin-bottom: 14px;
-  padding: 15px 16px 13px !important;
-  border: 1px solid rgba(255,255,255,.9);
-  border-radius: 28px;
-  background: rgba(255,253,248,.92);
-  box-shadow: var(--shadow);
-}
-
-.header::after {
-  position: absolute;
-  right: 92px;
-  top: 9px;
-  content: "✿";
-  color: var(--pink);
-  font-size: 20px;
-  transform: rotate(-12deg);
-}
-
-.eyebrow {
-  color: var(--rose);
-  font-size: 10px;
-  letter-spacing: 2.2px;
-}
-
-.header h1 {
-  color: #594239;
-  font-size: 31px;
-  text-shadow: 0 2px 0 #fff;
-}
-
-.date-text {
-  color: var(--muted);
-}
-
-.mascot-placeholder {
-  border: 3px solid #f0d7d9 !important;
-  border-radius: 25px !important;
-  background: linear-gradient(145deg,#fff7f5,#edf4e8) !important;
-  box-shadow: 0 8px 18px rgba(91,70,60,.10) !important;
-}
-
-.mascot-placeholder::after {
-  position: absolute;
-  right: -7px;
-  bottom: -8px;
-  content: "🌷";
-  font-size: 17px;
-}
-
-.balance-card {
-  border: 0 !important;
-  border-radius: 32px !important;
-  padding: 24px !important;
-  background:
-    radial-gradient(circle at 100% 0, rgba(232,174,184,.32) 0 105px, transparent 106px),
-    radial-gradient(circle at 0 100%, rgba(120,149,110,.20) 0 120px, transparent 121px),
-    linear-gradient(135deg,#fffdf8,#fff8f1) !important;
-  box-shadow: 0 18px 38px rgba(91,70,60,.13) !important;
-}
-
-.balance-card::before {
-  width: 190px !important;
-  height: 190px !important;
-  right: -70px !important;
-  bottom: -100px !important;
-  background: rgba(120,149,110,.14) !important;
-}
-
-.balance-card::after {
-  width: 130px !important;
-  height: 130px !important;
-  left: -55px !important;
-  top: -60px !important;
-  background: rgba(232,174,184,.16) !important;
-}
-
-.balance-top > p {
-  color: #8b6c61;
-}
-
-.mini-edit {
-  border: 1px solid #ead6d2;
-  background: #fff0f2;
-  color: #a25d6a;
-}
-
-.balance-card h2 {
-  margin-top: 5px;
-  color: #594239;
-  font-size: 42px;
-}
-
-.balance-info-grid {
-  gap: 9px !important;
-  margin-top: 19px !important;
-}
-
-.balance-info-grid > div {
-  border: 1px solid rgba(255,255,255,.8);
-  border-radius: 18px !important;
-  background: rgba(255,255,255,.72) !important;
-  box-shadow: 0 4px 12px rgba(91,70,60,.05);
-}
-
-.today-card > div {
-  border: 1px solid rgba(255,255,255,.8);
-  border-radius: 21px !important;
-  background: #fffaf6 !important;
-  box-shadow: var(--shadow) !important;
-}
-
-.quick-section,
-.history-card,
-.input-card,
-.chart-card,
-.recap-card,
-.all-history-card {
-  border: 1px solid #eee1d8 !important;
-  border-radius: 29px !important;
-  background: rgba(255,253,248,.96) !important;
-  box-shadow: var(--shadow) !important;
-}
-
-.section-title h2,
-.input-heading h2,
-.command-box-heading h2 {
-  color: #594239;
-  font-size: 23px;
-}
-
-.section-title p,
-.command-hint {
-  color: var(--muted);
-}
-
-.group-label {
-  margin-top: 18px;
-}
-
-.income-label { color: #64865b !important; }
-.expense-label { color: #aa6b72 !important; }
-
 .category-summary {
-  gap: 10px !important;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
 }
 
 .category-summary-button {
   min-height: 76px;
-  border: 2px solid transparent;
   border-radius: 22px !important;
   padding: 11px !important;
-  box-shadow: 0 7px 15px rgba(91,70,60,.07) !important;
 }
 
 .category-summary-button.income {
-  background: linear-gradient(145deg,#f1f7ed,#e5f0df) !important;
+  background: linear-gradient(145deg, #f1f7ed, #e5f0df) !important;
   color: #4f7449 !important;
 }
 
 .category-summary-button.expense {
-  background: linear-gradient(145deg,#fff1ef,#f8e5e3) !important;
+  background: linear-gradient(145deg, #fff1ef, #f8e5e3) !important;
   color: #965761 !important;
 }
 
@@ -1552,7 +1330,6 @@ main {
   border-radius: 19px !important;
   background: linear-gradient(135deg,#78956e,#66865f) !important;
   box-shadow: 0 9px 18px rgba(102,134,95,.23) !important;
-  letter-spacing: .2px;
 }
 
 .transaction-item {
@@ -1606,140 +1383,6 @@ main {
   border: 2px dashed #ead8d3 !important;
   border-radius: 21px !important;
   background: #fff8f5 !important;
-}
-
-.all-history-card .date-history-item,
-.date-history-item {
-  margin: 5px 0;
-  padding: 11px 10px !important;
-  border: 1px solid #f0e6df;
-  border-radius: 16px;
-  background: #fffaf6;
-}
-
-@media (max-width: 380px) {
-  main { padding-left: 11px; padding-right: 11px; }
-  .header h1 { font-size: 27px; }
-  .balance-card h2 { font-size: 36px; }
-}
-
-
-/* Final spacing polish — fewer ornaments, wider Jasdor Girl message */
-.category-decoration-art { display: none !important; }
-.category-decoration::before,
-.category-decoration::after { display: none !important; }
-.category-decoration {
-  min-height: 76px !important;
-  justify-content: center !important;
-  align-items: center !important;
-  padding: 10px 14px !important;
-  gap: 0 !important;
-}
-.category-decoration > div:last-child {
-  width: 100% !important;
-  margin: 0 !important;
-}
-.category-decoration strong {
-  font-size: 13px !important;
-  letter-spacing: .1px;
-  white-space: nowrap;
-}
-.category-decoration small {
-  margin-top: 4px !important;
-  font-size: 9px !important;
-  white-space: nowrap;
-}
-.chart-card::before,
-.header::after,
-.mascot-placeholder::after,
-.theme-leaf,
-.theme-flower { display: none !important; }
-
-
-/* Final tiny polish: mascot removed + decoration copy stays proportional */
-.mascot-placeholder {
-  display: none !important;
-}
-
-.category-decoration {
-  min-width: 0;
-  padding: 9px 10px;
-}
-
-.category-decoration-art {
-  width: 100%;
-  gap: 7px;
-  min-height: 32px;
-  flex-wrap: nowrap;
-}
-
-.category-decoration-art span {
-  flex: 0 0 auto;
-  font-size: 18px;
-  line-height: 1;
-}
-
-.category-decoration-copy {
-  width: 100%;
-  min-width: 0;
-  text-align: center;
-}
-
-.category-decoration-copy strong {
-  display: block;
-  width: 100%;
-  font-size: 10px;
-  line-height: 1.2;
-  font-weight: 700;
-  white-space: normal;
-  overflow-wrap: anywhere;
-}
-
-.category-decoration-copy small {
-  display: block;
-  margin-top: 3px;
-  font-size: 10px;
-  line-height: 1;
-  letter-spacing: 1px;
-}
-
-@media (max-width: 380px) {
-  .category-decoration-art span {
-    font-size: 16px;
-  }
-
-  .category-decoration-copy strong {
-    font-size: 9px;
-  }
-
-  .category-decoration-copy small {
-    font-size: 9px;
-  }
-}
-
-
-/* Final tiny text polish */
-.category-decoration-art span {
-  font-size: 25px !important;
-  line-height: 1 !important;
-}
-.category-decoration-copy strong {
-  font-size: 12px !important;
-  line-height: 1.45 !important;
-}
-.date-input-label {
-  font-weight: 900 !important;
-}
-
-
-/* Transaction details: make the description visible like a real spending history */
-.transaction-main {
-  min-width: 0;
-}
-
-.transaction-main strong {
-  max-width: 190px;
-  overflow-wrap: anywhere;
 }
 
 .date-history-group {
@@ -1850,24 +1493,24 @@ main {
   }
 }
 
-
-/* Cute chart frame + right-side rupiah scale */
+/* Chart frame + left-side rupiah scale */
 .chart-wrapper {
   display: grid !important;
-  grid-template-columns: 43px minmax(0, 1fr);
-  gap: 7px;
+  grid-template-columns: 39px minmax(0, 1fr) !important;
+  gap: 6px !important;
+  align-items: stretch;
+  width: 100%;
   height: 190px !important;
   margin-top: 14px;
   padding: 0 !important;
-  align-items: stretch;
 }
 
 .chart-scale {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: 8px 0 12px;
-  text-align: right;
+  padding: 8px 0 12px !important;
+  text-align: right !important;
   color: #8d8177;
   font-size: 9px;
   font-weight: 800;
@@ -1885,12 +1528,13 @@ main {
 }
 
 .chart-labels {
-  display: grid;
-  gap: 0;
-  margin-top: 5px;
-  margin-left: 50px;
+  display: grid !important;
+  gap: 0 !important;
+  margin-top: 5px !important;
+  margin-left: 45px !important;
+  margin-right: 0 !important;
   min-height: 18px;
-  text-align: center;
+  text-align: center !important;
 }
 
 .chart-labels span {
@@ -1899,22 +1543,25 @@ main {
   color: #8d8177;
   font-size: 9px;
   font-weight: 800;
+  text-align: center;
   text-overflow: clip;
   white-space: nowrap;
 }
 
 @media (max-width: 380px) {
   .chart-wrapper {
-    grid-template-columns: 39px minmax(0, 1fr);
-    gap: 5px;
+    grid-template-columns: 34px minmax(0, 1fr) !important;
+    gap: 5px !important;
   }
 
   .chart-scale {
+    padding-right: 1px !important;
     font-size: 8px;
   }
 
   .chart-labels {
-    margin-left: 44px;
+    margin-left: 39px !important;
+    margin-right: 0 !important;
   }
 
   .chart-labels span {
@@ -1922,95 +1569,15 @@ main {
   }
 }
 
-
-/* Final 7-day chart alignment: scale close to plot, dates directly under each vertical guide. */
-.chart-wrapper {
-  grid-template-columns: 36px minmax(0, 1fr) !important;
-  gap: 5px !important;
-  height: 190px !important;
-}
-
-.chart-scale {
-  padding: 8px 0 12px !important;
-  text-align: right !important;
-  padding-right: 1px !important;
-}
-
-.chart-labels {
-  margin-left: 41px !important;
-  margin-right: 0 !important;
-  display: grid !important;
-  text-align: center !important;
-}
-
-.chart-labels span {
-  display: block;
-  text-align: center;
-}
-
+/* IMPORTANT: keep all 7 dates exactly on their SVG vertical guides.
+   Never move the scale to the right on small screens. */
 @media (max-width: 380px) {
   .chart-wrapper {
-    grid-template-columns: 32px minmax(0, 1fr) !important;
-    gap: 4px !important;
+    grid-template-columns: 34px minmax(0, 1fr) !important;
   }
 
   .chart-labels {
-    margin-left: 36px !important;
+    margin-left: 39px !important;
     margin-right: 0 !important;
-  }
-}
-
-.date-history-transaction {
-  grid-template-columns: 34px minmax(0, 1fr) auto !important;
-}
-
-.date-history-transaction-right {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 5px;
-  min-width: 68px;
-}
-
-.date-history-actions {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.date-history-actions button {
-  width: 27px;
-  height: 25px;
-  padding: 0;
-  border: 1px solid #eadfd6;
-  border-radius: 9px;
-  background: #fffdf8;
-  font-size: 12px;
-  line-height: 1;
-  cursor: pointer;
-}
-
-.date-history-actions button:active {
-  transform: scale(.94);
-}
-
-@media (max-width: 380px) {
-  .chart-wrapper {
-    grid-template-columns: minmax(0, 1fr) 39px !important;
-    gap: 5px !important;
-  }
-
-  .chart-labels {
-    margin-right: 44px !important;
-  }
-
-  .date-history-transaction-right {
-    min-width: 62px;
-  }
-
-  .date-history-actions button {
-    width: 25px;
-    height: 24px;
-    font-size: 11px;
   }
 }
