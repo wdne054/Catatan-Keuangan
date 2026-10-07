@@ -485,8 +485,9 @@ export default function Home() {
 
   const chartPoints = chartDays.map((item, index) => {
     const x =
-      plotLeft +
-      ((index + 0.5) / Math.max(chartDays.length, 1)) * plotWidth;
+      chartDays.length <= 1
+        ? plotLeft
+        : plotLeft + (index / (chartDays.length - 1)) * plotWidth;
 
     const y =
       plotBottom -
@@ -875,8 +876,9 @@ export default function Home() {
 
             {chartDays.map((item, index) => {
               const x =
-                plotLeft +
-                ((index + 0.5) / Math.max(chartDays.length, 1)) * plotWidth;
+                chartDays.length <= 1
+                  ? plotLeft
+                  : plotLeft + (index / (chartDays.length - 1)) * plotWidth;
               return (
                 <line
                   key={`vertical-${item.date}`}
