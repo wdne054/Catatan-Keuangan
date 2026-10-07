@@ -996,11 +996,29 @@ export default function Home() {
                           </span>
                           <div className="date-history-detail">
                             <strong>{item.note || item.category}</strong>
-                            <small>{item.note ? item.category : "Transaksi"}</small>
                           </div>
-                          <strong className={type === "income" ? "positive" : "negative"}>
-                            {type === "income" ? "+" : "-"}{formatRupiah(item.amount)}
-                          </strong>
+
+                          <div className="date-history-actions">
+                            <strong className={type === "income" ? "positive" : "negative"}>
+                              {type === "income" ? "+" : "-"}{formatRupiah(item.amount)}
+                            </strong>
+
+                            <button
+                              onClick={() => editTransaction(item)}
+                              aria-label="Edit transaksi"
+                              type="button"
+                            >
+                              ✏️
+                            </button>
+
+                            <button
+                              onClick={() => deleteTransaction(item.id)}
+                              aria-label="Hapus transaksi"
+                              type="button"
+                            >
+                              🗑️
+                            </button>
+                          </div>
                         </div>
                       );
                     })}
