@@ -1656,3 +1656,53 @@ div {
   font-style: normal !important;
   transform: none !important;
 }
+
+
+/* Riwayat transaksi: keterangan satu baris, teks lebih besar, aksi lebih kecil */
+.date-history-detail strong {
+  font-size: 15px !important;
+  line-height: 1.25 !important;
+}
+
+.date-history-detail small {
+  display: none !important;
+}
+
+.date-history-transaction > strong {
+  font-size: 14px !important;
+}
+
+.date-history-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 3px;
+  flex-shrink: 0;
+}
+
+.date-history-actions > strong {
+  margin-right: 2px;
+}
+
+.date-history-actions button {
+  width: 25px;
+  height: 25px;
+  padding: 0 !important;
+  border: 1px solid #eee6dc;
+  border-radius: 7px;
+  background: #fffdf8;
+  font-size: 11px !important;
+  line-height: 1;
+}
+
+@media (max-width: 380px) {
+  .date-history-detail strong {
+    font-size: 14px !important;
+  }
+
+  .date-history-actions button {
+    width: 23px;
+    height: 23px;
+    font-size: 10px !important;
+  }
+}
