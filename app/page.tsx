@@ -424,7 +424,6 @@ export default function Home() {
     }[] = [];
 
     const now = new Date(currentDate);
-    const start = new Date(now);
 
     const periodDays = chartPeriod === "7hari"
       ? 7
@@ -432,15 +431,21 @@ export default function Home() {
         ? 14
         : 30;
 
-    // Pencatatan mulai 5 Oktober 2026, jadi grafik tidak pernah
-    // menampilkan tanggal 1–4 Oktober.
+    // Untuk 7 hari, tampilkan seluruh minggu berjalan (Senin–Minggu)
+    // supaya tanggal selalu sejajar: 5 · 6 · 7 · 8 · 9 · 10 · 11.
+    // Pencatatan dimulai 5 Oktober 2026, jadi hari sebelum tanggal itu
+    // tidak pernah dibuat sebagai kolom grafik.
     const trackingStart = new Date(2026, 9, 5);
-    const rollingStart = new Date(now);
-    rollingStart.setDate(now.getDate() - periodDays + 1);
-    const startDate = rollingStart < trackingStart ? trackingStart : rollingStart;
-    start.setTime(startDate.getTime());
+    trackingStart.setHours(0, 0, 0, 0);
 
-    for (let date = new Date(start); date <= now; date.setDate(date.getDate() + 1)) {
+    const weekStart = startOfWeek(now);
+    const start = new Date(weekStart);
+    if (start < trackingStart) start.setTime(trackingStart.getTime());
+
+    const end = new Date(start);
+    end.setDate(start.getDate() + periodDays - 1);
+
+    for (let date = new Date(start); date <= end; date.setDate(date.getDate() + 1)) {
       const currentDate = new Date(date);
       const key = getDateKey(currentDate);
 
@@ -855,14 +860,13 @@ export default function Home() {
               </linearGradient>
             </defs>
 
-            {chartDays.map((item, index) => {
+            {chartScaleLabels.map((value) => {
               const y =
-                chartDays.length === 1
-                  ? plotBottom
-                  : plotTop + (index / (chartDays.length - 1)) * plotHeight;
+                plotBottom -
+                (value / chartMaxValue) * plotHeight;
               return (
                 <line
-                  key={`horizontal-${item.date}`}
+                  key={`horizontal-${value}`}
                   x1={plotLeft}
                   x2={plotRight}
                   y1={y}
