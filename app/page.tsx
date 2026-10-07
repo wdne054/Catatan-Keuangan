@@ -862,15 +862,26 @@ export default function Home() {
           </svg>
         </div>
 
-        <div
-          className="chart-labels"
-          style={{
-            gridTemplateColumns: `repeat(${chartDays.length}, minmax(0, 1fr))`,
-          }}
-        >
-          {chartDays.map((item) => (
-            <span key={item.date}>{item.label}</span>
-          ))}
+        <div className="chart-labels">
+          {chartDays.map((item, index) => {
+            const left =
+              chartDays.length === 1
+                ? "50%"
+                : `${(index / (chartDays.length - 1)) * 100}%`;
+
+            return (
+              <span
+                key={item.date}
+                style={{
+                  position: "absolute",
+                  left,
+                  transform: "translateX(-50%)",
+                }}
+              >
+                {item.label}
+              </span>
+            );
+          })}
         </div>
 
 
