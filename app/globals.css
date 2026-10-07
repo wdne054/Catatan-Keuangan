@@ -1923,20 +1923,22 @@ main {
 }
 
 
-/* Chart grid follows every visible calendar day; scale stays on the right. */
+/* Final 7-day chart alignment: scale close to plot, dates directly under each vertical guide. */
 .chart-wrapper {
-  grid-template-columns: minmax(0, 1fr) 43px !important;
-  gap: 7px !important;
+  grid-template-columns: 36px minmax(0, 1fr) !important;
+  gap: 5px !important;
+  height: 190px !important;
 }
 
 .chart-scale {
   padding: 8px 0 12px !important;
-  text-align: left !important;
+  text-align: right !important;
+  padding-right: 1px !important;
 }
 
 .chart-labels {
-  margin-left: 0 !important;
-  margin-right: 50px !important;
+  margin-left: 41px !important;
+  margin-right: 0 !important;
   display: grid !important;
   text-align: center !important;
 }
@@ -1944,6 +1946,18 @@ main {
 .chart-labels span {
   display: block;
   text-align: center;
+}
+
+@media (max-width: 380px) {
+  .chart-wrapper {
+    grid-template-columns: 32px minmax(0, 1fr) !important;
+    gap: 4px !important;
+  }
+
+  .chart-labels {
+    margin-left: 36px !important;
+    margin-right: 0 !important;
+  }
 }
 
 .date-history-transaction {
