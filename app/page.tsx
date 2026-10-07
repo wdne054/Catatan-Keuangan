@@ -424,30 +424,26 @@ export default function Home() {
     }[] = [];
 
     const now = new Date(currentDate);
+    const periodDays =
+      chartPeriod === "7hari" ? 7 : chartPeriod === "14hari" ? 14 : 30;
 
-    const periodDays = chartPeriod === "7hari"
-      ? 7
-      : chartPeriod === "14hari"
-        ? 14
-        : 30;
-
-    // Untuk 7 hari, tampilkan seluruh minggu berjalan (Senin–Minggu)
-    // supaya tanggal selalu sejajar: 5 · 6 · 7 · 8 · 9 · 10 · 11.
-    // Pencatatan dimulai 5 Oktober 2026, jadi hari sebelum tanggal itu
-    // tidak pernah dibuat sebagai kolom grafik.
     const trackingStart = new Date(2026, 9, 5);
     trackingStart.setHours(0, 0, 0, 0);
 
-    const weekStart = startOfWeek(now);
-    const start = new Date(weekStart);
-    if (start < trackingStart) start.setTime(trackingStart.getTime());
+    const rollingStart = new Date(now);
+    rollingStart.setDate(now.getDate() - periodDays + 1);
+    rollingStart.setHours(0, 0, 0, 0);
 
-    const end = new Date(start);
-    end.setDate(start.getDate() + periodDays - 1);
+    const startDate =
+      rollingStart < trackingStart ? trackingStart : rollingStart;
 
-    for (let date = new Date(start); date <= end; date.setDate(date.getDate() + 1)) {
-      const currentDate = new Date(date);
-      const key = getDateKey(currentDate);
+    for (
+      let date = new Date(startDate);
+      date <= now;
+      date.setDate(date.getDate() + 1)
+    ) {
+      const day = new Date(date);
+      const key = getDateKey(day);
 
       const value = transactions
         .filter(
@@ -458,7 +454,7 @@ export default function Home() {
 
       days.push({
         date: key,
-        label: currentDate.toLocaleDateString("id-ID", {
+        label: day.toLocaleDateString("id-ID", {
           day: "numeric",
           month: "short",
         }),
@@ -469,51 +465,26 @@ export default function Home() {
     return days;
   }, [transactions, chartPeriod, currentDate]);
 
-  // Skala mengikuti kelipatan Rp600 ribu. Mulai dari Rp3 juta,
-  // lalu otomatis bertambah lagi jika pemasukan melewati batas.
-  const chartStep = 600000;
-  const chartMaxValue = Math.max(
-    3000000,
-    Math.ceil(
-      Math.max(...chartDays.map((item) => item.value), 0) / chartStep,
-    ) * chartStep,
+  const chartMax = Math.max(
+    ...chartDays.map((item) => item.value),
+    1,
   );
 
-  const chartWidth = 360;
-  const chartHeight = 170;
-  const plotLeft = 4;
-  const plotRight = 316;
-  const plotTop = 10;
-  const plotBottom = 150;
-  const plotWidth = plotRight - plotLeft;
-  const plotHeight = plotBottom - plotTop;
+  const chartWidth = 320;
+  const chartHeight = 150;
 
   const chartPoints = chartDays.map((item, index) => {
     const x =
-      chartDays.length <= 1
-        ? plotLeft
-        : plotLeft + (index / (chartDays.length - 1)) * plotWidth;
+      chartDays.length === 1
+        ? chartWidth / 2
+        : (index / (chartDays.length - 1)) * chartWidth;
 
     const y =
-      plotBottom -
-      (item.value / chartMaxValue) * plotHeight;
+      chartHeight -
+      (item.value / chartMax) * (chartHeight - 20);
 
     return `${x},${y}`;
   });
-
-  const chartScaleLabels = Array.from(
-    { length: Math.round(chartMaxValue / chartStep) + 1 },
-    (_, index) => index * chartStep,
-  ).reverse();
-
-  const formatChartScale = (value: number) => {
-    if (value === 0) return "0";
-    if (value >= 1000000) {
-      const millions = value / 1000000;
-      return `${Number.isInteger(millions) ? millions : millions.toFixed(1)} jt`;
-    }
-    return `${value / 1000} rb`;
-  };
 
   return (
     <main>
@@ -772,11 +743,7 @@ export default function Home() {
                     <div className="transaction-main">
                       <strong>{item.note || item.category}</strong>
 
-                      <small>
-                        {item.note
-                          ? item.category + " · " + formatDate(item.date)
-                          : formatDate(item.date)}
-                      </small>
+                      <small>{formatDate(item.date)}</small>
                     </div>
                   </div>
 
@@ -847,10 +814,8 @@ export default function Home() {
 
         <div className="chart-wrapper">
           <svg
-            className="merchant-chart"
             viewBox={`0 0 ${chartWidth} ${chartHeight}`}
             preserveAspectRatio="none"
-            role="img"
             aria-label="Grafik pemasukan Merchant"
           >
             <defs>
@@ -860,57 +825,8 @@ export default function Home() {
               </linearGradient>
             </defs>
 
-            {chartScaleLabels.map((value) => {
-              const y =
-                plotBottom -
-                (value / chartMaxValue) * plotHeight;
-              return (
-                <line
-                  key={`horizontal-${value}`}
-                  x1={plotLeft}
-                  x2={plotRight}
-                  y1={y}
-                  y2={y}
-                  stroke="#dfe7d9"
-                  strokeWidth="1"
-                  strokeDasharray="4 5"
-                />
-              );
-            })}
-
-            {chartDays.map((item, index) => {
-              const x =
-                chartDays.length <= 1
-                  ? plotLeft
-                  : plotLeft + (index / (chartDays.length - 1)) * plotWidth;
-              return (
-                <line
-                  key={`vertical-${item.date}`}
-                  x1={x}
-                  x2={x}
-                  y1={plotTop}
-                  y2={plotBottom}
-                  stroke="#e3e8de"
-                  strokeWidth="1"
-                  strokeDasharray="4 5"
-                />
-              );
-            })}
-
-            <rect
-              x={plotLeft}
-              y={plotTop}
-              width={plotWidth}
-              height={plotHeight}
-              rx="9"
-              fill="none"
-              stroke="#d8e1d2"
-              strokeWidth="1.5"
-              strokeDasharray="5 5"
-            />
-
             <polyline
-              points={`${plotLeft},${plotBottom} ${chartPoints.join(" ")} ${plotRight},${plotBottom}`}
+              points={`0,${chartHeight} ${chartPoints.join(" ")} ${chartWidth},${chartHeight}`}
               fill="url(#merchantFill)"
               stroke="none"
             />
@@ -926,25 +842,20 @@ export default function Home() {
 
             {chartDays.map((item, index) => {
               const point = chartPoints[index].split(",").map(Number);
+
               return (
                 <circle
                   key={item.date}
                   cx={point[0]}
                   cy={point[1]}
-                  r={chartDays.length <= 14 ? "4" : "2.7"}
+                  r="4"
                   fill="#fffdf8"
                   stroke="#6f8b67"
-                  strokeWidth={chartDays.length <= 14 ? "2.5" : "2"}
+                  strokeWidth="2.5"
                 />
               );
             })}
           </svg>
-
-          <div className="chart-scale" aria-hidden="true">
-            {chartScaleLabels.map((value) => (
-              <span key={value}>{formatChartScale(value)}</span>
-            ))}
-          </div>
         </div>
 
         <div
@@ -957,222 +868,3 @@ export default function Home() {
             <span key={item.date}>{item.label}</span>
           ))}
         </div>
-        <div className="chart-periods" aria-label="Periode grafik">
-          <button
-            className={chartPeriod === "7hari" ? "active" : ""}
-            onClick={() => setChartPeriod("7hari")}
-          >
-            7 Hari
-          </button>
-          <button
-            className={chartPeriod === "14hari" ? "active" : ""}
-            onClick={() => setChartPeriod("14hari")}
-          >
-            14 Hari
-          </button>
-          <button
-            className={chartPeriod === "30hari" ? "active" : ""}
-            onClick={() => setChartPeriod("30hari")}
-          >
-            30 Hari
-          </button>
-        </div>
-      </section>
-
-      <section className="recap-card">
-        <div className="section-title">
-          <div>
-            <h2>Rekap Keuangan 📊</h2>
-            <p>Lihat perkembangan Jasdor</p>
-          </div>
-        </div>
-
-        <div className="recap-tabs">
-          <button
-            className={
-              activeTab === "harian" ? "active" : ""
-            }
-            onClick={() => setActiveTab("harian")}
-          >
-            Harian
-          </button>
-
-          <button
-            className={
-              activeTab === "mingguan" ? "active" : ""
-            }
-            onClick={() => setActiveTab("mingguan")}
-          >
-            Mingguan
-          </button>
-
-          <button
-            className={
-              activeTab === "bulanan" ? "active" : ""
-            }
-            onClick={() => setActiveTab("bulanan")}
-          >
-            Bulanan
-          </button>
-        </div>
-
-        <div className="recap-grid">
-          <div>
-            <span>💰 Merchant</span>
-            <strong className="positive">
-              {formatRupiah(recapIncome)}
-            </strong>
-          </div>
-
-          <div>
-            <span>📦 Modal Merchant</span>
-            <strong>
-              {formatRupiah(recapModal)}
-            </strong>
-          </div>
-
-          <div>
-            <span>🔐 OTP</span>
-            <strong>
-              {formatRupiah(recapOtp)}
-            </strong>
-          </div>
-
-          <div>
-            <span>📱 VSPhone</span>
-            <strong>
-              {formatRupiah(recapVsphone)}
-            </strong>
-          </div>
-
-          <div>
-            <span>💸 Cash Out</span>
-            <strong>
-              {formatRupiah(recapCashOut)}
-            </strong>
-          </div>
-
-          <div className="net-box">
-            <span>🌿 Bersih</span>
-            <strong
-              className={
-                recapNet >= 0
-                  ? "positive"
-                  : "negative"
-              }
-            >
-              {recapNet >= 0 ? "+" : "-"}
-              {formatRupiah(recapNet)}
-            </strong>
-          </div>
-        </div>
-      </section>
-
-      <section className="all-history-card">
-        <div className="section-title">
-          <div>
-            <h2>Riwayat Semua Hari 🌷</h2>
-            <p>Transaksi sebelumnya tetap tersimpan</p>
-          </div>
-        </div>
-
-        {sortedTransactions.length === 0 ? (
-          <div className="empty-state">
-            <span>🪴</span>
-            <p>Belum ada riwayat.</p>
-          </div>
-        ) : (
-          <div className="date-history">
-            {Array.from(
-              new Set(
-                sortedTransactions.map(
-                  (item) => item.date,
-                ),
-              ),
-            ).map((date) => {
-              const dayTransactions =
-                sortedTransactions.filter(
-                  (item) => item.date === date,
-                );
-
-              const net = getNet(dayTransactions);
-
-              return (
-                <div
-                  className="date-history-group"
-                  key={date}
-                >
-                  <div className="date-history-heading">
-                    <div>
-                      <strong>{formatDate(date)}</strong>
-                      <small>{dayTransactions.length} transaksi</small>
-                    </div>
-
-                    <strong
-                      className={
-                        net >= 0
-                          ? "positive"
-                          : "negative"
-                      }
-                    >
-                      {net >= 0 ? "+" : "-"}
-                      {formatRupiah(net)}
-                    </strong>
-                  </div>
-
-                  <div className="date-history-transactions">
-                    {dayTransactions.map((item) => {
-                      const categoryInfo = categories.find(
-                        (category) => category.name === item.category,
-                      );
-                      const type = getCategoryType(item.category);
-
-                      return (
-                        <div className="date-history-transaction" key={item.id}>
-                          <span className="date-history-emoji">
-                            {categoryInfo?.emoji}
-                          </span>
-
-                          <div className="date-history-detail">
-                            <strong>{item.note || item.category}</strong>
-                            <small>{item.note ? item.category : "Transaksi"}</small>
-                          </div>
-
-                          <div className="date-history-transaction-right">
-                            <strong
-                              className={type === "income" ? "positive" : "negative"}
-                            >
-                              {type === "income" ? "+" : "-"}
-                              {formatRupiah(item.amount)}
-                            </strong>
-
-                            <div className="date-history-actions">
-                              <button
-                                type="button"
-                                aria-label="Edit transaksi"
-                                onClick={() => editTransaction(item)}
-                              >
-                                ✏️
-                              </button>
-                              <button
-                                type="button"
-                                aria-label="Hapus transaksi"
-                                onClick={() => deleteTransaction(item.id)}
-                              >
-                                🗑️
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
-      </section>
-    </main>
-  );
-                       }
