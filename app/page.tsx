@@ -477,7 +477,11 @@ export default function Home() {
     const x =
       chartDays.length === 1
         ? chartWidth / 2
-        : (index / (chartDays.length - 1)) * chartWidth;
+        : index === 0
+          ? 0
+          : index === chartDays.length - 1
+            ? chartWidth
+            : (index / (chartDays.length - 1)) * chartWidth;
 
     const y =
       chartHeight -
@@ -684,7 +688,7 @@ export default function Home() {
             placeholder={
               selectedCategory === "Cash Out"
                 ? "Contoh: beli brownies"
-                : "Contoh: keterangan transaksi"
+                : "Contoh: pemasukan order"
             }
             value={description}
             onChange={(event) => setDescription(event.target.value)}
