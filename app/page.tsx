@@ -470,11 +470,11 @@ export default function Home() {
     1,
   );
 
-  // Skala tetap terasa seperti dashboard pada referensi:
-  // 0, 60rb, 120rb, 180rb, 240rb, 300rb (naik otomatis bila diperlukan).
+  // Skala grafik mengikuti referensi: 0 sampai 3 jt, enam label di sisi kanan.
+  // Nilai yang lebih besar tetap terlihat dengan skala dinamis.
   const chartYAxisMax = Math.max(
-    300000,
-    Math.ceil(chartMax / 60000) * 60000,
+    3000000,
+    Math.ceil(chartMax / 600000) * 600000,
   );
   const chartTick = chartYAxisMax / 5;
 
@@ -843,10 +843,12 @@ export default function Home() {
         </div>
 
         <div className="chart-plot-area">
-          <div className="chart-y-axis" aria-hidden="true">
+          <div className="chart-y-axis chart-y-axis-right" aria-hidden="true">
             {[5, 4, 3, 2, 1, 0].map((step) => (
               <span key={step}>
-                {formatRupiah(chartTick * step).replace("Rp", "Rp")}
+                {step === 0
+                  ? "0"
+                  : `${((chartTick * step) / 1000000).toFixed(1).replace(".0", "")} jt`}
               </span>
             ))}
           </div>
