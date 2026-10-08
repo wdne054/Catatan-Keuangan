@@ -758,11 +758,11 @@ h1 {
 
 .chart-plot-area {
   display:grid;
-  grid-template-columns:minmax(0,1fr) 45px;
+  grid-template-columns:minmax(0,1fr) 42px;
   align-items:stretch;
-  gap:8px;
-  margin-top:10px;
-  padding:15px 10px 8px 10px;
+  gap:6px;
+  margin-top:12px;
+  padding:10px 5px 6px 5px;
   border:2px solid #eee2d8;
   border-radius:23px;
   background:#fff;
@@ -773,7 +773,7 @@ h1 {
 
 .chart-y-axis {
   display:flex;
-  height:190px;
+  height:184px;
   flex-direction:column;
   justify-content:space-between;
   align-items:flex-start;
@@ -794,7 +794,7 @@ h1 {
 
 .chart-wrapper {
   width:100%;
-  height:190px;
+  height:184px;
   margin:0;
   padding:0;
   border-radius:8px;
@@ -809,25 +809,25 @@ h1 {
 }
 
 .chart-grid line {
-  stroke:#d7d8d2;
+  stroke:#d9ddd5;
   stroke-width:1;
-  stroke-dasharray:5 5;
-  opacity:.92;
+  stroke-dasharray:4 5;
+  opacity:.9;
 }
 
 .chart-grid .chart-grid-vertical {
-  stroke:#e0dfda;
+  stroke:#e2e4de;
   stroke-width:1;
-  stroke-dasharray:5 5;
-  opacity:.72;
+  stroke-dasharray:4 5;
+  opacity:.6;
 }
 
 .chart-labels {
   position:relative !important;
   display:block !important;
-  width:calc(100% - 58px) !important;
+  width:calc(100% - 48px) !important;
   height:22px;
-  margin:8px 48px 0 4px !important;
+  margin:8px 42px 0 0 !important;
   overflow:visible !important;
 }
 
