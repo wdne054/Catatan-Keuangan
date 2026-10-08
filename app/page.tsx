@@ -481,21 +481,52 @@ export default function Home() {
   const chartWidth = 320;
   const chartHeight = 170;
 
-  const chartPoints = chartDays.map((item, index) => {
-    const x =
-      chartDays.length === 1
-        ? chartWidth / 2
-        : index === 0
-          ? 0
-          : index === chartDays.length - 1
-            ? chartWidth
-            : (index / (chartDays.length - 1)) * chartWidth;
+  // Setiap tanggal punya 3 titik agar bentuk grafik mengikuti referensi:
+  // 1) titik awal hari, 2) titik nominal Merchant, 3) titik transisi menuju tanggal berikutnya.
+  // Jadi 4 hari = 12 titik, sehingga kenaikan/penurunan antar-hari terlihat jelas.
+  const chartPoints: string[] = [];
+  const chartPointMeta: { date: string; kind: "start" | "merchant" | "end"; value: number }[] = [];
 
-    const y =
+  chartDays.forEach((item, index) => {
+    const dayStartX =
+      chartDays.length === 1
+        ? chartWidth * 0.28
+        : (index / chartDays.length) * chartWidth;
+
+    const dayEndX =
+      chartDays.length === 1
+        ? chartWidth * 0.72
+        : ((index + 1) / chartDays.length) * chartWidth;
+
+    const startValue = index === 0
+      ? 0
+      : chartDays[index - 1].value;
+
+    const startY =
+      chartHeight -
+      (startValue / chartYAxisMax) * (chartHeight - 18);
+
+    const merchantX = dayStartX + (dayEndX - dayStartX) * 0.5;
+    const merchantY =
       chartHeight -
       (item.value / chartYAxisMax) * (chartHeight - 18);
 
-    return `${x},${y}`;
+    const endValue = item.value;
+    const endY =
+      chartHeight -
+      (endValue / chartYAxisMax) * (chartHeight - 18);
+
+    chartPoints.push(
+      `${dayStartX},${startY}`,
+      `${merchantX},${merchantY}`,
+      `${dayEndX},${endY}`,
+    );
+
+    chartPointMeta.push(
+      { date: item.date, kind: "start", value: startValue },
+      { date: item.date, kind: "merchant", value: item.value },
+      { date: item.date, kind: "end", value: endValue },
+    );
   });
 
   return (
@@ -917,18 +948,19 @@ export default function Home() {
                 vectorEffect="non-scaling-stroke"
               />
 
-              {chartDays.map((item, index) => {
-                const point = chartPoints[index].split(",").map(Number);
+              {chartPoints.map((point, index) => {
+                const [cx, cy] = point.split(",").map(Number);
+                const meta = chartPointMeta[index];
 
                 return (
                   <circle
-                    key={item.date}
-                    cx={point[0]}
-                    cy={point[1]}
-                    r="4"
+                    key={`${meta.date}-${meta.kind}-${index}`}
+                    cx={cx}
+                    cy={cy}
+                    r={meta.kind === "merchant" ? "4.5" : "3"}
                     fill="#fffdf8"
                     stroke="#4e9b63"
-                    strokeWidth="2.5"
+                    strokeWidth={meta.kind === "merchant" ? "2.5" : "2"}
                     vectorEffect="non-scaling-stroke"
                   />
                 );
