@@ -470,8 +470,9 @@ export default function Home() {
     1,
   );
 
-  // Skala grafik mengikuti referensi: 0 sampai 3 jt, enam label di sisi kanan.
-  // Nilai yang lebih besar tetap terlihat dengan skala dinamis.
+  // Grafik dibuat 1 titik = 1 tanggal, seperti referensi Yegamestore.
+  // Tidak ada titik/garis tambahan di antara tanggal dan tidak ada garis
+  // sebelum tanggal pertama. Fungsi periode 7/14/30 hari tetap sama.
   const chartYAxisMax = Math.max(
     3000000,
     Math.ceil(chartMax / 600000) * 600000,
@@ -481,53 +482,26 @@ export default function Home() {
   const chartWidth = 320;
   const chartHeight = 170;
 
-  // Setiap tanggal punya 3 titik agar bentuk grafik mengikuti referensi:
-  // 1) titik awal hari, 2) titik nominal Merchant, 3) titik transisi menuju tanggal berikutnya.
-  // Jadi 4 hari = 12 titik, sehingga kenaikan/penurunan antar-hari terlihat jelas.
-  const chartPoints: string[] = [];
-  const chartPointMeta: { date: string; kind: "start" | "merchant" | "end"; value: number }[] = [];
-
-  chartDays.forEach((item, index) => {
-    const dayStartX =
+  const chartCoordinates = chartDays.map((item, index) => {
+    const x =
       chartDays.length === 1
-        ? chartWidth * 0.28
-        : (index / chartDays.length) * chartWidth;
+        ? chartWidth / 2
+        : (index / (chartDays.length - 1)) * chartWidth;
 
-    const dayEndX =
-      chartDays.length === 1
-        ? chartWidth * 0.72
-        : ((index + 1) / chartDays.length) * chartWidth;
-
-    const startValue = index === 0
-      ? 0
-      : chartDays[index - 1].value;
-
-    const startY =
+    const y =
       chartHeight -
-      (startValue / chartYAxisMax) * (chartHeight - 18);
+      (item.value / chartYAxisMax) * (chartHeight - 10);
 
-    const merchantX = dayStartX + (dayEndX - dayStartX) * 0.5;
-    const merchantY =
-      chartHeight -
-      (item.value / chartYAxisMax) * (chartHeight - 18);
-
-    const endValue = item.value;
-    const endY =
-      chartHeight -
-      (endValue / chartYAxisMax) * (chartHeight - 18);
-
-    chartPoints.push(
-      `${dayStartX},${startY}`,
-      `${merchantX},${merchantY}`,
-      `${dayEndX},${endY}`,
-    );
-
-    chartPointMeta.push(
-      { date: item.date, kind: "start", value: startValue },
-      { date: item.date, kind: "merchant", value: item.value },
-      { date: item.date, kind: "end", value: endValue },
-    );
+    return { ...item, x, y };
   });
+
+  const chartLinePoints = chartCoordinates
+    .map((item) => `${item.x},${item.y}`)
+    .join(" ");
+
+  const chartAreaPoints = chartLinePoints
+    ? `0,${chartHeight} ${chartLinePoints} ${chartWidth},${chartHeight}`
+    : `0,${chartHeight} ${chartWidth},${chartHeight}`;
 
   return (
     <main>
@@ -914,33 +888,27 @@ export default function Home() {
                   );
                 })}
 
-                {chartPoints.map((point, index) => {
-                  const [x] = point.split(",").map(Number);
-
-                  return (
-                    <line
-                      key={`vertical-${index}`}
-                      x1={x}
-                      x2={x}
-                      y1="0"
-                      y2={chartHeight}
-                      className={chartPointMeta[index].kind === "merchant"
-                        ? "chart-grid-vertical chart-grid-merchant"
-                        : "chart-grid-vertical"}
-                      vectorEffect="non-scaling-stroke"
-                    />
-                  );
-                })}
+                {chartCoordinates.map((item) => (
+                  <line
+                    key={`vertical-${item.date}`}
+                    x1={item.x}
+                    x2={item.x}
+                    y1="0"
+                    y2={chartHeight}
+                    className="chart-grid-vertical"
+                    vectorEffect="non-scaling-stroke"
+                  />
+                ))}
               </g>
 
               <polyline
-                points={`0,${chartHeight} ${chartPoints.join(" ")} ${chartWidth},${chartHeight}`}
+                points={chartAreaPoints}
                 fill="url(#merchantFill)"
                 stroke="none"
               />
 
               <polyline
-                points={chartPoints.join(" ")}
+                points={chartLinePoints}
                 fill="none"
                 stroke="#4e9b63"
                 strokeWidth="3"
@@ -949,23 +917,18 @@ export default function Home() {
                 vectorEffect="non-scaling-stroke"
               />
 
-              {chartPoints.map((point, index) => {
-                const [cx, cy] = point.split(",").map(Number);
-                const meta = chartPointMeta[index];
-
-                return (
-                  <circle
-                    key={`${meta.date}-${meta.kind}-${index}`}
-                    cx={cx}
-                    cy={cy}
-                    r={meta.kind === "merchant" ? "4.5" : "3"}
-                    fill="#fffdf8"
-                    stroke="#4e9b63"
-                    strokeWidth={meta.kind === "merchant" ? "2.5" : "2"}
-                    vectorEffect="non-scaling-stroke"
-                  />
-                );
-              })}
+              {chartCoordinates.map((item) => (
+                <circle
+                  key={item.date}
+                  cx={item.x}
+                  cy={item.y}
+                  r="4.5"
+                  fill="#fffdf8"
+                  stroke="#4e9b63"
+                  strokeWidth="2.5"
+                  vectorEffect="non-scaling-stroke"
+                />
+              ))}
             </svg>
           </div>
         </div>
@@ -975,7 +938,7 @@ export default function Home() {
             const left =
               chartDays.length === 1
                 ? "50%"
-                : `${((index + 0.5) / chartDays.length) * 100}%`;
+                : `${(index / (chartDays.length - 1)) * 100}%`;
 
             return (
               <span
