@@ -912,20 +912,19 @@ export default function Home() {
                   );
                 })}
 
-                {chartDays.map((item, index) => {
-                  const x =
-                    chartDays.length === 1
-                      ? chartWidth / 2
-                      : (index / (chartDays.length - 1)) * chartWidth;
+                {chartPoints.map((point, index) => {
+                  const [x] = point.split(",").map(Number);
 
                   return (
                     <line
-                      key={item.date}
+                      key={`vertical-${index}`}
                       x1={x}
                       x2={x}
                       y1="0"
                       y2={chartHeight}
-                      className="chart-grid-vertical"
+                      className={chartPointMeta[index].kind === "merchant"
+                        ? "chart-grid-vertical chart-grid-merchant"
+                        : "chart-grid-vertical"}
                       vectorEffect="non-scaling-stroke"
                     />
                   );
