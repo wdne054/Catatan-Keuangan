@@ -465,43 +465,24 @@ export default function Home() {
     return days;
   }, [transactions, chartPeriod, currentDate]);
 
-  const chartMax = Math.max(
-    ...chartDays.map((item) => item.value),
-    1,
-  );
+  const chartMax = Math.max(...chartDays.map((item) => item.value), 1);
 
-  // Grafik dibuat 1 titik = 1 tanggal, seperti referensi Yegamestore.
-  // Tidak ada titik/garis tambahan di antara tanggal dan tidak ada garis
-  // sebelum tanggal pertama. Fungsi periode 7/14/30 hari tetap sama.
+  // Bar chart: tinggi setiap batang dihitung langsung dari pemasukan Merchant
+  // pada tanggal tersebut. Data transaksi dan penyimpanannya tidak diubah.
   const chartYAxisMax = Math.max(
     3000000,
     Math.ceil(chartMax / 600000) * 600000,
   );
   const chartTick = chartYAxisMax / 5;
-
-  const chartWidth = 320;
   const chartHeight = 170;
 
-  const chartCoordinates = chartDays.map((item, index) => {
-    const x =
-      chartDays.length === 1
-        ? chartWidth / 2
-        : (index / (chartDays.length - 1)) * chartWidth;
-
-    const y =
-      chartHeight -
-      (item.value / chartYAxisMax) * (chartHeight - 10);
-
-    return { ...item, x, y };
-  });
-
-  const chartLinePoints = chartCoordinates
-    .map((item) => `${item.x},${item.y}`)
-    .join(" ");
-
-  const chartAreaPoints = chartLinePoints
-    ? `0,${chartHeight} ${chartLinePoints} ${chartWidth},${chartHeight}`
-    : `0,${chartHeight} ${chartWidth},${chartHeight}`;
+  const chartBars = chartDays.map((item) => ({
+    ...item,
+    height:
+      item.value > 0
+        ? Math.max(4, (item.value / chartYAxisMax) * (chartHeight - 8))
+        : 0,
+  }));
 
   return (
     <main>
@@ -847,7 +828,7 @@ export default function Home() {
           </span>
         </div>
 
-        <div className="chart-plot-area">
+        <div className="chart-plot-area chart-bar-plot">
           <div className="chart-y-axis chart-y-axis-right" aria-hidden="true">
             {[5, 4, 3, 2, 1, 0].map((step) => (
               <span key={step}>
@@ -855,106 +836,55 @@ export default function Home() {
                   ? "0"
                   : chartTick * step === 600000
                     ? "600 rb"
-                    : `${((chartTick * step) / 1000000).toFixed(1).replace(".0", "").replace(".", ",")} jt`}
+                    : `${((chartTick * step) / 1000000)
+                        .toFixed(1)
+                        .replace(".0", "")
+                        .replace(".", ",")} jt`}
               </span>
             ))}
           </div>
 
-          <div className="chart-wrapper">
-            <svg
-              viewBox={`0 0 ${chartWidth} ${chartHeight}`}
-              preserveAspectRatio="none"
-              aria-label="Grafik pemasukan Merchant"
-            >
-              <defs>
-                <linearGradient id="merchantFill" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#b7caae" stopOpacity="0.42" />
-                  <stop offset="100%" stopColor="#b7caae" stopOpacity="0.04" />
-                </linearGradient>
-              </defs>
-
-              <g className="chart-grid">
-                {[0, 1, 2, 3, 4, 5].map((step) => {
-                  const y = (step / 5) * chartHeight;
-                  return (
-                    <line
-                      key={step}
-                      x1="0"
-                      x2={chartWidth}
-                      y1={y}
-                      y2={y}
-                      vectorEffect="non-scaling-stroke"
-                    />
-                  );
-                })}
-
-                {chartCoordinates.map((item) => (
-                  <line
-                    key={`vertical-${item.date}`}
-                    x1={item.x}
-                    x2={item.x}
-                    y1="0"
-                    y2={chartHeight}
-                    className="chart-grid-vertical"
-                    vectorEffect="non-scaling-stroke"
-                  />
-                ))}
-              </g>
-
-              <polyline
-                points={chartAreaPoints}
-                fill="url(#merchantFill)"
-                stroke="none"
-              />
-
-              <polyline
-                points={chartLinePoints}
-                fill="none"
-                stroke="#4e9b63"
-                strokeWidth="3"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                vectorEffect="non-scaling-stroke"
-              />
-
-              {chartCoordinates.map((item) => (
-                <circle
-                  key={item.date}
-                  cx={item.x}
-                  cy={item.y}
-                  r="4.5"
-                  fill="#fffdf8"
-                  stroke="#4e9b63"
-                  strokeWidth="2.5"
-                  vectorEffect="non-scaling-stroke"
-                />
+          <div className="chart-bar-area">
+            <div className="chart-bar-grid" aria-hidden="true">
+              {[0, 1, 2, 3, 4, 5].map((step) => (
+                <span key={step} style={{ bottom: `${(step / 5) * 100}%` }} />
               ))}
-            </svg>
+            </div>
+
+            <div
+              className="chart-bars"
+              style={{ gridTemplateColumns: `repeat(${Math.max(chartBars.length, 1)}, minmax(0, 1fr))` }}
+            >
+              {chartBars.map((item) => (
+                <div className="chart-bar-column" key={item.date}>
+                  <div className="chart-bar-value">
+                    {item.value > 0 ? formatRupiah(item.value) : ""}
+                  </div>
+                  <div className="chart-bar-track">
+                    {item.value > 0 && (
+                      <div
+                        className="chart-bar"
+                        style={{ height: `${item.height}px` }}
+                        title={`${item.label}: ${formatRupiah(item.value)}`}
+                      >
+                        <span className="chart-bar-shine" />
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
 
-        <div className="chart-labels">
-          {chartDays.map((item, index) => {
-            const left =
-              chartDays.length === 1
-                ? "50%"
-                : `${(index / (chartDays.length - 1)) * 100}%`;
-
-            return (
-              <span
-                key={item.date}
-                style={{
-                  position: "absolute",
-                  left,
-                  transform: "translateX(-50%)",
-                }}
-              >
-                {item.label}
-              </span>
-            );
-          })}
+        <div
+          className="chart-labels chart-bar-labels"
+          style={{ gridTemplateColumns: `repeat(${Math.max(chartDays.length, 1)}, minmax(0, 1fr))` }}
+        >
+          {chartDays.map((item) => (
+            <span key={item.date}>{item.label}</span>
+          ))}
         </div>
-
 
       </section>
 
