@@ -879,7 +879,9 @@ export default function Home() {
               <span key={step}>
                 {step === 0
                   ? "0"
-                  : `${((chartTick * step) / 1000000).toFixed(1).replace(".0", "")} jt`}
+                  : chartTick * step === 600000
+                    ? "600 rb"
+                    : `${((chartTick * step) / 1000000).toFixed(1).replace(".0", "").replace(".", ",")} jt`}
               </span>
             ))}
           </div>
@@ -973,7 +975,7 @@ export default function Home() {
             const left =
               chartDays.length === 1
                 ? "50%"
-                : `${(index / (chartDays.length - 1)) * 100}%`;
+                : `${((index + 0.5) / chartDays.length) * 100}%`;
 
             return (
               <span
