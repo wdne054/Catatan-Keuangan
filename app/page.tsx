@@ -885,12 +885,41 @@ export default function Home() {
                   "repeating-linear-gradient(to bottom, transparent 0, transparent calc(20% - 1px), #e8e2dc calc(20% - 1px), #e8e2dc 20%)",
               }}
             >
-              {chartDays.map((item) => {
+              {chartDays.map((item, index) => {
                 const barPercent =
                   item.value > 0
                     ? Math.max(2, (item.value / chartYAxisMax) * 100)
                     : 0;
                 const isToday = item.date === today;
+                const barStyles = [
+                  {
+                    background: "linear-gradient(180deg, #f7b6c7 0%, #df7b98 100%)",
+                    shadow: "0 5px 12px rgba(223,123,152,.20)",
+                    sparkle: "✦",
+                  },
+                  {
+                    background: "linear-gradient(180deg, #b9dfbd 0%, #6aa878 100%)",
+                    shadow: "0 5px 12px rgba(106,168,120,.18)",
+                    sparkle: "✧",
+                  },
+                  {
+                    background: "linear-gradient(180deg, #f4d49a 0%, #dca85a 100%)",
+                    shadow: "0 5px 12px rgba(220,168,90,.18)",
+                    sparkle: "✦",
+                  },
+                  {
+                    background: "linear-gradient(180deg, #c9b8df 0%, #9b7bc4 100%)",
+                    shadow: "0 5px 12px rgba(155,123,196,.18)",
+                    sparkle: "✧",
+                  },
+                ][index % 4];
+                const activeBar = isToday
+                  ? {
+                      background: "linear-gradient(180deg, #ffb4c8 0%, #e66f91 100%)",
+                      shadow: "0 6px 14px rgba(230,111,145,.28)",
+                      sparkle: "✦",
+                    }
+                  : barStyles;
 
                 return (
                   <div
@@ -907,6 +936,67 @@ export default function Home() {
                     }}
                     title={`${item.label}: ${formatRupiah(item.value)}`}
                   >
+                    <div
+                      style={{
+                        width: chartDays.length > 14 ? "76%" : "min(30px, 74%)",
+                        height: item.value > 0 ? `${barPercent}%` : "0",
+                        minHeight: item.value > 0 ? "7px" : "0",
+                        borderRadius: "14px 14px 7px 7px",
+                        background: item.value > 0 ? activeBar.background : "transparent",
+                        boxShadow: item.value > 0 ? activeBar.shadow : "none",
+                        border: item.value > 0 ? "1px solid rgba(255,255,255,.55)" : "none",
+                        position: "relative",
+                        transition: "height .3s ease, transform .2s ease",
+                        transformOrigin: "bottom center",
+                      }}
+                    >
+                      {item.value > 0 && (
+                        <>
+                          <span
+                            aria-hidden="true"
+                            style={{
+                              position: "absolute",
+                              top: "5px",
+                              left: "5px",
+                              width: "4px",
+                              height: "32%",
+                              minHeight: "6px",
+                              borderRadius: "99px",
+                              background: "rgba(255,255,255,.50)",
+                            }}
+                          />
+                          <span
+                            aria-hidden="true"
+                            style={{
+                              position: "absolute",
+                              top: "10%",
+                              right: "10%",
+                              color: "rgba(255,255,255,.95)",
+                              fontSize: chartDays.length > 14 ? "7px" : "10px",
+                              lineHeight: 1,
+                              textShadow: "0 1px 5px rgba(255,255,255,.55)",
+                            }}
+                          >
+                            {activeBar.sparkle}
+                          </span>
+                          {chartDays.length <= 14 && (
+                            <span
+                              aria-hidden="true"
+                              style={{
+                                position: "absolute",
+                                top: "32%",
+                                left: "17%",
+                                color: "rgba(255,255,255,.75)",
+                                fontSize: "7px",
+                                lineHeight: 1,
+                              }}
+                            >
+                              {index % 2 === 0 ? "•" : "✧"}
+                            </span>
+                          )}
+                        </>
+                      )}
+                    </div>
                     {item.value > 0 && (
                       <span
                         style={{
@@ -916,79 +1006,19 @@ export default function Home() {
                           overflow: "hidden",
                           textOverflow: "ellipsis",
                           whiteSpace: "nowrap",
-                          color: isToday ? "#a84d67" : "#5d8062",
+                          color: isToday ? "#b65372" : "#806f66",
                           fontSize: chartDays.length > 14 ? "6px" : "8px",
                           lineHeight: 1,
                           fontWeight: 800,
+                          background: "#fffaf5",
+                          padding: "2px 4px",
+                          borderRadius: "999px",
+                          border: "1px solid #eadfd6",
                         }}
                       >
                         {formatRupiah(item.value)}
                       </span>
                     )}
-
-                    <div
-                      style={{
-                        width: chartDays.length > 14 ? "70%" : "min(30px, 72%)",
-                        height: item.value > 0 ? `${barPercent}%` : "0",
-                        minHeight: item.value > 0 ? "5px" : "0",
-                        borderRadius: "12px 12px 4px 4px",
-                        background: isToday
-                          ? "linear-gradient(180deg, #f39ab0 0%, #df6f8d 100%)"
-                          : "linear-gradient(180deg, #91c99a 0%, #4e9b63 100%)",
-                        boxShadow: isToday
-                          ? "0 4px 10px rgba(223,111,141,.25)"
-                          : "0 4px 10px rgba(78,155,99,.18)",
-                        position: "relative",
-                        transition: "height .25s ease",
-                      }}
-                    >
-                      {item.value > 0 && (
-                        <>
-                          <span
-                            aria-hidden="true"
-                            style={{
-                              position: "absolute",
-                              top: "4px",
-                              left: "4px",
-                              width: "4px",
-                              height: "30%",
-                              minHeight: "5px",
-                              borderRadius: "99px",
-                              background: "rgba(255,255,255,.45)",
-                            }}
-                          />
-                          <span
-                            aria-hidden="true"
-                            style={{
-                              position: "absolute",
-                              top: "12%",
-                              right: "12%",
-                              color: "rgba(255,255,255,.92)",
-                              fontSize: chartDays.length > 14 ? "7px" : "10px",
-                              lineHeight: 1,
-                              textShadow: "0 1px 4px rgba(255,255,255,.45)",
-                            }}
-                          >
-                            ✦
-                          </span>
-                          {chartDays.length <= 14 && (
-                            <span
-                              aria-hidden="true"
-                              style={{
-                                position: "absolute",
-                                top: "34%",
-                                left: "18%",
-                                color: "rgba(255,255,255,.72)",
-                                fontSize: "7px",
-                                lineHeight: 1,
-                              }}
-                            >
-                              ✧
-                            </span>
-                          )}
-                        </>
-                      )}
-                    </div>
                   </div>
                 );
               })}
@@ -1024,17 +1054,6 @@ export default function Home() {
           </div>
         </div>
 
-        <p
-          style={{
-            margin: "10px 4px 0",
-            color: "#8e7b70",
-            fontSize: "9px",
-            lineHeight: 1.4,
-            textAlign: "center",
-          }}
-        >
-          🌷 Tinggi batang mengikuti nominal asli pemasukan Merchant — tidak ada data yang diubah.
-        </p>
       </section>
       <section className="recap-card">
         <div className="section-title">
