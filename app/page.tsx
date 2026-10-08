@@ -808,17 +808,27 @@ export default function Home() {
           </button>
         </div>
 
-        <div className="chart-summary">
+        <div
+          className="chart-summary"
+          style={{
+            justifyContent: "center",
+            alignItems: "center",
+            textAlign: "center",
+            flexDirection: "column",
+            gap: "2px",
+            marginTop: "12px",
+          }}
+        >
+          <span>
+            {chartPeriod === "7hari"
+              ? "Total Pemasukan • 7 Hari"
+              : chartPeriod === "14hari"
+                ? "Total Pemasukan • 14 Hari"
+                : "Total Pemasukan • 30 Hari"}
+          </span>
           <strong>
             {formatRupiah(chartDays.reduce((total, item) => total + item.value, 0))}
           </strong>
-          <span>
-            {chartPeriod === "7hari"
-              ? "Total Merchant 7 hari"
-              : chartPeriod === "14hari"
-                ? "Total Merchant 14 hari"
-                : "Total Merchant 30 hari"}
-          </span>
         </div>
 
         <div
@@ -933,19 +943,50 @@ export default function Home() {
                       }}
                     >
                       {item.value > 0 && (
-                        <span
-                          aria-hidden="true"
-                          style={{
-                            position: "absolute",
-                            top: "4px",
-                            left: "4px",
-                            width: "4px",
-                            height: "30%",
-                            minHeight: "5px",
-                            borderRadius: "99px",
-                            background: "rgba(255,255,255,.45)",
-                          }}
-                        />
+                        <>
+                          <span
+                            aria-hidden="true"
+                            style={{
+                              position: "absolute",
+                              top: "4px",
+                              left: "4px",
+                              width: "4px",
+                              height: "30%",
+                              minHeight: "5px",
+                              borderRadius: "99px",
+                              background: "rgba(255,255,255,.45)",
+                            }}
+                          />
+                          <span
+                            aria-hidden="true"
+                            style={{
+                              position: "absolute",
+                              top: "12%",
+                              right: "12%",
+                              color: "rgba(255,255,255,.92)",
+                              fontSize: chartDays.length > 14 ? "7px" : "10px",
+                              lineHeight: 1,
+                              textShadow: "0 1px 4px rgba(255,255,255,.45)",
+                            }}
+                          >
+                            ✦
+                          </span>
+                          {chartDays.length <= 14 && (
+                            <span
+                              aria-hidden="true"
+                              style={{
+                                position: "absolute",
+                                top: "34%",
+                                left: "18%",
+                                color: "rgba(255,255,255,.72)",
+                                fontSize: "7px",
+                                lineHeight: 1,
+                              }}
+                            >
+                              ✧
+                            </span>
+                          )}
+                        </>
                       )}
                     </div>
                   </div>
@@ -955,7 +996,8 @@ export default function Home() {
 
             <div
               style={{
-                display: "flex",
+                display: "grid",
+                gridTemplateColumns: `repeat(${Math.max(chartDays.length, 1)}, minmax(0, 1fr))`,
                 gap: chartDays.length > 14 ? "2px" : "5px",
                 padding: "7px 2px 0",
               }}
@@ -964,7 +1006,6 @@ export default function Home() {
                 <span
                   key={item.date}
                   style={{
-                    flex: "1 1 0",
                     minWidth: 0,
                     overflow: "hidden",
                     textOverflow: "ellipsis",
