@@ -834,7 +834,7 @@ export default function Home() {
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "38px minmax(0, 1fr)",
+            gridTemplateColumns: "minmax(0, 1fr) 42px",
             gap: "8px",
             marginTop: "14px",
             padding: "12px 8px 8px",
@@ -843,34 +843,6 @@ export default function Home() {
             background: "#fff",
           }}
         >
-          <div
-            aria-hidden="true"
-            style={{
-              height: "210px",
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "space-between",
-              alignItems: "flex-end",
-              paddingBottom: "1px",
-              color: "#8e7b70",
-              fontSize: "9px",
-              fontWeight: 700,
-            }}
-          >
-            {[5, 4, 3, 2, 1, 0].map((step) => (
-              <span key={step}>
-                {step === 0
-                  ? "0"
-                  : chartTick * step === 600000
-                    ? "600 rb"
-                    : `${((chartTick * step) / 1000000)
-                        .toFixed(1)
-                        .replace(".0", "")
-                        .replace(".", ",")} jt`}
-              </span>
-            ))}
-          </div>
-
           <div style={{ minWidth: 0 }}>
             <div
               style={{
@@ -941,7 +913,7 @@ export default function Home() {
                         width: chartDays.length > 14 ? "76%" : "min(30px, 74%)",
                         height: item.value > 0 ? `${barPercent}%` : "0",
                         minHeight: item.value > 0 ? "7px" : "0",
-                        borderRadius: "14px 14px 7px 7px",
+                        borderRadius: "4px 4px 1px 1px",
                         background: item.value > 0 ? activeBar.background : "transparent",
                         boxShadow: item.value > 0 ? activeBar.shadow : "none",
                         border: item.value > 0 ? "1px solid rgba(255,255,255,.55)" : "none",
@@ -1006,14 +978,14 @@ export default function Home() {
                           overflow: "hidden",
                           textOverflow: "ellipsis",
                           whiteSpace: "nowrap",
-                          color: isToday ? "#b65372" : "#806f66",
+                          color: "#4e9b63",
                           fontSize: chartDays.length > 14 ? "6px" : "8px",
                           lineHeight: 1,
                           fontWeight: 800,
                           background: "#fffaf5",
                           padding: "2px 4px",
-                          borderRadius: "999px",
-                          border: "1px solid #eadfd6",
+                          borderRadius: "4px",
+                          border: "1px solid #d8eadb",
                         }}
                       >
                         {formatRupiah(item.value)}
@@ -1051,6 +1023,34 @@ export default function Home() {
                 </span>
               ))}
             </div>
+          </div>
+
+          <div
+            aria-hidden="true"
+            style={{
+              height: "210px",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "space-between",
+              alignItems: "flex-start",
+              paddingBottom: "1px",
+              color: "#8e7b70",
+              fontSize: "9px",
+              fontWeight: 700,
+            }}
+          >
+            {[5, 4, 3, 2, 1, 0].map((step) => (
+              <span key={step}>
+                {step === 0
+                  ? "0"
+                  : chartTick * step === 600000
+                    ? "600 rb"
+                    : `${((chartTick * step) / 1000000)
+                        .toFixed(1)
+                        .replace(".0", "")
+                        .replace(".", ",")} jt`}
+              </span>
+            ))}
           </div>
         </div>
 
