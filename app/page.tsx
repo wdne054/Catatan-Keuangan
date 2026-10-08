@@ -470,8 +470,16 @@ export default function Home() {
     1,
   );
 
+  // Skala tetap terasa seperti dashboard pada referensi:
+  // 0, 60rb, 120rb, 180rb, 240rb, 300rb (naik otomatis bila diperlukan).
+  const chartYAxisMax = Math.max(
+    300000,
+    Math.ceil(chartMax / 60000) * 60000,
+  );
+  const chartTick = chartYAxisMax / 5;
+
   const chartWidth = 320;
-  const chartHeight = 150;
+  const chartHeight = 170;
 
   const chartPoints = chartDays.map((item, index) => {
     const x =
@@ -485,7 +493,7 @@ export default function Home() {
 
     const y =
       chartHeight -
-      (item.value / chartMax) * (chartHeight - 20);
+      (item.value / chartYAxisMax) * (chartHeight - 18);
 
     return `${x},${y}`;
   });
@@ -834,50 +842,97 @@ export default function Home() {
           </span>
         </div>
 
-        <div className="chart-wrapper">
-          <svg
-            viewBox={`0 0 ${chartWidth} ${chartHeight}`}
-            preserveAspectRatio="none"
-            aria-label="Grafik pemasukan Merchant"
-          >
-            <defs>
-              <linearGradient id="merchantFill" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#b7caae" stopOpacity="0.45" />
-                <stop offset="100%" stopColor="#b7caae" stopOpacity="0" />
-              </linearGradient>
-            </defs>
+        <div className="chart-plot-area">
+          <div className="chart-y-axis" aria-hidden="true">
+            {[5, 4, 3, 2, 1, 0].map((step) => (
+              <span key={step}>
+                {formatRupiah(chartTick * step).replace("Rp", "Rp")}
+              </span>
+            ))}
+          </div>
 
-            <polyline
-              points={`0,${chartHeight} ${chartPoints.join(" ")} ${chartWidth},${chartHeight}`}
-              fill="url(#merchantFill)"
-              stroke="none"
-            />
+          <div className="chart-wrapper">
+            <svg
+              viewBox={`0 0 ${chartWidth} ${chartHeight}`}
+              preserveAspectRatio="none"
+              aria-label="Grafik pemasukan Merchant"
+            >
+              <defs>
+                <linearGradient id="merchantFill" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#b7caae" stopOpacity="0.42" />
+                  <stop offset="100%" stopColor="#b7caae" stopOpacity="0.04" />
+                </linearGradient>
+              </defs>
 
-            <polyline
-              points={chartPoints.join(" ")}
-              fill="none"
-              stroke="#6f8b67"
-              strokeWidth="4"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
+              <g className="chart-grid">
+                {[0, 1, 2, 3, 4, 5].map((step) => {
+                  const y = (step / 5) * chartHeight;
+                  return (
+                    <line
+                      key={step}
+                      x1="0"
+                      x2={chartWidth}
+                      y1={y}
+                      y2={y}
+                      vectorEffect="non-scaling-stroke"
+                    />
+                  );
+                })}
 
-            {chartDays.map((item, index) => {
-              const point = chartPoints[index].split(",").map(Number);
+                {chartDays.map((item, index) => {
+                  const x =
+                    chartDays.length === 1
+                      ? chartWidth / 2
+                      : (index / (chartDays.length - 1)) * chartWidth;
 
-              return (
-                <circle
-                  key={item.date}
-                  cx={point[0]}
-                  cy={point[1]}
-                  r="4"
-                  fill="#fffdf8"
-                  stroke="#6f8b67"
-                  strokeWidth="2.5"
-                />
-              );
-            })}
-          </svg>
+                  return (
+                    <line
+                      key={item.date}
+                      x1={x}
+                      x2={x}
+                      y1="0"
+                      y2={chartHeight}
+                      className="chart-grid-vertical"
+                      vectorEffect="non-scaling-stroke"
+                    />
+                  );
+                })}
+              </g>
+
+              <polyline
+                points={`0,${chartHeight} ${chartPoints.join(" ")} ${chartWidth},${chartHeight}`}
+                fill="url(#merchantFill)"
+                stroke="none"
+              />
+
+              <polyline
+                points={chartPoints.join(" ")}
+                fill="none"
+                stroke="#4e9b63"
+                strokeWidth="3"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                vectorEffect="non-scaling-stroke"
+              />
+
+              {chartDays.map((item, index) => {
+                const point = chartPoints[index].split(",").map(Number);
+
+                return (
+                  <circle
+                    key={item.date}
+                    cx={point[0]}
+                    cy={point[1]}
+                    r="4"
+                    fill="#fffdf8"
+                    stroke="#4e9b63"
+                    strokeWidth="2.5"
+                    vectorEffect="non-scaling-stroke"
+                  />
+                );
+              })}
+            </svg>
+          </div>
         </div>
 
         <div className="chart-labels">
