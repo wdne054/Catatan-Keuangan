@@ -782,8 +782,8 @@ export default function Home() {
       <section className="chart-card">
         <div className="section-title">
           <div>
-            <h2>Naik-Naik Ke Puncak Gunung</h2>
-            <p>Pemasukan Merchant • mulai 5 Oktober 2026</p>
+            <h2>📊 Pemasukan Harian</h2>
+            <p>Setiap batang = total Merchant pada tanggal tersebut</p>
           </div>
         </div>
 
@@ -810,26 +810,43 @@ export default function Home() {
 
         <div className="chart-summary">
           <strong>
-            {formatRupiah(
-              chartDays.reduce(
-                (total, item) =>
-                  total + item.value,
-                0,
-              ),
-            )}
+            {formatRupiah(chartDays.reduce((total, item) => total + item.value, 0))}
           </strong>
-
           <span>
             {chartPeriod === "7hari"
-              ? "Merchant 7 hari • dari terlama → hari ini"
+              ? "Total Merchant 7 hari"
               : chartPeriod === "14hari"
-                ? "Merchant 14 hari • dari terlama → hari ini"
-                : "Merchant 30 hari • dari terlama → hari ini"}
+                ? "Total Merchant 14 hari"
+                : "Total Merchant 30 hari"}
           </span>
         </div>
 
-        <div className="chart-plot-area chart-bar-plot">
-          <div className="chart-y-axis chart-y-axis-right" aria-hidden="true">
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "38px minmax(0, 1fr)",
+            gap: "8px",
+            marginTop: "14px",
+            padding: "12px 8px 8px",
+            border: "2px solid #eee2d8",
+            borderRadius: "22px",
+            background: "#fff",
+          }}
+        >
+          <div
+            aria-hidden="true"
+            style={{
+              height: "210px",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "space-between",
+              alignItems: "flex-end",
+              paddingBottom: "1px",
+              color: "#8e7b70",
+              fontSize: "9px",
+              fontWeight: 700,
+            }}
+          >
             {[5, 4, 3, 2, 1, 0].map((step) => (
               <span key={step}>
                 {step === 0
@@ -844,50 +861,140 @@ export default function Home() {
             ))}
           </div>
 
-          <div className="chart-bar-area">
-            <div className="chart-bar-grid" aria-hidden="true">
-              {[0, 1, 2, 3, 4, 5].map((step) => (
-                <span key={step} style={{ bottom: `${(step / 5) * 100}%` }} />
-              ))}
+          <div style={{ minWidth: 0 }}>
+            <div
+              style={{
+                position: "relative",
+                height: "210px",
+                display: "flex",
+                alignItems: "flex-end",
+                gap: chartDays.length > 14 ? "2px" : "5px",
+                padding: "0 2px",
+                borderBottom: "2px solid #d9cfc6",
+                backgroundImage:
+                  "repeating-linear-gradient(to bottom, transparent 0, transparent calc(20% - 1px), #e8e2dc calc(20% - 1px), #e8e2dc 20%)",
+              }}
+            >
+              {chartDays.map((item) => {
+                const barPercent =
+                  item.value > 0
+                    ? Math.max(2, (item.value / chartYAxisMax) * 100)
+                    : 0;
+                const isToday = item.date === today;
+
+                return (
+                  <div
+                    key={item.date}
+                    style={{
+                      flex: "1 1 0",
+                      minWidth: 0,
+                      height: "100%",
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "flex-end",
+                      alignItems: "center",
+                      position: "relative",
+                    }}
+                    title={`${item.label}: ${formatRupiah(item.value)}`}
+                  >
+                    {item.value > 0 && (
+                      <span
+                        style={{
+                          position: "absolute",
+                          bottom: `calc(${barPercent}% + 5px)`,
+                          maxWidth: chartDays.length > 14 ? "34px" : "62px",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          whiteSpace: "nowrap",
+                          color: isToday ? "#a84d67" : "#5d8062",
+                          fontSize: chartDays.length > 14 ? "6px" : "8px",
+                          lineHeight: 1,
+                          fontWeight: 800,
+                        }}
+                      >
+                        {formatRupiah(item.value)}
+                      </span>
+                    )}
+
+                    <div
+                      style={{
+                        width: chartDays.length > 14 ? "70%" : "min(30px, 72%)",
+                        height: item.value > 0 ? `${barPercent}%` : "0",
+                        minHeight: item.value > 0 ? "5px" : "0",
+                        borderRadius: "12px 12px 4px 4px",
+                        background: isToday
+                          ? "linear-gradient(180deg, #f39ab0 0%, #df6f8d 100%)"
+                          : "linear-gradient(180deg, #91c99a 0%, #4e9b63 100%)",
+                        boxShadow: isToday
+                          ? "0 4px 10px rgba(223,111,141,.25)"
+                          : "0 4px 10px rgba(78,155,99,.18)",
+                        position: "relative",
+                        transition: "height .25s ease",
+                      }}
+                    >
+                      {item.value > 0 && (
+                        <span
+                          aria-hidden="true"
+                          style={{
+                            position: "absolute",
+                            top: "4px",
+                            left: "4px",
+                            width: "4px",
+                            height: "30%",
+                            minHeight: "5px",
+                            borderRadius: "99px",
+                            background: "rgba(255,255,255,.45)",
+                          }}
+                        />
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
             </div>
 
             <div
-              className="chart-bars"
-              style={{ gridTemplateColumns: `repeat(${Math.max(chartBars.length, 1)}, minmax(0, 1fr))` }}
+              style={{
+                display: "flex",
+                gap: chartDays.length > 14 ? "2px" : "5px",
+                padding: "7px 2px 0",
+              }}
             >
-              {chartBars.map((item) => (
-                <div className="chart-bar-column" key={item.date}>
-                  <div className="chart-bar-value">
-                    {item.value > 0 ? formatRupiah(item.value) : ""}
-                  </div>
-                  <div className="chart-bar-track">
-                    {item.value > 0 && (
-                      <div
-                        className="chart-bar"
-                        style={{ height: `${item.height}px` }}
-                        title={`${item.label}: ${formatRupiah(item.value)}`}
-                      >
-                        <span className="chart-bar-shine" />
-                      </div>
-                    )}
-                  </div>
-                </div>
+              {chartDays.map((item) => (
+                <span
+                  key={item.date}
+                  style={{
+                    flex: "1 1 0",
+                    minWidth: 0,
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap",
+                    textAlign: "center",
+                    color: item.date === today ? "#a84d67" : "#806f66",
+                    fontSize: chartDays.length > 14 ? "7px" : "9px",
+                    lineHeight: 1.2,
+                    fontWeight: item.date === today ? 800 : 600,
+                  }}
+                >
+                  {item.label}
+                </span>
               ))}
             </div>
           </div>
         </div>
 
-        <div
-          className="chart-labels chart-bar-labels"
-          style={{ gridTemplateColumns: `repeat(${Math.max(chartDays.length, 1)}, minmax(0, 1fr))` }}
+        <p
+          style={{
+            margin: "10px 4px 0",
+            color: "#8e7b70",
+            fontSize: "9px",
+            lineHeight: 1.4,
+            textAlign: "center",
+          }}
         >
-          {chartDays.map((item) => (
-            <span key={item.date}>{item.label}</span>
-          ))}
-        </div>
-
+          🌷 Tinggi batang mengikuti nominal asli pemasukan Merchant — tidak ada data yang diubah.
+        </p>
       </section>
-
       <section className="recap-card">
         <div className="section-title">
           <div>
