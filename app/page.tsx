@@ -793,6 +793,27 @@ export default function Home() {
           </div>
         </div>
 
+        <div className="chart-periods" aria-label="Periode grafik">
+          <button
+            className={chartPeriod === "7hari" ? "active" : ""}
+            onClick={() => setChartPeriod("7hari")}
+          >
+            7 Hari
+          </button>
+          <button
+            className={chartPeriod === "14hari" ? "active" : ""}
+            onClick={() => setChartPeriod("14hari")}
+          >
+            14 Hari
+          </button>
+          <button
+            className={chartPeriod === "30hari" ? "active" : ""}
+            onClick={() => setChartPeriod("30hari")}
+          >
+            30 Hari
+          </button>
+        </div>
+
         <div className="chart-summary">
           <strong>
             {formatRupiah(
@@ -882,26 +903,6 @@ export default function Home() {
         </div>
 
 
-        <div className="chart-periods" aria-label="Periode grafik">
-          <button
-            className={chartPeriod === "7hari" ? "active" : ""}
-            onClick={() => setChartPeriod("7hari")}
-          >
-            7 Hari
-          </button>
-          <button
-            className={chartPeriod === "14hari" ? "active" : ""}
-            onClick={() => setChartPeriod("14hari")}
-          >
-            14 Hari
-          </button>
-          <button
-            className={chartPeriod === "30hari" ? "active" : ""}
-            onClick={() => setChartPeriod("30hari")}
-          >
-            30 Hari
-          </button>
-        </div>
       </section>
 
       <section className="recap-card">
