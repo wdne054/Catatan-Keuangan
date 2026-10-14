@@ -1,0 +1,135 @@
+name: Improve chart readability
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Patch chart layout
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('app/page.tsx')
+          s = p.read_text()
+
+          old = '''        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "minmax(0, 1fr) 42px",
+            gap: "8px",
+            marginTop: "14px",
+            padding: "12px 8px 8px",
+            border: "2px solid #eee2d8",
+            borderRadius: "22px",
+            background: "#fff",
+          }}
+        >
+          <div style={{ minWidth: 0 }}>
+'''
+          new = '''        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "minmax(0, 1fr) 42px",
+            gap: "8px",
+            marginTop: "14px",
+            padding: "12px 8px 8px",
+            border: "2px solid #eee2d8",
+            borderRadius: "22px",
+            background: "#fff",
+          }}
+        >
+          <div
+            style={{
+              minWidth: 0,
+              overflowX: chartDays.length > 7 ? "auto" : "visible",
+              overflowY: "hidden",
+              paddingBottom: chartDays.length > 7 ? "8px" : "0",
+              WebkitOverflowScrolling: "touch",
+            }}
+          >
+'''
+          if old not in s:
+              raise SystemExit('outer chart block not found')
+          s = s.replace(old, new, 1)
+
+          old2 = '''                position: "relative",
+                height: "210px",
+                display: "flex",
+'''
+          new2 = '''                position: "relative",
+                height: "210px",
+                minWidth:
+                  chartDays.length > 14
+                    ? "980px"
+                    : chartDays.length > 7
+                      ? "620px"
+                      : "0",
+                display: "flex",
+'''
+          if old2 not in s:
+              raise SystemExit('chart plot style block not found')
+          s = s.replace(old2, new2, 1)
+
+          old3 = '''        <div className="chart-periods" aria-label="Periode grafik">
+          <button
+'''
+          new3 = '''        <div className="chart-periods" aria-label="Periode grafik">
+          <button
+'''
+          if old3 not in s:
+              raise SystemExit('chart periods block not found')
+
+          marker = '''        </div>
+
+        <div
+          className="chart-summary"
+'''
+          hint = '''        </div>
+
+        {chartPeriod !== "7hari" && (
+          <p
+            style={{
+              margin: "8px 2px 0",
+              textAlign: "center",
+              color: "#8e7b70",
+              fontSize: "11px",
+              fontWeight: 700,
+            }}
+          >
+            ← Geser grafik untuk melihat semua tanggal →
+          </p>
+        )}
+
+        <div
+          className="chart-summary"
+'''
+          if marker not in s:
+              raise SystemExit('chart summary marker not found')
+          s = s.replace(marker, hint, 1)
+
+          p.write_text(s)
+          PY
+
+      - name: Commit patch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add app/page.tsx
+          if git diff --cached --quiet; then
+            echo "No changes needed"
+            exit 0
+          fi
+          git commit -m "Make long-range charts easier to read"
+          git push
+
+      - name: Remove one-time workflow
+        run: |
+          git rm .github/workflows/fix-chart-readability.yml
+          git commit -m "Remove one-time chart patch workflow"
+          git push
