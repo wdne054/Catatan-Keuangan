@@ -1164,3 +1164,28 @@ h1 {
       linear-gradient(180deg,#fffaf0 0%,#f8f0e1 55%,#f3ead7 100%);
   }
 }
+/* Long-range chart readability: keep every daily data point, give it breathing room, and let mobile users swipe horizontally. */
+@supports selector(:has(*)) {
+  .chart-card:has(.chart-periods button:nth-child(2).active) > div:nth-of-type(4) > div:first-child {
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    padding-bottom: 8px !important;
+    -webkit-overflow-scrolling: touch;
+  }
+  .chart-card:has(.chart-periods button:nth-child(2).active) > div:nth-of-type(4) > div:first-child > div:first-child {
+    min-width: 620px !important;
+  }
+  .chart-card:has(.chart-periods button:nth-child(3).active) > div:nth-of-type(4) > div:first-child {
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    padding-bottom: 8px !important;
+    -webkit-overflow-scrolling: touch;
+  }
+  .chart-card:has(.chart-periods button:nth-child(3).active) > div:nth-of-type(4) > div:first-child > div:first-child {
+    min-width: 980px !important;
+  }
+  .chart-card:has(.chart-periods button:nth-child(2).active) > div:nth-of-type(4) > div:first-child > div:nth-child(2) span,
+  .chart-card:has(.chart-periods button:nth-child(3).active) > div:nth-of-type(4) > div:first-child > div:nth-child(2) span {
+    font-size: 9px !important;
+  }
+}
