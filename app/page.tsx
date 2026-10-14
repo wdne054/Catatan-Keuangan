@@ -129,6 +129,10 @@ export default function Home() {
     "7hari" | "14hari" | "30hari"
   >("7hari");
 
+  const [historyPeriod, setHistoryPeriod] = useState<
+    "7hari" | "14hari" | "30hari"
+  >("7hari");
+
   const [showBalanceEditor, setShowBalanceEditor] = useState(false);
   const [balanceInput, setBalanceInput] = useState("");
 
@@ -424,22 +428,33 @@ export default function Home() {
     }[] = [];
 
     const now = new Date(currentDate);
-    const periodDays =
-      chartPeriod === "7hari" ? 7 : chartPeriod === "14hari" ? 14 : 30;
+    now.setHours(0, 0, 0, 0);
 
-    const trackingStart = new Date(2026, 9, 5);
-    trackingStart.setHours(0, 0, 0, 0);
+    const trackingStart = new Date("2026-10-05T00:00:00");
 
-    const rollingStart = new Date(now);
-    rollingStart.setDate(now.getDate() - periodDays + 1);
-    rollingStart.setHours(0, 0, 0, 0);
+    let startDate: Date;
+    let endDate: Date;
 
-    const startDate =
-      rollingStart < trackingStart ? trackingStart : rollingStart;
+    if (chartPeriod === "7hari") {
+      startDate = startOfWeek(now);
+      endDate = new Date(startDate);
+      endDate.setDate(startDate.getDate() + 6);
+    } else if (chartPeriod === "14hari") {
+      startDate = startOfWeek(now);
+      startDate.setDate(startDate.getDate() - 7);
+      endDate = new Date(startDate);
+      endDate.setDate(startDate.getDate() + 13);
+    } else {
+      startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+      endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+      endDate.setHours(0, 0, 0, 0);
+    }
+
+    if (startDate < trackingStart) startDate = new Date(trackingStart);
 
     for (
       let date = new Date(startDate);
-      date <= now;
+      date <= endDate;
       date.setDate(date.getDate() + 1)
     ) {
       const day = new Date(date);
@@ -464,6 +479,54 @@ export default function Home() {
 
     return days;
   }, [transactions, chartPeriod, currentDate]);
+
+  const historyTransactions = useMemo(() => {
+    const now = new Date(currentDate);
+    now.setHours(0, 0, 0, 0);
+
+    const trackingStart = new Date("2026-10-05T00:00:00");
+    let startDate: Date;
+    let endDate: Date;
+
+    if (historyPeriod === "7hari") {
+      startDate = startOfWeek(now);
+      endDate = new Date(startDate);
+      endDate.setDate(startDate.getDate() + 6);
+    } else if (historyPeriod === "14hari") {
+      startDate = startOfWeek(now);
+      startDate.setDate(startDate.getDate() - 7);
+      endDate = new Date(startDate);
+      endDate.setDate(startDate.getDate() + 13);
+    } else {
+      startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+      endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+      endDate.setHours(0, 0, 0, 0);
+    }
+
+    if (startDate < trackingStart) startDate = new Date(trackingStart);
+
+    const startKey = getDateKey(startDate);
+    const endKey = getDateKey(endDate);
+
+    return sortedTransactions.filter(
+      (item) => item.date >= startKey && item.date <= endKey,
+    );
+  }, [sortedTransactions, historyPeriod, currentDate]);
+
+  const expenseBreakdown = useMemo(() => {
+    const totals = new Map<string, number>();
+
+    historyTransactions
+      .filter((item) => getCategoryType(item.category) === "expense")
+      .forEach((item) => {
+        const label = item.note?.trim() || item.category;
+        totals.set(label, (totals.get(label) || 0) + item.amount);
+      });
+
+    return Array.from(totals.entries())
+      .map(([label, amount]) => ({ label, amount }))
+      .sort((a, b) => b.amount - a.amount);
+  }, [historyTransactions]);
 
   const chartMax = Math.max(...chartDays.map((item) => item.value), 1);
 
@@ -1114,23 +1177,104 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="all-history-card">
+      <section className="recap-card">
         <div className="section-title">
           <div>
-            <h2>Riwayat Semua Hari 🌷</h2>
-            <p>Transaksi sebelumnya tetap tersimpan</p>
+            <h2>💸 Pengeluaran Terbesar</h2>
+            <p>Kelihatan uang paling banyak keluar untuk transaksi apa</p>
           </div>
         </div>
 
-        {sortedTransactions.length === 0 ? (
+        <div className="recap-tabs" aria-label="Periode pengeluaran">
+          <button
+            className={historyPeriod === "7hari" ? "active" : ""}
+            onClick={() => setHistoryPeriod("7hari")}
+          >
+            7 Hari
+          </button>
+          <button
+            className={historyPeriod === "14hari" ? "active" : ""}
+            onClick={() => setHistoryPeriod("14hari")}
+          >
+            14 Hari
+          </button>
+          <button
+            className={historyPeriod === "30hari" ? "active" : ""}
+            onClick={() => setHistoryPeriod("30hari")}
+          >
+            1 Bulan
+          </button>
+        </div>
+
+        {expenseBreakdown.length === 0 ? (
+          <div className="empty-state">
+            <span>🌱</span>
+            <p>Belum ada pengeluaran di periode ini.</p>
+          </div>
+        ) : (
+          <div style={{ display: "grid", gap: "12px", marginTop: "14px" }}>
+            {expenseBreakdown.slice(0, 12).map((item, index) => {
+              const max = expenseBreakdown[0]?.amount || 1;
+              const width = Math.max(3, (item.amount / max) * 100);
+
+              return (
+                <div key={`${item.label}-${index}`}>
+                  <div style={{ display: "flex", justifyContent: "space-between", gap: "10px", alignItems: "center", marginBottom: "6px" }}>
+                    <strong style={{ minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                      {item.label}
+                    </strong>
+                    <strong className="negative" style={{ flexShrink: 0 }}>
+                      {formatRupiah(item.amount)}
+                    </strong>
+                  </div>
+                  <div style={{ height: "14px", borderRadius: "999px", background: "#f1e6dc", overflow: "hidden" }}>
+                    <div style={{ width: `${width}%`, height: "100%", borderRadius: "999px", background: "linear-gradient(90deg, #b78667 0%, #d2a98c 100%)" }} />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </section>
+
+      <section className="all-history-card">
+        <div className="section-title">
+          <div>
+            <h2>Riwayat Transaksi 🌷</h2>
+            <p>Filter pemasukan & pengeluaran berdasarkan periode</p>
+          </div>
+        </div>
+
+        <div className="recap-tabs" aria-label="Periode riwayat">
+          <button
+            className={historyPeriod === "7hari" ? "active" : ""}
+            onClick={() => setHistoryPeriod("7hari")}
+          >
+            7 Hari
+          </button>
+          <button
+            className={historyPeriod === "14hari" ? "active" : ""}
+            onClick={() => setHistoryPeriod("14hari")}
+          >
+            14 Hari
+          </button>
+          <button
+            className={historyPeriod === "30hari" ? "active" : ""}
+            onClick={() => setHistoryPeriod("30hari")}
+          >
+            1 Bulan
+          </button>
+        </div>
+
+        {historyTransactions.length === 0 ? (
           <div className="empty-state">
             <span>🪴</span>
-            <p>Belum ada riwayat.</p>
+            <p>Belum ada transaksi di periode ini.</p>
           </div>
         ) : (
           <div className="date-history">
-            {Array.from(new Set(sortedTransactions.map((item) => item.date))).map((date) => {
-              const dayTransactions = sortedTransactions.filter((item) => item.date === date);
+            {Array.from(new Set(historyTransactions.map((item) => item.date))).map((date) => {
+              const dayTransactions = historyTransactions.filter((item) => item.date === date);
               const net = getNet(dayTransactions);
 
               return (
