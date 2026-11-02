@@ -477,7 +477,12 @@ export default function Home() {
       endDate.setDate(startDate.getDate() + 13);
     } else {
       const [year, month] = selectedMonth.split("-").map(Number);
-      startDate = new Date(year, month - 1, 1);
+      // Arsip Oktober dimulai saat pencatatan Jasdor pertama kali dibuat.
+      // Semua bulan berikutnya selalu dimulai dari tanggal 1.
+      startDate =
+        selectedMonth === "2026-10"
+          ? new Date(2026, 9, 5)
+          : new Date(year, month - 1, 1);
       endDate = new Date(year, month, 0);
       endDate.setHours(0, 0, 0, 0);
 
@@ -487,7 +492,9 @@ export default function Home() {
       }
     }
 
-    if (startDate < trackingStart) startDate = new Date(trackingStart);
+    if (chartPeriod !== "30hari" && startDate < trackingStart) {
+      startDate = new Date(trackingStart);
+    }
 
     for (
       let date = new Date(startDate);
@@ -964,6 +971,7 @@ export default function Home() {
           }}
         >
           <div
+            key={`${chartPeriod}-${selectedMonth}`}
             style={{
               minWidth: 0,
               width: "100%",
