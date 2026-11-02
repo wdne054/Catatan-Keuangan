@@ -963,14 +963,28 @@ export default function Home() {
             background: "#fff",
           }}
         >
-          <div style={{ minWidth: 0 }}>
+          <div
+            style={{
+              minWidth: 0,
+              width: "100%",
+              overflowX: chartDays.length > 7 ? "auto" : "visible",
+              overflowY: "hidden",
+              WebkitOverflowScrolling: "touch",
+              paddingBottom: chartDays.length > 7 ? "8px" : "0",
+            }}
+          >
+            <div
+              style={{
+                minWidth: chartDays.length > 7 ? `${chartDays.length * 44}px` : "100%",
+              }}
+            >
             <div
               style={{
                 position: "relative",
-                height: "210px",
+                height: "230px",
                 display: "flex",
                 alignItems: "flex-end",
-                gap: chartDays.length > 14 ? "2px" : "5px",
+                gap: "5px",
                 padding: "0 2px",
                 borderBottom: "2px solid #d9cfc6",
                 backgroundImage:
@@ -1030,7 +1044,7 @@ export default function Home() {
                   >
                     <div
                       style={{
-                        width: chartDays.length > 14 ? "76%" : "min(30px, 74%)",
+                        width: chartDays.length > 7 ? "22px" : "min(30px, 74%)",
                         height: item.value > 0 ? `${barPercent}%` : "0",
                         minHeight: item.value > 0 ? "7px" : "0",
                         borderRadius: "4px 4px 1px 1px",
@@ -1064,7 +1078,7 @@ export default function Home() {
                               top: "10%",
                               right: "10%",
                               color: "rgba(255,255,255,.95)",
-                              fontSize: chartDays.length > 14 ? "7px" : "10px",
+                              fontSize: chartDays.length > 7 ? "9px" : "10px",
                               lineHeight: 1,
                               textShadow: "0 1px 5px rgba(255,255,255,.55)",
                             }}
@@ -1094,12 +1108,12 @@ export default function Home() {
                         style={{
                           position: "absolute",
                           bottom: `calc(${barPercent}% + 5px)`,
-                          maxWidth: chartDays.length > 14 ? "34px" : "62px",
+                          maxWidth: chartDays.length > 7 ? "52px" : "62px",
                           overflow: "hidden",
                           textOverflow: "ellipsis",
                           whiteSpace: "nowrap",
                           color: "#4e9b63",
-                          fontSize: chartDays.length > 14 ? "6px" : "8px",
+                          fontSize: chartDays.length > 7 ? "8px" : "8px",
                           lineHeight: 1,
                           fontWeight: 800,
                           background: "#fffaf5",
@@ -1134,7 +1148,7 @@ export default function Home() {
                     whiteSpace: "nowrap",
                     textAlign: "center",
                     color: item.date === today ? "#a84d67" : "#806f66",
-                    fontSize: chartDays.length > 14 ? "7px" : "9px",
+                    fontSize: chartDays.length > 7 ? "10px" : "9px",
                     lineHeight: 1.2,
                     fontWeight: item.date === today ? 800 : 600,
                   }}
@@ -1142,6 +1156,7 @@ export default function Home() {
                   {item.label}
                 </span>
               ))}
+            </div>
             </div>
           </div>
 
