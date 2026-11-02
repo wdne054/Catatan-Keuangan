@@ -40,6 +40,9 @@ const getDateKey = (date = new Date()) => {
   return `${year}-${month}-${day}`;
 };
 
+const getMonthKey = (date = new Date()) =>
+  `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
+
 const commandMap: Record<string, Category> = {
   MC: "Merchant",
   MM: "Modal Merchant",
@@ -133,6 +136,9 @@ export default function Home() {
     "7hari" | "14hari" | "30hari"
   >("7hari");
 
+  // Arsip bulanan hanya mengubah tampilan; semua transaksi tetap di satu penyimpanan.
+  const [selectedMonth, setSelectedMonth] = useState(() => getMonthKey());
+
   const [showBalanceEditor, setShowBalanceEditor] = useState(false);
   const [balanceInput, setBalanceInput] = useState("");
 
@@ -141,6 +147,36 @@ export default function Home() {
   const [entryDate, setEntryDate] = useState(getDateKey());
 
   const today = getDateKey(currentDate);
+  const selectedMonthLabel = new Date(`${selectedMonth}-01T00:00:00`).toLocaleDateString(
+    "id-ID",
+    { month: "long", year: "numeric" },
+  );
+
+  const monthOptions = useMemo(() => {
+    const options: { value: string; label: string }[] = [];
+    const firstMonth = new Date(2026, 9, 1);
+    const lastMonth = new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth(),
+      1,
+    );
+
+    for (
+      const month = new Date(firstMonth);
+      month <= lastMonth;
+      month.setMonth(month.getMonth() + 1)
+    ) {
+      options.push({
+        value: getMonthKey(month),
+        label: month.toLocaleDateString("id-ID", {
+          month: "long",
+          year: "numeric",
+        }),
+      });
+    }
+
+    return options.reverse();
+  }, [currentDate]);
 
   useEffect(() => {
     const updateCurrentDate = () => setCurrentDate(new Date());
@@ -373,18 +409,13 @@ export default function Home() {
   }, [transactions, currentDate]);
 
   const monthlyTransactions = useMemo(() => {
-    const now = new Date(currentDate);
-    const month = now.getMonth();
-    const year = now.getFullYear();
+    const [year, month] = selectedMonth.split("-").map(Number);
 
     return transactions.filter((item) => {
       const date = new Date(`${item.date}T00:00:00`);
-      return (
-        date.getMonth() === month &&
-        date.getFullYear() === year
-      );
+      return date.getMonth() + 1 === month && date.getFullYear() === year;
     });
-  }, [transactions, currentDate]);
+  }, [transactions, selectedMonth]);
 
   const recapData =
     activeTab === "harian"
@@ -445,9 +476,15 @@ export default function Home() {
       endDate = new Date(startDate);
       endDate.setDate(startDate.getDate() + 13);
     } else {
-      startDate = new Date(now.getFullYear(), now.getMonth(), 1);
-      endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+      const [year, month] = selectedMonth.split("-").map(Number);
+      startDate = new Date(year, month - 1, 1);
+      endDate = new Date(year, month, 0);
       endDate.setHours(0, 0, 0, 0);
+
+      // Bulan berjalan hanya menampilkan tanggal sampai hari ini.
+      if (getMonthKey(now) === selectedMonth && endDate > now) {
+        endDate = new Date(now);
+      }
     }
 
     if (startDate < trackingStart) startDate = new Date(trackingStart);
@@ -478,7 +515,7 @@ export default function Home() {
     }
 
     return days;
-  }, [transactions, chartPeriod, currentDate]);
+  }, [transactions, chartPeriod, currentDate, selectedMonth]);
 
   const historyTransactions = useMemo(() => {
     const now = new Date(currentDate);
@@ -498,9 +535,14 @@ export default function Home() {
       endDate = new Date(startDate);
       endDate.setDate(startDate.getDate() + 13);
     } else {
-      startDate = new Date(now.getFullYear(), now.getMonth(), 1);
-      endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+      const [year, month] = selectedMonth.split("-").map(Number);
+      startDate = new Date(year, month - 1, 1);
+      endDate = new Date(year, month, 0);
       endDate.setHours(0, 0, 0, 0);
+
+      if (getMonthKey(now) === selectedMonth && endDate > now) {
+        endDate = new Date(now);
+      }
     }
 
     if (startDate < trackingStart) startDate = new Date(trackingStart);
@@ -511,7 +553,7 @@ export default function Home() {
     return sortedTransactions.filter(
       (item) => item.date >= startKey && item.date <= endKey,
     );
-  }, [sortedTransactions, historyPeriod, currentDate]);
+  }, [sortedTransactions, historyPeriod, currentDate, selectedMonth]);
 
   const expenseBreakdown = useMemo(() => {
     const totals = new Map<string, number>();
@@ -850,6 +892,21 @@ export default function Home() {
           </div>
         </div>
 
+        <div className="month-selector">
+          <label htmlFor="archive-month">Arsip bulan</label>
+          <select
+            id="archive-month"
+            value={selectedMonth}
+            onChange={(event) => setSelectedMonth(event.target.value)}
+          >
+            {monthOptions.map((month) => (
+              <option key={month.value} value={month.value}>
+                {month.label}
+              </option>
+            ))}
+          </select>
+        </div>
+
         <div className="chart-periods" aria-label="Periode grafik">
           <button
             className={chartPeriod === "7hari" ? "active" : ""}
@@ -887,7 +944,7 @@ export default function Home() {
               ? "Total Pemasukan • 7 Hari"
               : chartPeriod === "14hari"
                 ? "Total Pemasukan • 14 Hari"
-                : "Total Pemasukan • 30 Hari"}
+                : `Total Pemasukan • ${selectedMonthLabel}`}
           </span>
           <strong>
             {formatRupiah(chartDays.reduce((total, item) => total + item.value, 0))}
@@ -1122,7 +1179,11 @@ export default function Home() {
         <div className="section-title">
           <div>
             <h2>Rekap Keuangan 📊</h2>
-            <p>Lihat perkembangan Jasdor</p>
+            <p>
+              {activeTab === "bulanan"
+                ? `Rekap ${selectedMonthLabel}`
+                : "Lihat perkembangan Jasdor"}
+            </p>
           </div>
         </div>
 
