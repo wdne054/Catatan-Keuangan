@@ -1189,3 +1189,40 @@ h1 {
     font-size: 9px !important;
   }
 }
+
+
+.month-selector {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 6px;
+  margin-top: 15px;
+  padding: 12px 13px;
+  border: 1px solid #eadfd6;
+  border-radius: 18px;
+  background: rgba(255,255,255,.78);
+}
+
+.month-selector label {
+  color: #826e63;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.month-selector select {
+  width: 100%;
+  min-height: 42px;
+  border: 1px solid #e4d5ca;
+  border-radius: 13px;
+  outline: none;
+  padding: 8px 12px;
+  background: #fffaf5;
+  color: #5c392e;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.month-selector select:focus {
+  border-color: #a9c39a;
+  box-shadow: 0 0 0 3px rgba(166,197,149,.18);
+}
