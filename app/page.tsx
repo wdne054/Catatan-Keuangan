@@ -467,7 +467,10 @@ export default function Home() {
     let endDate: Date;
 
     if (chartPeriod === "7hari") {
-      startDate = startOfWeek(now);
+      // Grafik 7 hari memakai awal pekan Minggu agar tanggal 1 Nov tidak terlewat.
+      startDate = new Date(now);
+      startDate.setDate(now.getDate() - now.getDay());
+      startDate.setHours(0, 0, 0, 0);
       endDate = new Date(startDate);
       endDate.setDate(startDate.getDate() + 6);
     } else if (chartPeriod === "14hari") {
