@@ -86,7 +86,7 @@ export default function NotaDigitalPage() {
   const downloadPng = async () => {
     const validItems = items.filter((item) => item.name.trim());
     const width = 900;
-    const height = 1040 + validItems.length * 112 + (note.trim() ? 76 : 0);
+    const height = 1180 + validItems.length * 112 + (note.trim() ? 76 : 0);
     await document.fonts.load("700 34px Fredoka");
     await document.fonts.ready;
     const canvas = document.createElement("canvas");
