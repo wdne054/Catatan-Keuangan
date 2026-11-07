@@ -614,6 +614,27 @@ export default function Home() {
               year: "numeric",
             })}
           </p>
+
+          <a
+            href="/nota"
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "7px",
+              marginTop: "12px",
+              padding: "9px 14px",
+              border: "1px solid #efcbd1",
+              borderRadius: "999px",
+              background: "#fff0f3",
+              color: "#87545e",
+              fontSize: "12px",
+              fontWeight: 600,
+              textDecoration: "none",
+              boxShadow: "0 4px 10px rgba(130,80,90,.07)",
+            }}
+          >
+            🧾 Buat Nota Digital
+          </a>
         </div>
       </header>
 
