@@ -86,7 +86,7 @@ export default function NotaDigitalPage() {
   const downloadPng = async () => {
     const validItems = items.filter((item) => item.name.trim());
     const width = 760;
-    const height = 900 + validItems.length * 72 + (note.trim() ? 50 : 0);
+    const height = 1200 + validItems.length * 90 + (note.trim() ? 70 : 0);
     await document.fonts.load("700 54px Fredoka");
     await document.fonts.ready;
     const canvas = document.createElement("canvas");
@@ -107,7 +107,7 @@ export default function NotaDigitalPage() {
       ctx.fillRect(width - 60, y, 5, 2);
     }
 
-    const center = (text: string, y: number, size: number, weight = "600") => {
+    const center = (text: string, y: number, size: number, weight = "700") => {
       ctx.font = `${weight} ${size}px Fredoka, sans-serif`;
       ctx.fillStyle = "#70464d";
       ctx.textAlign = "center";
@@ -124,13 +124,13 @@ export default function NotaDigitalPage() {
       ctx.stroke();
       ctx.restore();
     };
-    const left = (text: string, y: number, size = 22, weight = "500") => {
+    const left = (text: string, y: number, size = 22, weight = "700") => {
       ctx.font = `${weight} ${size}px Fredoka, sans-serif`;
       ctx.fillStyle = "#765158";
       ctx.textAlign = "left";
       ctx.fillText(text, 100, y);
     };
-    const right = (text: string, y: number, size = 22, weight = "500") => {
+    const right = (text: string, y: number, size = 22, weight = "700") => {
       ctx.font = `${weight} ${size}px Fredoka, sans-serif`;
       ctx.fillStyle = "#765158";
       ctx.textAlign = "right";
@@ -164,13 +164,12 @@ export default function NotaDigitalPage() {
     ctx.stroke();
     ctx.restore();
 
-    center("Jasdor", 205, 54, "700");
-    center("by_esaashop", 238, 23, "600");
-    center("♡  DIGITAL RECEIPT  ♡", 278, 19, "600");
+    center("Jasdorby_esaashop", 218, 38, "700");
+    center("♡  DIGITAL RECEIPT  ♡", 270, 20, "700");
     line(310);
     left(`No. Nota  : ${receiptNo}`, 354, 20);
     left(`Tanggal  : ${todayLabel()}`, 392, 20);
-    left(`Jam      : ${time} WIB`, 430, 20);
+    left(`JAM TRANSAKSI : ${time} WIB`, 430, 22, "700");
     left(`Customer : ${customer.trim() || "-"}`, 468, 20);
     line(500);
 
@@ -204,8 +203,7 @@ export default function NotaDigitalPage() {
     }
     line(y + 12);
     center("Thank you for ordering ♡", y + 62, 23, "700");
-    center("Semoga harimu semanis kopimu ☕", y + 96, 17, "500");
-    center("Jasdor by_esaashop", y + 132, 16, "600");
+    center("Semoga harimu semanis kopimu ☕", y + 96, 19, "700");
 
     const link = document.createElement("a");
     link.download = `Nota-Jasdor-${receiptNo}.png`;
@@ -278,8 +276,7 @@ export default function NotaDigitalPage() {
             <span className="cup">☕</span>
             <span className="sparkle">✳</span>
           </div>
-          <h2>Jasdor</h2>
-          <strong className="nota-brand">by_esaashop</strong>
+          <h2 className="nota-brand-top">Jasdorby_esaashop</h2>
           <p className="nota-subtitle">♡ DIGITAL RECEIPT ♡</p>
           <div className="nota-dash" />
           <div className="nota-meta"><span>No. Nota</span><b>{receiptNo}</b></div>
@@ -301,7 +298,6 @@ export default function NotaDigitalPage() {
           <div className="nota-dash" />
           <p className="nota-thanks">Thank you for ordering ♡</p>
           <p className="nota-footer">Semoga harimu semanis kopimu ☕</p>
-          <div className="nota-stamp">Jasdor by_esaashop</div>
         </article>
       </section>
 
