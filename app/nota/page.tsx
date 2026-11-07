@@ -18,7 +18,7 @@ const todayLabel = () =>
 export default function NotaDigitalPage() {
   const [customer, setCustomer] = useState("");
   const [items, setItems] = useState<NotaItem[]>([
-    { id: 1, name: "Kopi Kenangan", qty: "1", price: "15000" },
+    { id: 1, name: "", qty: "1", price: "" },
   ]);
   const [status, setStatus] = useState<"LUNAS" | "BELUM LUNAS">("LUNAS");
   const [note, setNote] = useState("");
