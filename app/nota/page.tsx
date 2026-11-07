@@ -82,10 +82,10 @@ export default function NotaDigitalPage() {
       .join("\n");
   };
 
-  const downloadPng = () => {
+  const downloadPng = async () => {
     const validItems = items.filter((item) => item.name.trim());
     const width = 760;
-    const height = 650 + validItems.length * 74 + (note.trim() ? 65 : 0);
+    const height = 900 + validItems.length * 72 + (note.trim() ? 50 : 0);\n    await document.fonts.load("700 54px Fredoka");\n    await document.fonts.ready;
     const canvas = document.createElement("canvas");
     canvas.width = width;
     canvas.height = height;
