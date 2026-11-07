@@ -85,9 +85,9 @@ export default function NotaDigitalPage() {
 
   const downloadPng = async () => {
     const validItems = items.filter((item) => item.name.trim());
-    const width = 760;
-    const height = 1200 + validItems.length * 90 + (note.trim() ? 70 : 0);
-    await document.fonts.load("700 54px Fredoka");
+    const width = 900;
+    const height = 1040 + validItems.length * 112 + (note.trim() ? 76 : 0);
+    await document.fonts.load("700 34px Fredoka");
     await document.fonts.ready;
     const canvas = document.createElement("canvas");
     canvas.width = width;
@@ -95,115 +95,143 @@ export default function NotaDigitalPage() {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    ctx.fillStyle = "#fff0f3";
-    ctx.fillRect(0, 0, width, height);
+    // Transparent canvas: only the cream receipt paper is exported.
+    const paperLeft = 28;
+    const paperRight = width - 28;
+    const paperTop = 20;
+    const paperBottom = height - 52;
     ctx.fillStyle = "#fffaf8";
-    ctx.fillRect(42, 24, width - 84, height - 48);
+    ctx.beginPath();
+    ctx.moveTo(paperLeft, paperTop);
+    ctx.lineTo(paperRight, paperTop);
+    ctx.lineTo(paperRight, paperBottom - 12);
+    const scallopCount = 34;
+    const scallopWidth = (paperRight - paperLeft) / scallopCount;
+    for (let i = scallopCount; i >= 0; i--) {
+      const x = paperLeft + i * scallopWidth;
+      ctx.lineTo(x, paperBottom - (i % 2 === 0 ? 0 : 12));
+    }
+    ctx.closePath();
+    ctx.fill();
 
-    // Soft paper grain and perforated receipt edges.
-    for (let y = 34; y < height - 30; y += 16) {
-      ctx.fillStyle = "rgba(177,119,128,.08)";
-      ctx.fillRect(55, y, 5, 2);
-      ctx.fillRect(width - 60, y, 5, 2);
+    // Delicate dotted side details, kept inside the paper.
+    for (let y = 48; y < paperBottom - 24; y += 22) {
+      ctx.fillStyle = "rgba(177,119,128,.16)";
+      ctx.beginPath();
+      ctx.arc(48, y, 2, 0, Math.PI * 2);
+      ctx.arc(width - 48, y, 2, 0, Math.PI * 2);
+      ctx.fill();
     }
 
-    const center = (text: string, y: number, size: number, weight = "700") => {
-      ctx.font = `${weight} ${size}px Fredoka, sans-serif`;
+    const center = (text: string, y: number, size: number, letterSpace = 1) => {
+      ctx.font = `700 ${size}px Fredoka, sans-serif`;
       ctx.fillStyle = "#70464d";
       ctx.textAlign = "center";
+      ctx.textBaseline = "alphabetic";
+      ctx.letterSpacing = `${letterSpace}px`;
       ctx.fillText(text, width / 2, y);
+      ctx.letterSpacing = "0px";
+    };
+    const left = (text: string, y: number, size = 28) => {
+      ctx.font = `700 ${size}px Fredoka, sans-serif`;
+      ctx.fillStyle = "#765158";
+      ctx.textAlign = "left";
+      ctx.letterSpacing = "0.5px";
+      ctx.fillText(text, 104, y);
+      ctx.letterSpacing = "0px";
+    };
+    const right = (text: string, y: number, size = 28) => {
+      ctx.font = `700 ${size}px Fredoka, sans-serif`;
+      ctx.fillStyle = "#765158";
+      ctx.textAlign = "right";
+      ctx.letterSpacing = "0.3px";
+      ctx.fillText(text, width - 104, y);
+      ctx.letterSpacing = "0px";
     };
     const line = (y: number) => {
       ctx.save();
-      ctx.setLineDash([7, 8]);
+      ctx.setLineDash([9, 9]);
       ctx.strokeStyle = "#d9aeb5";
-      ctx.lineWidth = 2;
+      ctx.lineWidth = 3;
       ctx.beginPath();
-      ctx.moveTo(92, y);
-      ctx.lineTo(width - 92, y);
+      ctx.moveTo(100, y);
+      ctx.lineTo(width - 100, y);
       ctx.stroke();
       ctx.restore();
     };
-    const left = (text: string, y: number, size = 22, weight = "700") => {
-      ctx.font = `${weight} ${size}px Fredoka, sans-serif`;
-      ctx.fillStyle = "#765158";
-      ctx.textAlign = "left";
-      ctx.fillText(text, 100, y);
-    };
-    const right = (text: string, y: number, size = 22, weight = "700") => {
-      ctx.font = `${weight} ${size}px Fredoka, sans-serif`;
-      ctx.fillStyle = "#765158";
-      ctx.textAlign = "right";
-      ctx.fillText(text, width - 100, y);
-    };
 
-    // Tiny hand-drawn coffee cup doodle.
+    // A clear, hand-drawn coffee cup (not a font/emoji glyph).
     ctx.save();
     ctx.strokeStyle = "#bd858c";
-    ctx.lineWidth = 5;
+    ctx.lineWidth = 6;
     ctx.lineCap = "round";
+    ctx.lineJoin = "round";
     ctx.beginPath();
-    ctx.moveTo(330, 76);
-    ctx.lineTo(430, 76);
-    ctx.lineTo(418, 145);
-    ctx.quadraticCurveTo(380, 164, 342, 145);
+    ctx.moveTo(380, 92);
+    ctx.lineTo(500, 92);
+    ctx.lineTo(486, 166);
+    ctx.quadraticCurveTo(440, 184, 394, 166);
     ctx.closePath();
     ctx.stroke();
     ctx.beginPath();
-    ctx.moveTo(430, 91);
-    ctx.quadraticCurveTo(482, 85, 462, 126);
-    ctx.quadraticCurveTo(448, 140, 421, 132);
+    ctx.moveTo(500, 108);
+    ctx.bezierCurveTo(566, 96, 566, 160, 490, 154);
     ctx.stroke();
     ctx.beginPath();
-    ctx.moveTo(355, 60);
-    ctx.quadraticCurveTo(340, 42, 356, 28);
-    ctx.moveTo(382, 60);
-    ctx.quadraticCurveTo(367, 42, 384, 28);
-    ctx.moveTo(409, 60);
-    ctx.quadraticCurveTo(394, 42, 411, 28);
+    ctx.moveTo(410, 75);
+    ctx.quadraticCurveTo(394, 54, 412, 36);
+    ctx.moveTo(440, 75);
+    ctx.quadraticCurveTo(424, 54, 442, 36);
+    ctx.moveTo(470, 75);
+    ctx.quadraticCurveTo(454, 54, 472, 36);
     ctx.stroke();
     ctx.restore();
 
-    center("Jasdorby_esaashop", 218, 38, "700");
-    center("♡  DIGITAL RECEIPT  ♡", 270, 20, "700");
-    line(310);
-    left(`No. Nota  : ${receiptNo}`, 354, 20);
-    left(`Tanggal  : ${todayLabel()}`, 392, 20);
-    left(`JAM TRANSAKSI : ${time} WIB`, 430, 22, "700");
-    left(`Customer : ${customer.trim() || "-"}`, 468, 20);
-    line(500);
+    center("Jasdorby_esaashop", 238, 48, 1.8);
+    center("♡  DIGITAL RECEIPT  ♡", 292, 25, 2);
+    line(330);
+    left(`No. Nota : ${receiptNo}`, 390, 27);
+    left(`Tanggal : ${todayLabel()}`, 438, 27);
+    left(`Jam transaksi : ${time} WIB`, 486, 29);
+    left(`Customer : ${customer.trim() || "-"}`, 534, 27);
+    line(570);
+    center("DETAIL PESANAN", 620, 23, 2);
 
-    let y = 548;
+    let y = 678;
     validItems.forEach((item) => {
       const qty = Math.max(0, Number(item.qty) || 0);
       const price = Math.max(0, Number(item.price) || 0);
-      left(item.name.slice(0, 34), y, 22, "700");
-      right(`${qty} x ${money(price)}`, y, 19);
-      y += 30;
-      right(money(qty * price), y, 19, "700");
-      y += 42;
+      left(item.name.slice(0, 38), y, 29);
+      right(`${qty} x ${money(price)}`, y, 25);
+      y += 39;
+      right(money(qty * price), y, 27);
+      y += 62;
     });
     line(y);
-    y += 48;
-    left("TOTAL", y, 25, "700");
-    right(money(total), y, 28, "700");
-    y += 58;
+    y += 62;
+    left("TOTAL PESANAN", y, 30);
+    right(money(total), y, 40);
+    y += 78;
 
     ctx.fillStyle = "#f8dce1";
-    ctx.fillRect(100, y - 29, width - 200, 58);
-    ctx.font = "700 24px Fredoka, sans-serif";
+    ctx.beginPath();
+    ctx.roundRect(104, y - 42, width - 208, 68, 18);
+    ctx.fill();
+    ctx.font = "700 30px Fredoka, sans-serif";
     ctx.fillStyle = "#784951";
     ctx.textAlign = "center";
-    ctx.fillText(status, width / 2, y + 9);
-    y += 60;
+    ctx.letterSpacing = "2px";
+    ctx.fillText(status, width / 2, y + 3);
+    ctx.letterSpacing = "0px";
+    y += 78;
 
     if (note.trim()) {
-      left(`Catatan: ${note.trim().slice(0, 45)}`, y + 15, 18);
-      y += 50;
+      left(`Catatan: ${note.trim().slice(0, 48)}`, y, 24);
+      y += 58;
     }
-    line(y + 12);
-    center("Thank you for ordering ♡", y + 62, 23, "700");
-    center("Semoga harimu semanis kopimu ☕", y + 96, 19, "700");
+    line(y + 4);
+    center("Thank you for ordering ♡", y + 68, 30, 1);
+    center("Semoga harimu semanis kopimu ☕", y + 116, 25, 1);
 
     const link = document.createElement("a");
     link.download = `Nota-Jasdor-${receiptNo}.png`;
