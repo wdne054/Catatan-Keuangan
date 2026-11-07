@@ -67,7 +67,7 @@ export default function NotaDigitalPage() {
       "DIGITAL RECEIPT",
       "--------------------------------",
       `No. Nota: ${receiptNo}`,
-      `Tanggal: ${todayLabel()}`,
+      `Tanggal: ${todayLabel()}`,\n      `Jam: ${time} WIB`,
       `Customer: ${customer.trim() || "-"}`,
       "--------------------------------",
       ...rows,
@@ -166,11 +166,11 @@ export default function NotaDigitalPage() {
     center("♡  DIGITAL RECEIPT  ♡", 278, 19, "600");
     line(310);
     left(`No. Nota  : ${receiptNo}`, 354, 20);
-    left(`Tanggal  : ${todayLabel()}`, 392, 20);
-    left(`Customer : ${customer.trim() || "-"}`, 430, 20);
-    line(462);
+    left(`Tanggal  : ${todayLabel()}`, 392, 20);\n    left(`Jam      : ${time} WIB`, 430, 20);
+    left(`Customer : ${customer.trim() || "-"}`, 468, 20);
+    line(500);
 
-    let y = 510;
+    let y = 548;
     validItems.forEach((item) => {
       const qty = Math.max(0, Number(item.qty) || 0);
       const price = Math.max(0, Number(item.price) || 0);
