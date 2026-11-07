@@ -283,7 +283,8 @@ export default function NotaDigitalPage() {
           <p className="nota-subtitle">♡ DIGITAL RECEIPT ♡</p>
           <div className="nota-dash" />
           <div className="nota-meta"><span>No. Nota</span><b>{receiptNo}</b></div>
-          <div className="nota-meta"><span>Tanggal</span><b>{todayLabel()}</b></div>\n          <div className="nota-meta"><span>Jam</span><b>{time} WIB</b></div>
+          <div className="nota-meta"><span>Tanggal</span><b>{todayLabel()}</b></div>
+          <div className="nota-meta"><span>Jam</span><b>{time} WIB</b></div>
           <div className="nota-meta"><span>Customer</span><b>{customer.trim() || "-"}</b></div>
           <div className="nota-dash" />
           <p className="nota-detail-title">DETAIL PESANAN</p>
