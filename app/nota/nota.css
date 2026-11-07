@@ -101,3 +101,8 @@
   .nota-preview-wrap { margin:0; }
   .nota-paper { width:100%; max-width:440px; margin:0 auto; box-shadow:none; border:0; }
 }
+
+/* Final receipt typography: every label and detail uses a bold, friendly weight. */
+.nota-page, .nota-page * { font-weight: 700 !important; }
+.nota-paper .nota-brand-top { max-width: none; margin: 0 0 5px; text-align: center; color: #71464e; font-size: 27px; letter-spacing: -.7px; line-height: 1.2; }
+.nota-brand { display: none; }
