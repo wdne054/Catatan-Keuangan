@@ -177,10 +177,10 @@ export default function NotaDigitalPage() {
     validItems.forEach((item) => {
       const qty = Math.max(0, Number(item.qty) || 0);
       const price = Math.max(0, Number(item.price) || 0);
-      left(item.name.slice(0, 34), y, 22, "600");
+      left(item.name.slice(0, 34), y, 22, "700");
       right(`${qty} x ${money(price)}`, y, 19);
       y += 30;
-      right(money(qty * price), y, 19, "600");
+      right(money(qty * price), y, 19, "700");
       y += 42;
     });
     line(y);
