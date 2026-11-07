@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import "./nota.css";
 
 type NotaItem = { id: number; name: string; qty: string; price: string };
@@ -22,7 +22,18 @@ export default function NotaDigitalPage() {
   ]);
   const [status, setStatus] = useState<"LUNAS" | "BELUM LUNAS">("LUNAS");
   const [note, setNote] = useState("");
-  const [receiptNo] = useState(() => `JD-${Date.now().toString().slice(-6)}`);
+  const [receiptNo, setReceiptNo] = useState("Menyiapkan...");
+  const [time, setTime] = useState("12:00");
+
+  useEffect(() => {
+    const now = new Date();
+    setTime(now.toTimeString().slice(0, 5));
+    const dateKey = `jasdor-nota-${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+    const nextNumber = Number(window.localStorage.getItem(dateKey) || "0") + 1;
+    window.localStorage.setItem(dateKey, String(nextNumber));
+    const datePart = `${String(now.getDate()).padStart(2, "0")}${String(now.getMonth() + 1).padStart(2, "0")}${String(now.getFullYear()).slice(-2)}`;
+    setReceiptNo(`JD-${datePart}-${String(nextNumber).padStart(3, "0")}`);
+  }, []);
   const [feedback, setFeedback] = useState("");
 
   const total = useMemo(
@@ -94,7 +105,7 @@ export default function NotaDigitalPage() {
     }
 
     const center = (text: string, y: number, size: number, weight = "600") => {
-      ctx.font = `${weight} ${size}px Arial, sans-serif`;
+      ctx.font = `${weight} ${size}px Fredoka, sans-serif`;
       ctx.fillStyle = "#70464d";
       ctx.textAlign = "center";
       ctx.fillText(text, width / 2, y);
@@ -177,7 +188,7 @@ export default function NotaDigitalPage() {
 
     ctx.fillStyle = "#f8dce1";
     ctx.fillRect(100, y - 29, width - 200, 58);
-    ctx.font = "700 24px Arial, sans-serif";
+    ctx.font = "700 24px Fredoka, sans-serif";
     ctx.fillStyle = "#784951";
     ctx.textAlign = "center";
     ctx.fillText(status, width / 2, y + 9);
@@ -223,7 +234,7 @@ export default function NotaDigitalPage() {
           Nama customer
           <input value={customer} onChange={(e) => setCustomer(e.target.value)} placeholder="Nama customer" />
         </label>
-        <div className="nota-items-title">
+        <label className="nota-time-field">\n          Jam transaksi (WIB)\n          <input type="time" value={time} onChange={(e) => setTime(e.target.value)} />\n        </label>\n        <div className="nota-items-title">
           <strong>Detail pesanan</strong>
           <button type="button" onClick={() => setItems((current) => [...current, { id: Date.now(), name: "", qty: "1", price: "" }])}>+ Tambah menu</button>
         </div>
@@ -264,7 +275,7 @@ export default function NotaDigitalPage() {
           <p className="nota-subtitle">♡ DIGITAL RECEIPT ♡</p>
           <div className="nota-dash" />
           <div className="nota-meta"><span>No. Nota</span><b>{receiptNo}</b></div>
-          <div className="nota-meta"><span>Tanggal</span><b>{todayLabel()}</b></div>
+          <div className="nota-meta"><span>Tanggal</span><b>{todayLabel()}</b></div>\n          <div className="nota-meta"><span>Jam</span><b>{time} WIB</b></div>
           <div className="nota-meta"><span>Customer</span><b>{customer.trim() || "-"}</b></div>
           <div className="nota-dash" />
           <p className="nota-detail-title">DETAIL PESANAN</p>
