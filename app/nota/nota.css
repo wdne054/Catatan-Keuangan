@@ -123,3 +123,33 @@
 .nota-thanks { font-size: 20px; letter-spacing: .5px; }
 .nota-footer { font-size: 14px; letter-spacing: .35px; }
 .nota-paper .nota-brand-top { overflow-wrap: anywhere; }
+
+/* Friendly readable type for all receipt details; keep brand heading unchanged. */
+@import url("https://fonts.googleapis.com/css2?family=Nunito:wght@500;600;700;800;900&display=swap");
+.nota-paper { font-family: "Nunito", sans-serif; }
+.nota-paper .nota-brand-top { font-family: "Fredoka", sans-serif; font-size: 29px; letter-spacing: .8px; }
+.nota-paper .nota-subtitle,
+.nota-paper .nota-meta,
+.nota-paper .nota-meta b,
+.nota-paper .nota-detail-title,
+.nota-paper .nota-line-item,
+.nota-paper .nota-line-item b,
+.nota-paper .nota-line-item small,
+.nota-paper .nota-line-item strong,
+.nota-paper .nota-total,
+.nota-paper .nota-note,
+.nota-paper .nota-paid,
+.nota-paper .nota-thanks,
+.nota-paper .nota-footer { font-family: "Nunito", sans-serif; letter-spacing: 0; }
+.nota-paper .nota-subtitle { font-size: 13px; }
+.nota-paper .nota-meta { font-size: 13px; margin: 9px 0; }
+.nota-paper .nota-meta b { font-size: 13px; overflow-wrap:anywhere; }
+.nota-paper .nota-detail-title { font-size: 13px; }
+.nota-paper .nota-line-item { font-size: 14px; margin: 12px 0; }
+.nota-paper .nota-line-item small { font-size: 12px; }
+.nota-paper .nota-total { font-size: 17px; margin: 18px 0; }
+.nota-paper .nota-total strong { font-size: 24px; }
+.nota-paper .nota-note { font-size: 12px; line-height: 1.5; }
+.nota-paper .nota-paid { font-size: 15px; }
+.nota-paper .nota-thanks { font-size: 17px; }
+.nota-paper .nota-footer { font-size: 12px; }
