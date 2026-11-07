@@ -86,81 +86,107 @@ export default function NotaDigitalPage() {
   const downloadPng = async () => {
     const validItems = items.filter((item) => item.name.trim());
     const width = 900;
-    const height = 1180 + validItems.length * 112 + (note.trim() ? 76 : 0);
-    await document.fonts.load("700 34px Fredoka");
+    await document.fonts.load("700 48px Fredoka");
+    await document.fonts.load("700 30px Nunito");
     await document.fonts.ready;
+
+    const measureCanvas = document.createElement("canvas");
+    const measure = measureCanvas.getContext("2d");
+    if (!measure) return;
+    const wrap = (value: string, maxWidth: number, font: string) => {
+      measure.font = font;
+      const words = value.split(/\s+/);
+      const lines: string[] = [];
+      let current = "";
+      for (const word of words) {
+        const candidate = current ? current + " " + word : word;
+        if (current && measure.measureText(candidate).width > maxWidth) {
+          lines.push(current);
+          current = word;
+        } else {
+          current = candidate;
+        }
+      }
+      if (current) lines.push(current);
+      return lines.length ? lines : [""];
+    };
+
+    const itemLayouts = validItems.map((item) => ({
+      item,
+      nameLines: wrap(item.name.trim(), 700, "700 30px Nunito"),
+    }));
+    const noteLines = note.trim()
+      ? wrap("Catatan: " + note.trim(), 690, "700 25px Nunito")
+      : [];
+    const itemHeight = itemLayouts.reduce((sum, row) => sum + row.nameLines.length * 40 + 70, 0);
+    const height = Math.max(1120, 1050 + itemHeight + noteLines.length * 36);
+
     const canvas = document.createElement("canvas");
     canvas.width = width;
     canvas.height = height;
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    // Transparent canvas: only the cream receipt paper is exported.
+    // Export only the receipt paper; everything outside it stays transparent.
     const paperLeft = 28;
     const paperRight = width - 28;
     const paperTop = 20;
-    const paperBottom = height - 52;
+    const paperBottom = height - 48;
     ctx.fillStyle = "#fffaf8";
     ctx.beginPath();
     ctx.moveTo(paperLeft, paperTop);
     ctx.lineTo(paperRight, paperTop);
     ctx.lineTo(paperRight, paperBottom - 12);
-    const scallopCount = 34;
-    const scallopWidth = (paperRight - paperLeft) / scallopCount;
-    for (let i = scallopCount; i >= 0; i--) {
-      const x = paperLeft + i * scallopWidth;
-      ctx.lineTo(x, paperBottom - (i % 2 === 0 ? 0 : 12));
+    const scallops = 34;
+    const scallopWidth = (paperRight - paperLeft) / scallops;
+    for (let i = scallops; i >= 0; i--) {
+      ctx.lineTo(paperLeft + i * scallopWidth, paperBottom - (i % 2 === 0 ? 0 : 12));
     }
     ctx.closePath();
     ctx.fill();
 
-    // Delicate dotted side details, kept inside the paper.
-    for (let y = 48; y < paperBottom - 24; y += 22) {
-      ctx.fillStyle = "rgba(177,119,128,.16)";
+    for (let y = 48; y < paperBottom - 24; y += 24) {
+      ctx.fillStyle = "rgba(177,119,128,.13)";
       ctx.beginPath();
       ctx.arc(48, y, 2, 0, Math.PI * 2);
       ctx.arc(width - 48, y, 2, 0, Math.PI * 2);
       ctx.fill();
     }
 
-    const center = (text: string, y: number, size: number, letterSpace = 1) => {
-      ctx.font = `700 ${size}px Fredoka, sans-serif`;
+    const center = (value: string, y: number, size: number, family = "Nunito") => {
+      ctx.font = `800 ${size}px ${family}, sans-serif`;
       ctx.fillStyle = "#70464d";
       ctx.textAlign = "center";
-      ctx.textBaseline = "alphabetic";
-      ctx.letterSpacing = `${letterSpace}px`;
-      ctx.fillText(text, width / 2, y);
       ctx.letterSpacing = "0px";
+      ctx.fillText(value, width / 2, y);
     };
-    const left = (text: string, y: number, size = 28) => {
-      ctx.font = `700 ${size}px Fredoka, sans-serif`;
+    const left = (value: string, y: number, size = 27) => {
+      ctx.font = `700 ${size}px Nunito, sans-serif`;
       ctx.fillStyle = "#765158";
       ctx.textAlign = "left";
-      ctx.letterSpacing = "0.5px";
-      ctx.fillText(text, 104, y);
       ctx.letterSpacing = "0px";
+      ctx.fillText(value, 100, y);
     };
-    const right = (text: string, y: number, size = 28) => {
-      ctx.font = `700 ${size}px Fredoka, sans-serif`;
+    const right = (value: string, y: number, size = 27) => {
+      ctx.font = `800 ${size}px Nunito, sans-serif`;
       ctx.fillStyle = "#765158";
       ctx.textAlign = "right";
-      ctx.letterSpacing = "0.3px";
-      ctx.fillText(text, width - 104, y);
       ctx.letterSpacing = "0px";
+      ctx.fillText(value, width - 100, y);
     };
     const line = (y: number) => {
       ctx.save();
-      ctx.setLineDash([9, 9]);
-      ctx.strokeStyle = "#d9aeb5";
-      ctx.lineWidth = 3;
+      ctx.setLineDash([8, 9]);
+      ctx.strokeStyle = "#d9b5bb";
+      ctx.lineWidth = 2;
       ctx.beginPath();
-      ctx.moveTo(100, y);
-      ctx.lineTo(width - 100, y);
+      ctx.moveTo(94, y);
+      ctx.lineTo(width - 94, y);
       ctx.stroke();
       ctx.restore();
     };
 
-    // A clear, hand-drawn coffee cup (not a font/emoji glyph).
+    // Hand-drawn cup icon; avoids emoji/font substitution in exported PNG.
     ctx.save();
     ctx.strokeStyle = "#bd858c";
     ctx.lineWidth = 6;
@@ -187,51 +213,54 @@ export default function NotaDigitalPage() {
     ctx.stroke();
     ctx.restore();
 
-    center("Jasdorby_esaashop", 238, 48, 1.8);
-    center("♡  DIGITAL RECEIPT  ♡", 292, 25, 2);
+    // Keep the approved brand lettering; use a softer, clearer font for all other text.
+    center("Jasdorby_esaashop", 238, 48, "Fredoka");
+    center("♡  DIGITAL RECEIPT  ♡", 292, 25);
     line(330);
-    left(`No. Nota : ${receiptNo}`, 390, 27);
-    left(`Tanggal : ${todayLabel()}`, 438, 27);
-    left(`Jam transaksi : ${time} WIB`, 486, 29);
-    left(`Customer : ${customer.trim() || "-"}`, 534, 27);
+    left(`No. Nota : ${receiptNo}`, 390, 26);
+    left(`Tanggal : ${todayLabel()}`, 438, 26);
+    left(`Jam transaksi : ${time} WIB`, 486, 27);
+    left(`Customer : ${customer.trim() || "-"}`, 534, 26);
     line(570);
-    center("DETAIL PESANAN", 620, 23, 2);
+    center("DETAIL PESANAN", 620, 24);
 
     let y = 678;
-    validItems.forEach((item) => {
+    for (const { item, nameLines } of itemLayouts) {
+      nameLines.forEach((nameLine) => {
+        left(nameLine, y, 29);
+        y += 39;
+      });
       const qty = Math.max(0, Number(item.qty) || 0);
       const price = Math.max(0, Number(item.price) || 0);
-      left(item.name.slice(0, 38), y, 29);
-      right(`${qty} x ${money(price)}`, y, 25);
-      y += 39;
+      left(`${qty} × ${money(price)}`, y, 24);
       right(money(qty * price), y, 27);
-      y += 62;
-    });
+      y += 54;
+    }
     line(y);
-    y += 62;
-    left("TOTAL PESANAN", y, 30);
-    right(money(total), y, 40);
-    y += 78;
+    y += 58;
+    left("TOTAL PESANAN", y, 29);
+    right(money(total), y, 35);
+    y += 76;
 
     ctx.fillStyle = "#f8dce1";
     ctx.beginPath();
-    ctx.roundRect(104, y - 42, width - 208, 68, 18);
+    ctx.roundRect(104, y - 40, width - 208, 64, 18);
     ctx.fill();
-    ctx.font = "700 30px Fredoka, sans-serif";
+    ctx.font = "800 28px Nunito, sans-serif";
     ctx.fillStyle = "#784951";
     ctx.textAlign = "center";
-    ctx.letterSpacing = "2px";
-    ctx.fillText(status, width / 2, y + 3);
-    ctx.letterSpacing = "0px";
-    y += 78;
+    ctx.fillText(status, width / 2, y + 2);
+    y += 76;
 
-    if (note.trim()) {
-      left(`Catatan: ${note.trim().slice(0, 48)}`, y, 24);
-      y += 58;
+    if (noteLines.length) {
+      noteLines.forEach((noteLine) => {
+        left(noteLine, y, 25);
+        y += 36;
+      });
     }
     line(y + 4);
-    center("Thank you for ordering ♡", y + 68, 30, 1);
-    center("Semoga harimu semanis kopimu ☕", y + 116, 25, 1);
+    center("Thank you for ordering ♡", y + 64, 28);
+    center("Semoga harimu semanis kopimu", y + 108, 25);
 
     const link = document.createElement("a");
     link.download = `Nota-Jasdor-${receiptNo}.png`;
