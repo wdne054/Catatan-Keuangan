@@ -106,3 +106,20 @@
 .nota-page, .nota-page * { font-weight: 700 !important; }
 .nota-paper .nota-brand-top { max-width: none; margin: 0 0 5px; text-align: center; color: #71464e; font-size: 27px; letter-spacing: -.7px; line-height: 1.2; }
 .nota-brand { display: none; }
+
+/* Clearer, roomier receipt typography. */
+.nota-paper { padding: 28px 27px 42px; }
+.nota-paper .nota-brand-top { font-size: 29px; letter-spacing: .8px; }
+.nota-subtitle { font-size: 13px; letter-spacing: 2.4px; margin: 12px 0 18px; }
+.nota-meta { font-size: 14px; letter-spacing: .25px; margin: 10px 0; gap: 12px; }
+.nota-meta b { font-size: 14px; }
+.nota-detail-title { font-size: 13px; letter-spacing: 1.8px; margin: 20px 0 14px; }
+.nota-line-item { font-size: 15px; margin: 14px 0; gap: 12px; }
+.nota-line-item small { font-size: 12px; }
+.nota-total { font-size: 20px; margin: 22px 0; letter-spacing: .5px; }
+.nota-total strong { font-size: 28px; letter-spacing: .5px; }
+.nota-note { font-size: 13px; line-height: 1.5; }
+.nota-paid { font-size: 17px; padding: 11px 28px; }
+.nota-thanks { font-size: 20px; letter-spacing: .5px; }
+.nota-footer { font-size: 14px; letter-spacing: .35px; }
+.nota-paper .nota-brand-top { overflow-wrap: anywhere; }
