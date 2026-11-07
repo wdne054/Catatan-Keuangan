@@ -85,7 +85,9 @@ export default function NotaDigitalPage() {
   const downloadPng = async () => {
     const validItems = items.filter((item) => item.name.trim());
     const width = 760;
-    const height = 900 + validItems.length * 72 + (note.trim() ? 50 : 0);\n    await document.fonts.load("700 54px Fredoka");\n    await document.fonts.ready;
+    const height = 900 + validItems.length * 72 + (note.trim() ? 50 : 0);
+    await document.fonts.load("700 54px Fredoka");
+    await document.fonts.ready;
     const canvas = document.createElement("canvas");
     canvas.width = width;
     canvas.height = height;
@@ -122,7 +124,7 @@ export default function NotaDigitalPage() {
       ctx.restore();
     };
     const left = (text: string, y: number, size = 22, weight = "500") => {
-      ctx.font = `${weight} ${size}px Arial, sans-serif`;
+      ctx.font = `${weight} ${size}px Fredoka, sans-serif`;
       ctx.fillStyle = "#765158";
       ctx.textAlign = "left";
       ctx.fillText(text, 100, y);
@@ -166,7 +168,8 @@ export default function NotaDigitalPage() {
     center("♡  DIGITAL RECEIPT  ♡", 278, 19, "600");
     line(310);
     left(`No. Nota  : ${receiptNo}`, 354, 20);
-    left(`Tanggal  : ${todayLabel()}`, 392, 20);\n    left(`Jam      : ${time} WIB`, 430, 20);
+    left(`Tanggal  : ${todayLabel()}`, 392, 20);
+    left(`Jam      : ${time} WIB`, 430, 20);
     left(`Customer : ${customer.trim() || "-"}`, 468, 20);
     line(500);
 
