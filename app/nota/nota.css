@@ -1,0 +1,103 @@
+@import url("https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap");
+
+.nota-page {
+  width: min(100%, 560px);
+  min-height: 100vh;
+  margin: 0 auto;
+  padding: 20px 18px 56px;
+  color: #70464d;
+  font-family: "Fredoka", sans-serif;
+}
+.nota-back {
+  display: inline-block;
+  color: #91646c;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  margin-bottom: 18px;
+}
+.nota-heading { text-align: center; padding: 10px 8px 22px; }
+.nota-heading > span { font-size: 25px; letter-spacing: 7px; }
+.nota-heading p { margin: 8px 0 2px; color: #a16f78; font-size: 11px; font-weight: 700; letter-spacing: 2px; }
+.nota-heading h1 { max-width: none; color: #70464d; font-size: 34px; letter-spacing: 0; }
+.nota-heading small { display: block; margin-top: 5px; color: #a77e83; font-size: 12px; }
+.nota-form {
+  padding: 18px;
+  border: 1px solid #f1d8dc;
+  border-radius: 23px;
+  background: rgba(255,250,248,.96);
+  box-shadow: 0 10px 28px rgba(128,77,87,.08);
+}
+.nota-form label { display: block; color: #85565e; font-size: 12px; font-weight: 600; }
+.nota-form input {
+  width: 100%;
+  min-width: 0;
+  margin-top: 6px;
+  padding: 11px 12px;
+  border: 1px solid #edcfd4;
+  border-radius: 13px;
+  outline: none;
+  background: #fff;
+  color: #68434a;
+  font: 500 14px "Fredoka", sans-serif;
+}
+.nota-form input:focus { border-color: #d795a2; box-shadow: 0 0 0 3px #fbe7eb; }
+.nota-items-title { display:flex; align-items:center; justify-content:space-between; gap:8px; margin:18px 0 10px; color:#70464d; font-size:14px; }
+.nota-items-title button, .nota-status button {
+  border: 1px solid #e9c4cb; border-radius: 999px; padding: 8px 11px;
+  background: #fff0f3; color: #85545d; font: 600 11px "Fredoka",sans-serif;
+}
+.nota-item-editor { padding: 11px; margin-bottom: 9px; border: 1px dashed #e8c9ce; border-radius: 15px; background: #fff7f7; }
+.nota-item-numbers { display:grid; grid-template-columns: .65fr 1.35fr 30px; align-items:end; gap:8px; margin-top:9px; }
+.nota-item-numbers label { font-size:10px; }
+.nota-item-numbers input { padding:9px 8px; font-size:13px; }
+.nota-remove { width:29px; height:36px; border:0; border-radius:10px; background:#f8e2e5; color:#965e68; font-size:20px; }
+.nota-item-editor > small { display:block; margin-top:7px; color:#a17d82; font-size:10px; text-align:right; }
+.nota-form > label + label { margin-top:15px; }
+.nota-status { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:9px; margin-top:17px; color:#85565e; font-size:12px; font-weight:600; }
+.nota-status > div { display:flex; gap:6px; }
+.nota-status button.chosen { background:#d98e9d; border-color:#d98e9d; color:white; }
+.nota-preview-wrap { margin-top:22px; }
+.nota-preview-label { margin:0 0 9px 5px; color:#a16f78; font-size:10px; font-weight:700; letter-spacing:1.6px; }
+.nota-paper {
+  position:relative; overflow:hidden; width:min(100%, 440px); margin:0 auto; padding:24px 25px 27px;
+  color:#765158; background:#fff9f7; border:1px solid #f1d9dc;
+  box-shadow:0 12px 28px rgba(117,73,82,.12);
+  clip-path:polygon(0 0,100% 0,100% 98.8%,98% 100%,96% 98.8%,94% 100%,92% 98.8%,90% 100%,88% 98.8%,86% 100%,84% 98.8%,82% 100%,80% 98.8%,78% 100%,76% 98.8%,74% 100%,72% 98.8%,70% 100%,68% 98.8%,66% 100%,64% 98.8%,62% 100%,60% 98.8%,58% 100%,56% 98.8%,54% 100%,52% 98.8%,50% 100%,48% 98.8%,46% 100%,44% 98.8%,42% 100%,40% 98.8%,38% 100%,36% 98.8%,34% 100%,32% 98.8%,30% 100%,28% 98.8%,26% 100%,24% 98.8%,22% 100%,20% 98.8%,18% 100%,16% 98.8%,14% 100%,12% 98.8%,10% 100%,8% 98.8%,6% 100%,4% 98.8%,2% 100%,0 98.8%);
+}
+.nota-paper::before { content:""; position:absolute; inset:0; pointer-events:none; opacity:.35; background:repeating-linear-gradient(0deg,transparent 0 7px,rgba(200,151,157,.06) 8px); }
+.nota-doodle { position:relative; height:67px; display:flex; align-items:center; justify-content:center; color:#bd858c; }
+.nota-doodle .cup { font-size:43px; filter:grayscale(.2) sepia(.18); }
+.nota-doodle .steam { position:absolute; top:0; font-size:20px; letter-spacing:7px; transform:rotate(-8deg); color:#c28c92; }
+.nota-doodle .sparkle { position:absolute; right:22%; top:15px; color:#d49aa2; font-size:24px; }
+.nota-paper h2 { max-width:none; text-align:center; color:#71464e; font-size:42px; letter-spacing:-1px; }
+.nota-brand { display:block; margin-top:-2px; text-align:center; font-size:13px; letter-spacing:1px; }
+.nota-subtitle { margin:9px 0 15px; text-align:center; font-size:10px; font-weight:700; letter-spacing:2px; }
+.nota-dash { border-top:2px dashed #dcbac0; margin:13px 0; }
+.nota-meta { display:flex; justify-content:space-between; gap:10px; margin:8px 0; font-size:11px; }
+.nota-meta b { text-align:right; font-weight:600; }
+.nota-detail-title { margin:17px 0 11px; font-size:10px; font-weight:700; letter-spacing:1.4px; }
+.nota-line-item { display:flex; justify-content:space-between; gap:10px; margin:11px 0; font-size:12px; }
+.nota-line-item > div { min-width:0; }
+.nota-line-item b { display:block; overflow-wrap:anywhere; font-weight:600; }
+.nota-line-item small { display:block; margin-top:3px; color:#a17d82; font-size:10px; }
+.nota-line-item > strong { flex-shrink:0; font-weight:600; }
+.nota-total { display:flex; justify-content:space-between; align-items:center; gap:10px; margin:18px 0; font-size:14px; }
+.nota-total strong { color:#70464d; font-size:20px; }
+.nota-note { margin:12px 0; font-size:10px; overflow-wrap:anywhere; }
+.nota-paid { width:max-content; max-width:100%; margin:15px auto; padding:9px 24px; border:1px solid #e5b7c0; border-radius:5px; background:#f9e1e5; color:#86515b; font-size:14px; font-weight:700; letter-spacing:1px; text-align:center; }
+.nota-thanks { margin-top:17px; text-align:center; color:#885760; font-size:17px; font-weight:700; }
+.nota-footer,.nota-stamp { margin-top:6px; text-align:center; color:#a17d82; font-size:10px; }
+.nota-stamp { margin-top:16px; font-size:9px; letter-spacing:1px; }
+.nota-actions { display:grid; gap:9px; margin:17px auto 0; width:min(100%,440px); }
+.nota-actions button { border:0; border-radius:15px; padding:14px; background:#d98e9d; color:white; font:700 13px "Fredoka",sans-serif; box-shadow:0 7px 16px rgba(180,105,119,.2); }
+.nota-actions button.secondary { border:1px solid #e8c6cc; background:#fff7f7; color:#85545d; box-shadow:none; }
+.nota-feedback { margin:12px 0; text-align:center; color:#7d9a70; font-size:12px; font-weight:600; }
+.nota-disclaimer { max-width:440px; margin:15px auto 0; color:#a17d82; font-size:10px; line-height:1.5; text-align:center; }
+@media print {
+  body { background:#fff !important; }
+  .nota-page { width:100%; padding:0; }
+  .nota-back,.nota-heading,.nota-form,.nota-preview-label,.nota-actions,.nota-feedback,.nota-disclaimer { display:none !important; }
+  .nota-preview-wrap { margin:0; }
+  .nota-paper { width:100%; max-width:440px; margin:0 auto; box-shadow:none; border:0; }
+}
