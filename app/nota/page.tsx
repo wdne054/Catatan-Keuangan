@@ -130,7 +130,7 @@ export default function NotaDigitalPage() {
       ctx.fillText(text, 100, y);
     };
     const right = (text: string, y: number, size = 22, weight = "500") => {
-      ctx.font = `${weight} ${size}px Arial, sans-serif`;
+      ctx.font = `${weight} ${size}px Fredoka, sans-serif`;
       ctx.fillStyle = "#765158";
       ctx.textAlign = "right";
       ctx.fillText(text, width - 100, y);
