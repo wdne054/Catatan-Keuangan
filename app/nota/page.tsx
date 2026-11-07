@@ -67,7 +67,8 @@ export default function NotaDigitalPage() {
       "DIGITAL RECEIPT",
       "--------------------------------",
       `No. Nota: ${receiptNo}`,
-      `Tanggal: ${todayLabel()}`,\n      `Jam: ${time} WIB`,
+      `Tanggal: ${todayLabel()}`,
+      `Jam: ${time} WIB`,
       `Customer: ${customer.trim() || "-"}`,
       "--------------------------------",
       ...rows,
@@ -237,7 +238,11 @@ export default function NotaDigitalPage() {
           Nama customer
           <input value={customer} onChange={(e) => setCustomer(e.target.value)} placeholder="Nama customer" />
         </label>
-        <label className="nota-time-field">\n          Jam transaksi (WIB)\n          <input type="time" value={time} onChange={(e) => setTime(e.target.value)} />\n        </label>\n        <div className="nota-items-title">
+        <label className="nota-time-field">
+          Jam transaksi (WIB)
+          <input type="time" value={time} onChange={(e) => setTime(e.target.value)} />
+        </label>
+        <div className="nota-items-title">
           <strong>Detail pesanan</strong>
           <button type="button" onClick={() => setItems((current) => [...current, { id: Date.now(), name: "", qty: "1", price: "" }])}>+ Tambah menu</button>
         </div>
