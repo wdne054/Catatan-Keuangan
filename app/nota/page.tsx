@@ -198,7 +198,7 @@ export default function NotaDigitalPage() {
     };
 
     // Logo is the same 180px square used in the preview; preserve its aspect ratio.
-    ctx.drawImage(logo, (W - 180) / 2, 26, 180, 180);
+    ctx.drawImage(logo, (W - 160) / 2, 26, 160, 160);
     text("♡  DIGITAL RECEIPT  ♡", W / 2, 244, 14, "center", 700, "#70464d");
     divider(268);
 
@@ -225,8 +225,8 @@ export default function NotaDigitalPage() {
 
     divider(y + 2);
     y += 49;
-    text("TOTAL PESANAN", 30, y, 18, "left", 700, "#70464d");
-    text(money(total), W - 30, y + 3, 28, "right", 700, "#70464d");
+    text("TOTAL PESANAN", 30, y, 16, "left", 700, "#70464d");
+    text(money(total), W - 30, y + 2, 22, "right", 700, "#70464d");
     y += 55;
 
     const pillWidth = 336;
