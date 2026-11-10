@@ -85,17 +85,20 @@ export default function NotaDigitalPage() {
 
   const downloadPng = async () => {
     const validItems = items.filter((item) => item.name.trim());
-    const width = 900;
-    await document.fonts.load("700 48px Fredoka");
-    await document.fonts.load("700 30px Fredoka");
+    await document.fonts.load("600 16px Fredoka");
+    await document.fonts.load("700 28px Fredoka");
     await document.fonts.ready;
 
+    // Draw in the same 440px layout width as the on-screen receipt, then
+    // export at 2x resolution. This keeps proportions identical on phones.
+    const W = 440;
+    const scale = 2;
     const measureCanvas = document.createElement("canvas");
     const measure = measureCanvas.getContext("2d");
     if (!measure) return;
     const wrap = (value: string, maxWidth: number, font: string) => {
       measure.font = font;
-      const words = value.split(/\s+/);
+      const words = value.split(/\\s+/);
       const lines: string[] = [];
       let current = "";
       for (const word of words) {
@@ -103,140 +106,143 @@ export default function NotaDigitalPage() {
         if (current && measure.measureText(candidate).width > maxWidth) {
           lines.push(current);
           current = word;
-        } else {
-          current = candidate;
-        }
+        } else current = candidate;
       }
       if (current) lines.push(current);
       return lines.length ? lines : [""];
     };
 
-    const itemLayouts = validItems.map((item) => ({
-      item,
-      nameLines: wrap(item.name.trim(), 700, "700 30px Fredoka"),
-    }));
-    const noteLines = note.trim()
-      ? wrap("Catatan: " + note.trim(), 690, "700 25px Fredoka")
-      : [];
-    const itemHeight = itemLayouts.reduce((sum, row) => sum + row.nameLines.length * 40 + 70, 0);
-    const height = Math.max(1120, 1050 + itemHeight + noteLines.length * 36);
-
-    const canvas = document.createElement("canvas");
-    canvas.width = width;
-    canvas.height = height;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    // Export only the receipt paper; everything outside it stays transparent.
-    const paperLeft = 28;
-    const paperRight = width - 28;
-    const paperTop = 20;
-    const paperBottom = height - 48;
-    ctx.fillStyle = "#fffaf8";
-    ctx.beginPath();
-    ctx.moveTo(paperLeft, paperTop);
-    ctx.lineTo(paperRight, paperTop);
-    ctx.lineTo(paperRight, paperBottom - 12);
-    const scallops = 34;
-    const scallopWidth = (paperRight - paperLeft) / scallops;
-    for (let i = scallops; i >= 0; i--) {
-      ctx.lineTo(paperLeft + i * scallopWidth, paperBottom - (i % 2 === 0 ? 0 : 12));
-    }
-    ctx.closePath();
-    ctx.fill();
-
-    for (let y = 48; y < paperBottom - 24; y += 24) {
-      ctx.fillStyle = "rgba(177,119,128,.13)";
-      ctx.beginPath();
-      ctx.arc(48, y, 2, 0, Math.PI * 2);
-      ctx.arc(width - 48, y, 2, 0, Math.PI * 2);
-      ctx.fill();
-    }
-
-    const center = (value: string, y: number, size: number, family = "Fredoka") => {
-      ctx.font = `800 ${size}px ${family}, sans-serif`;
-      ctx.fillStyle = "#70464d";
-      ctx.textAlign = "center";
-      ctx.letterSpacing = "0px";
-      ctx.fillText(value, width / 2, y);
-    };
-    const left = (value: string, y: number, size = 27) => {
-      ctx.font = `700 ${size}px Fredoka, sans-serif`;
-      ctx.fillStyle = "#765158";
-      ctx.textAlign = "left";
-      ctx.letterSpacing = "0px";
-      ctx.fillText(value, 100, y);
-    };
-    const right = (value: string, y: number, size = 27) => {
-      ctx.font = `800 ${size}px Fredoka, sans-serif`;
-      ctx.fillStyle = "#765158";
-      ctx.textAlign = "right";
-      ctx.letterSpacing = "0px";
-      ctx.fillText(value, width - 100, y);
-    };
-    const line = (y: number) => {
-      ctx.save();
-      ctx.setLineDash([8, 9]);
-      ctx.strokeStyle = "#d9b5bb";
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.moveTo(94, y);
-      ctx.lineTo(width - 94, y);
-      ctx.stroke();
-      ctx.restore();
-    };
-
-    // Use the exact Jasdor illustration in both the HTML preview and PNG export.
     const logo = new Image();
     logo.src = "/jasdor-logo.svg";
     await logo.decode();
-    ctx.drawImage(logo, 350, 18, 200, 200);
-    center("♡  DIGITAL RECEIPT  ♡", 292, 25);
-    line(330);
-    left(`No. Nota : ${receiptNo}`, 390, 26);
-    left(`Tanggal : ${todayLabel()}`, 438, 26);
-    left(`Jam transaksi : ${time} WIB`, 486, 27);
-    left(`Customer : ${customer.trim() || "-"}`, 534, 26);
-    line(570);
-    center("DETAIL PESANAN", 620, 24);
 
-    let y = 678;
+    const meta = [
+      ["No. Nota", receiptNo],
+      ["Tanggal", todayLabel()],
+      ["Jam", time + " WIB"],
+      ["Customer", customer.trim() || "-"],
+    ];
+    const metaLayouts = meta.map(([label, value]) => ({
+      label,
+      lines: wrap(value, 205, "600 14px Fredoka"),
+    }));
+    const itemLayouts = validItems.map((item) => ({
+      item,
+      nameLines: wrap(item.name.trim(), 265, "600 17px Fredoka"),
+    }));
+    const noteLines = note.trim()
+      ? wrap("Catatan: " + note.trim(), 370, "500 14px Fredoka")
+      : [];
+
+    let y = 250;
+    for (const row of metaLayouts) y += Math.max(34, row.lines.length * 19) + 2;
+    y += 54;
+    for (const row of itemLayouts) y += row.nameLines.length * 23 + 48;
+    y += 112 + noteLines.length * 21 + 112;
+    const H = Math.max(900, y);
+
+    const canvas = document.createElement("canvas");
+    canvas.width = W * scale;
+    canvas.height = H * scale;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    ctx.scale(scale, scale);
+
+    const paperBottom = H - 20;
+    ctx.fillStyle = "#fff9f7";
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.lineTo(W, 0);
+    ctx.lineTo(W, paperBottom - 10);
+    const scallops = 32;
+    const sw = W / scallops;
+    for (let i = scallops; i >= 0; i--) {
+      ctx.lineTo(i * sw, paperBottom - (i % 2 === 0 ? 0 : 10));
+    }
+    ctx.closePath();
+    ctx.fill();
+    ctx.strokeStyle = "#f1d9dc";
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    for (let dotY = 28; dotY < paperBottom - 22; dotY += 25) {
+      ctx.fillStyle = "rgba(177,119,128,.13)";
+      ctx.beginPath();
+      ctx.arc(13, dotY, 1.5, 0, Math.PI * 2);
+      ctx.arc(W - 13, dotY, 1.5, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    const text = (value: string, x: number, baseline: number, size: number, align: CanvasTextAlign = "left", weight = 600, color = "#765158") => {
+      ctx.font = weight + " " + size + "px Fredoka, sans-serif";
+      ctx.fillStyle = color;
+      ctx.textAlign = align;
+      ctx.textBaseline = "alphabetic";
+      ctx.letterSpacing = "0px";
+      ctx.fillText(value, x, baseline);
+    };
+    const divider = (at: number) => {
+      ctx.save();
+      ctx.setLineDash([4, 4]);
+      ctx.strokeStyle = "#dcbac0";
+      ctx.lineWidth = 1.4;
+      ctx.beginPath();
+      ctx.moveTo(28, at);
+      ctx.lineTo(W - 28, at);
+      ctx.stroke();
+      ctx.restore();
+    };
+    const drawWrapped = (lines: string[], x: number, baseline: number, size: number, lineHeight: number, align: CanvasTextAlign = "left", weight = 600) => {
+      lines.forEach((line, index) => text(line, x, baseline + index * lineHeight, size, align, weight));
+    };
+
+    // Logo is the same 180px square used in the preview; preserve its aspect ratio.
+    ctx.drawImage(logo, (W - 180) / 2, 18, 180, 180);
+    text("♡  DIGITAL RECEIPT  ♡", W / 2, 224, 14, "center", 700, "#70464d");
+    divider(250);
+
+    y = 282;
+    for (const row of metaLayouts) {
+      text(row.label, 30, y, 14, "left", 600);
+      drawWrapped(row.lines, W - 30, y, 14, 19, "right", 600);
+      y += Math.max(34, row.lines.length * 19) + 2;
+    }
+    divider(y + 5);
+    y += 49;
+    text("DETAIL PESANAN", W / 2, y, 14, "center", 700, "#70464d");
+    y += 42;
+
     for (const { item, nameLines } of itemLayouts) {
-      nameLines.forEach((nameLine) => {
-        left(nameLine, y, 29);
-        y += 39;
-      });
+      drawWrapped(nameLines, 30, y, 17, 23, "left", 600);
       const qty = Math.max(0, Number(item.qty) || 0);
       const price = Math.max(0, Number(item.price) || 0);
-      left(`${qty} × ${money(price)}`, y, 24);
-      right(money(qty * price), y, 27);
-      y += 54;
+      text(money(qty * price), W - 30, y, 16, "right", 700);
+      y += nameLines.length * 23;
+      text(qty + " × " + money(price), 30, y + 1, 14, "left", 500, "#9b747b");
+      y += 38;
     }
-    line(y);
-    y += 58;
-    left("TOTAL PESANAN", y, 29);
-    right(money(total), y, 35);
-    y += 76;
 
+    divider(y + 2);
+    y += 49;
+    text("TOTAL PESANAN", 30, y, 18, "left", 700, "#70464d");
+    text(money(total), W - 30, y + 3, 28, "right", 700, "#70464d");
+    y += 55;
+
+    const pillWidth = 336;
     ctx.fillStyle = "#f8dce1";
     ctx.beginPath();
-    ctx.roundRect(104, y - 40, width - 208, 64, 18);
+    ctx.roundRect((W - pillWidth) / 2, y - 25, pillWidth, 42, 13);
     ctx.fill();
-    ctx.font = "800 28px Fredoka, sans-serif";
-    ctx.fillStyle = "#784951";
-    ctx.textAlign = "center";
-    ctx.fillText(status, width / 2, y + 2);
-    y += 76;
+    text(status, W / 2, y + 3, 18, "center", 700, "#784951");
+    y += 48;
 
     if (noteLines.length) {
-      noteLines.forEach((noteLine) => {
-        left(noteLine, y, 25);
-        y += 36;
-      });
+      drawWrapped(noteLines, 30, y, 14, 21, "left", 500);
+      y += noteLines.length * 21 + 16;
     }
-    line(y + 4);
-    center("Thank you for ordering ♡", y + 64, 28);
-    center("Semoga harimu semanis kopimu", y + 108, 25);
+    divider(y + 3);
+    text("Thank you for ordering ♡", W / 2, y + 51, 19, "center", 600, "#885760");
+    text("Semoga harimu semanis kopimu", W / 2, y + 82, 15, "center", 600, "#a17d82");
 
     const link = document.createElement("a");
     link.download = `Nota-Jasdor-${receiptNo}.png`;
