@@ -311,3 +311,40 @@
   .nota-paper .nota-line-item, .nota-paper .nota-line-item b { font-size: 14px !important; }
   .nota-paper .nota-total strong { font-size: 23px !important; }
 }
+
+/* Compact, polished receipt proportions. */
+.nota-paper {
+  width: min(92vw, 400px) !important;
+  max-width: 400px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  padding: 24px 24px 38px !important;
+}
+.nota-logo-wrap {
+  height: 170px !important;
+  margin: 0 auto 6px !important;
+}
+.nota-logo-wrap img {
+  width: 160px !important;
+  height: 160px !important;
+  object-fit: contain;
+}
+.nota-paper .nota-total {
+  margin: 20px 0 !important;
+  gap: 10px !important;
+  font-size: 16px !important;
+  line-height: 1.4 !important;
+}
+.nota-paper .nota-total strong {
+  font-size: 22px !important;
+  line-height: 1.3 !important;
+}
+@media (max-width: 380px) {
+  .nota-paper {
+    width: 94vw !important;
+    padding-left: 19px !important;
+    padding-right: 19px !important;
+  }
+  .nota-paper .nota-total { font-size: 15px !important; }
+  .nota-paper .nota-total strong { font-size: 20px !important; }
+}
