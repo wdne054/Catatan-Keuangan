@@ -99,7 +99,7 @@ export default function NotaDigitalPage() {
     if (!measure) return;
     const wrap = (value: string, maxWidth: number, font: string) => {
       measure.font = font;
-      const words = value.split(/\\s+/);
+      const words = value.split(/\s+/);
       const lines: string[] = [];
       let current = "";
       for (const word of words) {
