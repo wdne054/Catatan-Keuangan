@@ -91,7 +91,8 @@ export default function NotaDigitalPage() {
 
     // Draw in the same 440px layout width as the on-screen receipt, then
     // export at 2x resolution. This keeps proportions identical on phones.
-    const W = 440;
+    const previewPaper = document.querySelector(".nota-paper");
+    const W = Math.round(previewPaper?.getBoundingClientRect().width || 440);
     const scale = 2;
     const measureCanvas = document.createElement("canvas");
     const measure = measureCanvas.getContext("2d");
@@ -197,11 +198,11 @@ export default function NotaDigitalPage() {
     };
 
     // Logo is the same 180px square used in the preview; preserve its aspect ratio.
-    ctx.drawImage(logo, (W - 180) / 2, 18, 180, 180);
-    text("♡  DIGITAL RECEIPT  ♡", W / 2, 224, 14, "center", 700, "#70464d");
-    divider(250);
+    ctx.drawImage(logo, (W - 180) / 2, 26, 180, 180);
+    text("♡  DIGITAL RECEIPT  ♡", W / 2, 244, 14, "center", 700, "#70464d");
+    divider(268);
 
-    y = 282;
+    y = 300;
     for (const row of metaLayouts) {
       text(row.label, 30, y, 14, "left", 600);
       drawWrapped(row.lines, W - 30, y, 14, 19, "right", 600);
