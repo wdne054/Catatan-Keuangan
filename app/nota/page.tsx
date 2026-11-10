@@ -87,7 +87,7 @@ export default function NotaDigitalPage() {
     const validItems = items.filter((item) => item.name.trim());
     const width = 900;
     await document.fonts.load("700 48px Fredoka");
-    await document.fonts.load("700 30px Nunito");
+    await document.fonts.load("700 30px Fredoka");
     await document.fonts.ready;
 
     const measureCanvas = document.createElement("canvas");
@@ -113,10 +113,10 @@ export default function NotaDigitalPage() {
 
     const itemLayouts = validItems.map((item) => ({
       item,
-      nameLines: wrap(item.name.trim(), 700, "700 30px Nunito"),
+      nameLines: wrap(item.name.trim(), 700, "700 30px Fredoka"),
     }));
     const noteLines = note.trim()
-      ? wrap("Catatan: " + note.trim(), 690, "700 25px Nunito")
+      ? wrap("Catatan: " + note.trim(), 690, "700 25px Fredoka")
       : [];
     const itemHeight = itemLayouts.reduce((sum, row) => sum + row.nameLines.length * 40 + 70, 0);
     const height = Math.max(1120, 1050 + itemHeight + noteLines.length * 36);
@@ -153,7 +153,7 @@ export default function NotaDigitalPage() {
       ctx.fill();
     }
 
-    const center = (value: string, y: number, size: number, family = "Nunito") => {
+    const center = (value: string, y: number, size: number, family = "Fredoka") => {
       ctx.font = `800 ${size}px ${family}, sans-serif`;
       ctx.fillStyle = "#70464d";
       ctx.textAlign = "center";
@@ -161,14 +161,14 @@ export default function NotaDigitalPage() {
       ctx.fillText(value, width / 2, y);
     };
     const left = (value: string, y: number, size = 27) => {
-      ctx.font = `700 ${size}px Nunito, sans-serif`;
+      ctx.font = `700 ${size}px Fredoka, sans-serif`;
       ctx.fillStyle = "#765158";
       ctx.textAlign = "left";
       ctx.letterSpacing = "0px";
       ctx.fillText(value, 100, y);
     };
     const right = (value: string, y: number, size = 27) => {
-      ctx.font = `800 ${size}px Nunito, sans-serif`;
+      ctx.font = `800 ${size}px Fredoka, sans-serif`;
       ctx.fillStyle = "#765158";
       ctx.textAlign = "right";
       ctx.letterSpacing = "0px";
@@ -186,35 +186,11 @@ export default function NotaDigitalPage() {
       ctx.restore();
     };
 
-    // Hand-drawn cup icon; avoids emoji/font substitution in exported PNG.
-    ctx.save();
-    ctx.strokeStyle = "#bd858c";
-    ctx.lineWidth = 6;
-    ctx.lineCap = "round";
-    ctx.lineJoin = "round";
-    ctx.beginPath();
-    ctx.moveTo(380, 92);
-    ctx.lineTo(500, 92);
-    ctx.lineTo(486, 166);
-    ctx.quadraticCurveTo(440, 184, 394, 166);
-    ctx.closePath();
-    ctx.stroke();
-    ctx.beginPath();
-    ctx.moveTo(500, 108);
-    ctx.bezierCurveTo(566, 96, 566, 160, 490, 154);
-    ctx.stroke();
-    ctx.beginPath();
-    ctx.moveTo(410, 75);
-    ctx.quadraticCurveTo(394, 54, 412, 36);
-    ctx.moveTo(440, 75);
-    ctx.quadraticCurveTo(424, 54, 442, 36);
-    ctx.moveTo(470, 75);
-    ctx.quadraticCurveTo(454, 54, 472, 36);
-    ctx.stroke();
-    ctx.restore();
-
-    // Keep the approved brand lettering; use a softer, clearer font for all other text.
-    center("Jasdorby_esaashop", 238, 48, "Fredoka");
+    // Use the exact Jasdor illustration in both the HTML preview and PNG export.
+    const logo = new Image();
+    logo.src = "/jasdor-logo.svg";
+    await logo.decode();
+    ctx.drawImage(logo, 350, 18, 200, 200);
     center("♡  DIGITAL RECEIPT  ♡", 292, 25);
     line(330);
     left(`No. Nota : ${receiptNo}`, 390, 26);
@@ -246,7 +222,7 @@ export default function NotaDigitalPage() {
     ctx.beginPath();
     ctx.roundRect(104, y - 40, width - 208, 64, 18);
     ctx.fill();
-    ctx.font = "800 28px Nunito, sans-serif";
+    ctx.font = "800 28px Fredoka, sans-serif";
     ctx.fillStyle = "#784951";
     ctx.textAlign = "center";
     ctx.fillText(status, width / 2, y + 2);
@@ -328,12 +304,9 @@ export default function NotaDigitalPage() {
       <section className="nota-preview-wrap">
         <div className="nota-preview-label">PREVIEW NOTA ♡</div>
         <article className="nota-paper">
-          <div className="nota-doodle" aria-hidden="true">
-            <span className="steam">〰 〰 〰</span>
-            <span className="cup">☕</span>
-            <span className="sparkle">✳</span>
+          <div className="nota-logo-wrap">
+            <img src="/jasdor-logo.svg" alt="Logo Jasdor by_esaashop" />
           </div>
-          <h2 className="nota-brand-top">Jasdorby_esaashop</h2>
           <p className="nota-subtitle">♡ DIGITAL RECEIPT ♡</p>
           <div className="nota-dash" />
           <div className="nota-meta"><span>No. Nota</span><b>{receiptNo}</b></div>
