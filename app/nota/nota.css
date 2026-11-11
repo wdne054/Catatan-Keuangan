@@ -433,20 +433,25 @@
   position: absolute;
   z-index: 0;
   pointer-events: none;
-  inset: 8px;
-  border: 2px dashed #f3b5c2;
-  border-radius: 25px;
-  opacity: .92;
-  background: none !important;
+  inset: -5px;
+  border: 0;
+  border-radius: 38px;
+  opacity: 1;
+  background:
+    radial-gradient(circle at 14px 0, #f4c1cc 0 9px, transparent 10px) 0 0 / 28px 14px repeat-x,
+    radial-gradient(circle at 14px 14px, #f4c1cc 0 9px, transparent 10px) 0 100% / 28px 14px repeat-x,
+    radial-gradient(circle at 0 14px, #f4c1cc 0 9px, transparent 10px) 0 0 / 14px 28px repeat-y,
+    radial-gradient(circle at 14px 14px, #f4c1cc 0 9px, transparent 10px) 100% 0 / 14px 28px repeat-y;
 }
 .nota-paper::after {
   content: "";
   position: absolute;
   z-index: 0;
   pointer-events: none;
-  inset: 0;
-  border-radius: 30px;
-  box-shadow: inset 0 0 0 2px rgba(255,255,255,.95);
+  inset: 9px;
+  border: 2px dashed #f3b5c2;
+  border-radius: 25px;
+  box-shadow: inset 0 0 0 3px rgba(255,255,255,.75);
 }
 .nota-paper > * { position: relative; z-index: 1; }
 .nota-logo-wrap {
