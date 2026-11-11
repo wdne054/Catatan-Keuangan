@@ -137,7 +137,7 @@ export default function NotaDigitalPage() {
     const metaHeight = metaLayouts.reduce((sum, row) => sum + Math.max(30, row.lines.length * 21) + 3, 0);
     const itemsHeight = itemLayouts.reduce((sum, row) => sum + row.nameLines.length * 25 + 42, 0);
     const noteHeight = noteLines.length ? noteLines.length * 21 + 44 : 0;
-    const H = Math.max(700, 24 + 194 + 25 + 35 + metaHeight + 6 + 36 + 29 + itemsHeight + 44 + 70 + noteHeight + 50 + 76 + 75);
+    const H = Math.max(720, 24 + 202 + 25 + 35 + metaHeight + 6 + 36 + 29 + itemsHeight + 44 + 70 + noteHeight + 50 + 76 + 92);
 
     const canvas = document.createElement("canvas");
     canvas.width = W * scale;
@@ -248,9 +248,17 @@ export default function NotaDigitalPage() {
     cursor += 4;
     divider(cursor);
     cursor += 40;
-    pill("Total Pesanan", 30, cursor - 23, 140, 30);
-    pill("Total Harga", 238, cursor - 23, 172, 30);
-    text(validItems.length + " item", 100, cursor + 28, 18, "center", 600);
+    pill("Total Pesanan", 28, cursor - 23, 150, 30);
+    pill("Total Harga", 238, cursor - 23, 174, 30);
+    ctx.save();
+    ctx.setLineDash([4, 5]);
+    ctx.strokeStyle = "#f0aeba";
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(220, cursor - 22); ctx.lineTo(220, cursor + 42);
+    ctx.stroke();
+    ctx.restore();
+    text(validItems.length + " item", 103, cursor + 28, 18, "center", 600);
     text(money(total), W - 30, cursor + 34, 27, "right", 700, "#70464d");
     cursor += 70;
 
@@ -354,7 +362,7 @@ export default function NotaDigitalPage() {
           <div className="nota-dash" />
           <div className="nota-meta"><span>No. Nota</span><b>{receiptNo}</b></div>
           <div className="nota-meta"><span>Tanggal</span><b>{todayLabel()}</b></div>
-          <div className="nota-meta"><span>Jam</span><b>{time} WIB</b></div>
+          <div className="nota-meta"><span>Jam Transaksi</span><b>{time} WIB</b></div>
           <div className="nota-meta"><span>Customer</span><b>{customer.trim() || "-"}</b></div>
           <div className="nota-dash" />
           <p className="nota-detail-title"><span>DETAIL PESANAN</span></p>
@@ -367,7 +375,6 @@ export default function NotaDigitalPage() {
           <div className="nota-dash" />
           <div className="nota-total"><div><b>Total Pesanan</b><span>{items.filter((item) => item.name.trim()).length} item</span></div><div><b>Total Harga</b><strong>{money(total)}</strong></div></div>
           {note.trim() && <p className="nota-note">Catatan: {note}</p>}
-          <div className="nota-paid">{status}</div>
           <div className="nota-dash" />
           <p className="nota-thanks">Thank you for ordering ♡</p>
           <p className="nota-footer">Semoga harimu semanis kopimu ☕</p>
