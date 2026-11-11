@@ -85,21 +85,18 @@ export default function NotaDigitalPage() {
 
   const downloadPng = async () => {
     const validItems = items.filter((item) => item.name.trim());
-    await document.fonts.load("600 16px Fredoka");
-    await document.fonts.load("700 28px Fredoka");
     await document.fonts.ready;
+    await document.fonts.load("600 16px Fredoka");
+    await document.fonts.load("700 24px Fredoka");
 
-    // Draw in the same 440px layout width as the on-screen receipt, then
-    // export at 2x resolution. This keeps proportions identical on phones.
-    const previewPaper = document.querySelector(".nota-paper");
-    const W = Math.round(previewPaper?.getBoundingClientRect().width || 440);
-    const scale = 2;
+    const W = 440;
+    const scale = 3;
     const measureCanvas = document.createElement("canvas");
     const measure = measureCanvas.getContext("2d");
     if (!measure) return;
     const wrap = (value: string, maxWidth: number, font: string) => {
       measure.font = font;
-      const words = value.split(/\s+/);
+      const words = value.split(/\\s+/);
       const lines: string[] = [];
       let current = "";
       for (const word of words) {
@@ -114,33 +111,38 @@ export default function NotaDigitalPage() {
     };
 
     const logo = new Image();
-    logo.src = "/jasdor-logo.svg";
+    logo.src = "/jasdor-logo-hd.webp";
     await logo.decode();
 
     const meta = [
       ["No. Nota", receiptNo],
       ["Tanggal", todayLabel()],
-      ["Jam", time + " WIB"],
+      ["Jam Transaksi", time + " WIB"],
       ["Customer", customer.trim() || "-"],
     ];
     const metaLayouts = meta.map(([label, value]) => ({
       label,
-      lines: wrap(value, 205, "600 14px Fredoka"),
+      lines: wrap(value, 265, "600 15px Fredoka"),
     }));
     const itemLayouts = validItems.map((item) => ({
       item,
-      nameLines: wrap(item.name.trim(), 265, "600 17px Fredoka"),
+      nameLines: wrap(item.name.trim(), 270, "600 18px Fredoka"),
     }));
     const noteLines = note.trim()
       ? wrap("Catatan: " + note.trim(), 370, "500 14px Fredoka")
       : [];
 
-    let y = 250;
-    for (const row of metaLayouts) y += Math.max(34, row.lines.length * 19) + 2;
-    y += 54;
-    for (const row of itemLayouts) y += row.nameLines.length * 23 + 48;
-    y += 112 + noteLines.length * 21 + 112;
-    const H = Math.max(900, y);
+    // Content-first height: every wrapped menu/meta/note line contributes
+    // to the paper height, so long orders never get clipped.
+    let H = 0;
+    let y = 24 + 174 + 12 + 28 + 20;
+    for (const row of metaLayouts) y += Math.max(30, row.lines.length * 21) + 3;
+    y += 20 + 38 + 18;
+    for (const row of itemLayouts) y += row.nameLines.length * 25 + 42 + 18;
+    y += 22 + 88;
+    if (noteLines.length) y += noteLines.length * 21 + 18;
+    y += 24 + 104 + 34;
+    H = Math.max(700, Math.ceil(y));
 
     const canvas = document.createElement("canvas");
     canvas.width = W * scale;
@@ -149,101 +151,104 @@ export default function NotaDigitalPage() {
     if (!ctx) return;
     ctx.scale(scale, scale);
 
-    const paperBottom = H - 20;
+    // Cream paper with a softly stitched scalloped edge.
     ctx.fillStyle = "#fff9f7";
+    ctx.fillRect(0, 0, W, H);
+    ctx.strokeStyle = "#f3cbd2";
+    ctx.lineWidth = 2;
+    ctx.strokeRect(7, 7, W - 14, H - 14);
+    ctx.save();
+    ctx.setLineDash([2, 10]);
+    ctx.strokeStyle = "#f6cbd2";
+    ctx.lineWidth = 2;
     ctx.beginPath();
-    ctx.moveTo(0, 0);
-    ctx.lineTo(W, 0);
-    ctx.lineTo(W, paperBottom - 10);
-    const scallops = 32;
-    const sw = W / scallops;
-    for (let i = scallops; i >= 0; i--) {
-      ctx.lineTo(i * sw, paperBottom - (i % 2 === 0 ? 0 : 10));
-    }
-    ctx.closePath();
-    ctx.fill();
-    ctx.strokeStyle = "#f1d9dc";
-    ctx.lineWidth = 1;
+    ctx.moveTo(18, 18); ctx.lineTo(18, H - 18);
+    ctx.moveTo(W - 18, 18); ctx.lineTo(W - 18, H - 18);
     ctx.stroke();
+    ctx.restore();
 
-    for (let dotY = 28; dotY < paperBottom - 22; dotY += 25) {
-      ctx.fillStyle = "rgba(177,119,128,.13)";
-      ctx.beginPath();
-      ctx.arc(13, dotY, 1.5, 0, Math.PI * 2);
-      ctx.arc(W - 13, dotY, 1.5, 0, Math.PI * 2);
-      ctx.fill();
-    }
-
-    const text = (value: string, x: number, baseline: number, size: number, align: CanvasTextAlign = "left", weight = 600, color = "#765158") => {
+    const text = (value: string, x: number, baseline: number, size: number, align: CanvasTextAlign = "left", weight = 600, color = "#70464d") => {
       ctx.font = weight + " " + size + "px Fredoka, sans-serif";
       ctx.fillStyle = color;
       ctx.textAlign = align;
       ctx.textBaseline = "alphabetic";
-      ctx.letterSpacing = "0px";
       ctx.fillText(value, x, baseline);
     };
     const divider = (at: number) => {
       ctx.save();
-      ctx.setLineDash([4, 4]);
-      ctx.strokeStyle = "#dcbac0";
-      ctx.lineWidth = 1.4;
+      ctx.setLineDash([5, 5]);
+      ctx.strokeStyle = "#f0aeba";
+      ctx.lineWidth = 1.5;
       ctx.beginPath();
-      ctx.moveTo(28, at);
-      ctx.lineTo(W - 28, at);
+      ctx.moveTo(28, at); ctx.lineTo(W - 28, at);
       ctx.stroke();
       ctx.restore();
     };
     const drawWrapped = (lines: string[], x: number, baseline: number, size: number, lineHeight: number, align: CanvasTextAlign = "left", weight = 600) => {
       lines.forEach((line, index) => text(line, x, baseline + index * lineHeight, size, align, weight));
     };
+    const pill = (label: string, x: number, top: number, width: number, height: number) => {
+      ctx.fillStyle = "#f9dce2";
+      ctx.beginPath();
+      ctx.roundRect(x, top, width, height, height / 2);
+      ctx.fill();
+      text(label, x + width / 2, top + height * .68, 16, "center", 700, "#70464d");
+    };
 
-    // Logo is the same 180px square used in the preview; preserve its aspect ratio.
-    ctx.drawImage(logo, (W - 160) / 2, 26, 160, 160);
-    text("♡  DIGITAL RECEIPT  ♡", W / 2, 244, 14, "center", 700, "#70464d");
-    divider(268);
+    let cursor = 24;
+    ctx.drawImage(logo, (W - 178) / 2, cursor, 178, 178);
+    cursor += 194;
+    text("♡  DIGITAL RECEIPT  ♡", W / 2, cursor, 20, "center", 700, "#70464d");
+    cursor += 25;
+    divider(cursor);
+    cursor += 35;
 
-    y = 300;
     for (const row of metaLayouts) {
-      text(row.label, 30, y, 14, "left", 600);
-      drawWrapped(row.lines, W - 30, y, 14, 19, "right", 600);
-      y += Math.max(34, row.lines.length * 19) + 2;
+      text(row.label + " :", 30, cursor, 15, "left", 600);
+      drawWrapped(row.lines, W - 30, cursor, 15, 21, "right", 600);
+      cursor += Math.max(30, row.lines.length * 21) + 3;
     }
-    divider(y + 5);
-    y += 49;
-    text("DETAIL PESANAN", W / 2, y, 14, "center", 700, "#70464d");
-    y += 42;
+    cursor += 6;
+    divider(cursor);
+    cursor += 36;
+    pill("DETAIL PESANAN", (W - 190) / 2, cursor - 23, 190, 30);
+    cursor += 29;
 
     for (const { item, nameLines } of itemLayouts) {
-      drawWrapped(nameLines, 30, y, 17, 23, "left", 600);
+      drawWrapped(nameLines, 30, cursor, 18, 25, "left", 600);
       const qty = Math.max(0, Number(item.qty) || 0);
       const price = Math.max(0, Number(item.price) || 0);
-      text(money(qty * price), W - 30, y, 16, "right", 700);
-      y += nameLines.length * 23;
-      text(qty + " × " + money(price), 30, y + 1, 14, "left", 500, "#9b747b");
-      y += 38;
+      text(money(qty * price), W - 30, cursor + 2, 17, "right", 700);
+      cursor += nameLines.length * 25;
+      text(qty + " × " + money(price), 30, cursor + 1, 14, "left", 500, "#956e76");
+      cursor += 42;
     }
 
-    divider(y + 2);
-    y += 49;
-    text("TOTAL PESANAN", 30, y, 16, "left", 700, "#70464d");
-    text(money(total), W - 30, y + 2, 22, "right", 700, "#70464d");
-    y += 55;
-
-    const pillWidth = 336;
-    ctx.fillStyle = "#f8dce1";
-    ctx.beginPath();
-    ctx.roundRect((W - pillWidth) / 2, y - 25, pillWidth, 42, 13);
-    ctx.fill();
-    text(status, W / 2, y + 3, 18, "center", 700, "#784951");
-    y += 48;
+    cursor += 4;
+    divider(cursor);
+    cursor += 40;
+    pill("Total Pesanan", 30, cursor - 23, 140, 30);
+    pill("Total Harga", 238, cursor - 23, 172, 30);
+    text(validItems.length + " item", 100, cursor + 28, 18, "center", 600);
+    text(money(total), W - 30, cursor + 34, 27, "right", 700, "#70464d");
+    cursor += 70;
 
     if (noteLines.length) {
-      drawWrapped(noteLines, 30, y, 14, 21, "left", 500);
-      y += noteLines.length * 21 + 16;
+      divider(cursor);
+      cursor += 28;
+      drawWrapped(noteLines, 30, cursor, 14, 21, "left", 500);
+      cursor += noteLines.length * 21 + 16;
     }
-    divider(y + 3);
-    text("Thank you for ordering ♡", W / 2, y + 51, 19, "center", 600, "#885760");
-    text("Semoga harimu semanis kopimu", W / 2, y + 82, 15, "center", 600, "#a17d82");
+    divider(cursor);
+    cursor += 50;
+    ctx.fillStyle = "#fde8ec";
+    ctx.beginPath();
+    ctx.roundRect(28, cursor - 30, W - 56, 76, 24);
+    ctx.fill();
+    text("Thank you for ordering ♡", W / 2, cursor, 21, "center", 700, "#70464d");
+    text("Semoga harimu semanis kopimu ☕", W / 2, cursor + 29, 15, "center", 600, "#80555d");
+    cursor += 76;
+    text("──────────────  🎀  ──────────────", W / 2, cursor + 24, 17, "center", 600, "#e69aa8");
 
     const link = document.createElement("a");
     link.download = `Nota-Jasdor-${receiptNo}.png`;
@@ -312,7 +317,7 @@ export default function NotaDigitalPage() {
         <div className="nota-preview-label">PREVIEW NOTA ♡</div>
         <article className="nota-paper">
           <div className="nota-logo-wrap">
-            <img src="/jasdor-logo.svg" alt="Logo Jasdor by_esaashop" />
+            <img src="/jasdor-logo-hd.webp" alt="Logo Jasdor by_esaashop" />
           </div>
           <p className="nota-subtitle">♡ DIGITAL RECEIPT ♡</p>
           <div className="nota-dash" />
@@ -321,7 +326,7 @@ export default function NotaDigitalPage() {
           <div className="nota-meta"><span>Jam</span><b>{time} WIB</b></div>
           <div className="nota-meta"><span>Customer</span><b>{customer.trim() || "-"}</b></div>
           <div className="nota-dash" />
-          <p className="nota-detail-title">DETAIL PESANAN</p>
+          <p className="nota-detail-title"><span>DETAIL PESANAN</span></p>
           {items.filter((item) => item.name.trim()).map((item) => (
             <div className="nota-line-item" key={item.id}>
               <div><b>{item.name}</b><small>{item.qty || "0"} × {money(Number(item.price) || 0)}</small></div>
@@ -329,7 +334,7 @@ export default function NotaDigitalPage() {
             </div>
           ))}
           <div className="nota-dash" />
-          <div className="nota-total"><b>TOTAL</b><strong>{money(total)}</strong></div>
+          <div className="nota-total"><div><b>Total Pesanan</b><span>{items.filter((item) => item.name.trim()).length} item</span></div><div><b>Total Harga</b><strong>{money(total)}</strong></div></div>
           {note.trim() && <p className="nota-note">Catatan: {note}</p>}
           <div className="nota-paid">{status}</div>
           <div className="nota-dash" />
