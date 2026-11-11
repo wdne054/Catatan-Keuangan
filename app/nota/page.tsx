@@ -111,7 +111,7 @@ export default function NotaDigitalPage() {
     };
 
     const logo = new Image();
-    logo.src = "/jasdor-logo-hd.webp";
+    logo.src = "/jasdor-logo.svg";
     await logo.decode();
 
     const meta = [
@@ -317,7 +317,7 @@ export default function NotaDigitalPage() {
         <div className="nota-preview-label">PREVIEW NOTA ♡</div>
         <article className="nota-paper">
           <div className="nota-logo-wrap">
-            <img src="/jasdor-logo-hd.webp" alt="Logo Jasdor by_esaashop" />
+            <img src="/jasdor-logo.svg" alt="Logo Jasdor by_esaashop" />
           </div>
           <p className="nota-subtitle">♡ DIGITAL RECEIPT ♡</p>
           <div className="nota-dash" />
