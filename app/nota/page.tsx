@@ -96,7 +96,7 @@ export default function NotaDigitalPage() {
     if (!measure) return;
     const wrap = (value: string, maxWidth: number, font: string) => {
       measure.font = font;
-      const words = value.split(/\\s+/);
+      const words = value.split(/\s+/);
       const lines: string[] = [];
       let current = "";
       for (const word of words) {
@@ -134,15 +134,10 @@ export default function NotaDigitalPage() {
 
     // Content-first height: every wrapped menu/meta/note line contributes
     // to the paper height, so long orders never get clipped.
-    let H = 0;
-    let y = 24 + 174 + 12 + 28 + 20;
-    for (const row of metaLayouts) y += Math.max(30, row.lines.length * 21) + 3;
-    y += 20 + 38 + 18;
-    for (const row of itemLayouts) y += row.nameLines.length * 25 + 42 + 18;
-    y += 22 + 88;
-    if (noteLines.length) y += noteLines.length * 21 + 18;
-    y += 24 + 104 + 34;
-    H = Math.max(700, Math.ceil(y));
+    const metaHeight = metaLayouts.reduce((sum, row) => sum + Math.max(30, row.lines.length * 21) + 3, 0);
+    const itemsHeight = itemLayouts.reduce((sum, row) => sum + row.nameLines.length * 25 + 42, 0);
+    const noteHeight = noteLines.length ? noteLines.length * 21 + 44 : 0;
+    const H = Math.max(700, 24 + 194 + 25 + 35 + metaHeight + 6 + 36 + 29 + itemsHeight + 44 + 70 + noteHeight + 50 + 76 + 75);
 
     const canvas = document.createElement("canvas");
     canvas.width = W * scale;
@@ -151,19 +146,33 @@ export default function NotaDigitalPage() {
     if (!ctx) return;
     ctx.scale(scale, scale);
 
-    // Cream paper with a softly stitched scalloped edge.
+    // Soft scalloped stationery silhouette, matching the live preview.
+    const paperPath = () => {
+      ctx.beginPath();
+      ctx.moveTo(28, 10);
+      for (let x = 28; x < W - 28; x += 28) ctx.quadraticCurveTo(x + 14, -2, x + 28, 10);
+      for (let y = 10; y < H - 28; y += 28) ctx.quadraticCurveTo(W + 2, y + 14, W - 10, y + 28);
+      for (let x = W - 28; x > 28; x -= 28) ctx.quadraticCurveTo(x - 14, H + 2, x - 28, H - 10);
+      for (let y = H - 28; y > 10; y -= 28) ctx.quadraticCurveTo(-2, y - 14, 10, y - 28);
+      ctx.closePath();
+    };
+    paperPath();
     ctx.fillStyle = "#fff9f7";
-    ctx.fillRect(0, 0, W, H);
-    ctx.strokeStyle = "#f3cbd2";
-    ctx.lineWidth = 2;
-    ctx.strokeRect(7, 7, W - 14, H - 14);
+    ctx.fill();
+    ctx.strokeStyle = "#f3b8c4";
+    ctx.lineWidth = 5;
+    ctx.stroke();
+    paperPath();
     ctx.save();
-    ctx.setLineDash([2, 10]);
-    ctx.strokeStyle = "#f6cbd2";
+    ctx.clip();
+    ctx.strokeStyle = "#f7d6dc";
     ctx.lineWidth = 2;
+    ctx.strokeRect(17, 17, W - 34, H - 34);
+    ctx.setLineDash([2, 10]);
+    ctx.strokeStyle = "#f4cbd3";
     ctx.beginPath();
-    ctx.moveTo(18, 18); ctx.lineTo(18, H - 18);
-    ctx.moveTo(W - 18, 18); ctx.lineTo(W - 18, H - 18);
+    ctx.moveTo(22, 26); ctx.lineTo(22, H - 26);
+    ctx.moveTo(W - 22, 26); ctx.lineTo(W - 22, H - 26);
     ctx.stroke();
     ctx.restore();
 
@@ -173,6 +182,14 @@ export default function NotaDigitalPage() {
       ctx.textAlign = align;
       ctx.textBaseline = "alphabetic";
       ctx.fillText(value, x, baseline);
+    };
+    const decor = (value: string, x: number, y: number, size: number, color = "#ef9eae") => {
+      ctx.save();
+      ctx.font = size + "px Fredoka, sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillStyle = color;
+      ctx.fillText(value, x, y);
+      ctx.restore();
     };
     const divider = (at: number) => {
       ctx.save();
@@ -196,8 +213,12 @@ export default function NotaDigitalPage() {
     };
 
     let cursor = 24;
-    ctx.drawImage(logo, (W - 178) / 2, cursor, 178, 178);
-    cursor += 194;
+    ctx.drawImage(logo, (W - 190) / 2, cursor, 190, 190);
+    decor("♥", 48, cursor + 48, 22, "#f18d9e");
+    decor("♥", W - 48, cursor + 72, 18, "#f18d9e");
+    decor("✦", 55, cursor + 126, 18, "#f2b44d");
+    decor("✦", W - 56, cursor + 145, 18, "#f2b44d");
+    cursor += 202;
     text("♡  DIGITAL RECEIPT  ♡", W / 2, cursor, 20, "center", 700, "#70464d");
     cursor += 25;
     divider(cursor);
@@ -248,7 +269,13 @@ export default function NotaDigitalPage() {
     text("Thank you for ordering ♡", W / 2, cursor, 21, "center", 700, "#70464d");
     text("Semoga harimu semanis kopimu ☕", W / 2, cursor + 29, 15, "center", 600, "#80555d");
     cursor += 76;
-    text("──────────────  🎀  ──────────────", W / 2, cursor + 24, 17, "center", 600, "#e69aa8");
+    ctx.strokeStyle = "#ee9eae";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(32, cursor + 20); ctx.lineTo(145, cursor + 20);
+    ctx.moveTo(W - 145, cursor + 20); ctx.lineTo(W - 32, cursor + 20);
+    ctx.stroke();
+    decor("🎀", W / 2, cursor + 31, 28, "#e87991");
 
     const link = document.createElement("a");
     link.download = `Nota-Jasdor-${receiptNo}.png`;
@@ -317,7 +344,11 @@ export default function NotaDigitalPage() {
         <div className="nota-preview-label">PREVIEW NOTA ♡</div>
         <article className="nota-paper">
           <div className="nota-logo-wrap">
+            <span className="nota-heart nota-heart-left">♥</span>
             <img src="/jasdor-logo.svg" alt="Logo Jasdor by_esaashop" />
+            <span className="nota-heart nota-heart-right">♥</span>
+            <span className="nota-spark nota-spark-left">✦</span>
+            <span className="nota-spark nota-spark-right">✦</span>
           </div>
           <p className="nota-subtitle">♡ DIGITAL RECEIPT ♡</p>
           <div className="nota-dash" />
@@ -340,6 +371,7 @@ export default function NotaDigitalPage() {
           <div className="nota-dash" />
           <p className="nota-thanks">Thank you for ordering ♡</p>
           <p className="nota-footer">Semoga harimu semanis kopimu ☕</p>
+          <div className="nota-ribbon"><span>────────────</span><b>🎀</b><span>────────────</span></div>
         </article>
       </section>
 
