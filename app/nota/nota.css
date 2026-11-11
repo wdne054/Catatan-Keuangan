@@ -616,3 +616,190 @@
 @media print {
   .nota-paper { height: auto !important; overflow: visible !important; }
 }
+
+/* Reference receipt: cream paper, scalloped pink edge, rounded Fredoka typography. */
+.nota-paper {
+  position:relative !important;
+  isolation:isolate;
+  box-sizing:border-box !important;
+  width:min(94vw,440px) !important;
+  max-width:440px !important;
+  min-height:0 !important;
+  height:auto !important;
+  overflow:visible !important;
+  padding:24px 27px 34px !important;
+  border:4px solid #f4bdc8 !important;
+  border-radius:32px !important;
+  background:linear-gradient(180deg,#fffdfb 0%,#fff9f6 100%) !important;
+  box-shadow:0 0 0 4px #ffe9ed,0 12px 28px rgba(117,73,82,.13),inset 0 0 0 4px #fff0f3 !important;
+  clip-path:none !important;
+  color:#70404a !important;
+  font-family:"Fredoka",sans-serif !important;
+}
+.nota-paper::before {
+  content:"";
+  position:absolute;
+  z-index:-1;
+  pointer-events:none;
+  inset:-5px;
+  border-radius:36px;
+  background:
+    radial-gradient(circle at 14px 0,#f4bdc8 0 9px,transparent 10px) 0 0/28px 14px repeat-x,
+    radial-gradient(circle at 14px 14px,#f4bdc8 0 9px,transparent 10px) 0 100%/28px 14px repeat-x,
+    radial-gradient(circle at 0 14px,#f4bdc8 0 9px,transparent 10px) 0 0/14px 28px repeat-y,
+    radial-gradient(circle at 14px 14px,#f4bdc8 0 9px,transparent 10px) 100% 0/14px 28px repeat-y;
+}
+.nota-paper::after {
+  content:"";
+  position:absolute;
+  z-index:-1;
+  pointer-events:none;
+  inset:9px;
+  border:2px dashed #f3b5c2;
+  border-radius:23px;
+}
+.nota-paper > * { position:relative; z-index:1; }
+.nota-logo-wrap { min-height:0 !important; height:auto !important; margin:0 auto 8px !important; }
+.nota-logo-wrap img {
+  display:block !important;
+  width:min(58vw,220px) !important;
+  height:auto !important;
+  max-width:100% !important;
+  object-fit:contain !important;
+  image-rendering:auto;
+  filter:drop-shadow(0 3px 2px rgba(151,88,93,.08));
+}
+.nota-heart { color:#f18c9e !important; text-shadow:0 1px white; }
+.nota-spark { color:#f4b64f !important; text-shadow:0 1px white; }
+.nota-paper .nota-subtitle {
+  margin:8px 0 17px !important;
+  color:#70404a !important;
+  font-family:"Fredoka",sans-serif !important;
+  font-size:clamp(17px,4.4vw,21px) !important;
+  font-weight:700 !important;
+  letter-spacing:1.3px !important;
+}
+.nota-paper .nota-dash {
+  height:0 !important;
+  margin:16px 0 !important;
+  border:0 !important;
+  border-top:2px dashed #f0aeba !important;
+  background:none !important;
+}
+.nota-paper .nota-meta {
+  display:grid !important;
+  grid-template-columns:max-content minmax(0,1fr) !important;
+  align-items:start !important;
+  gap:5px !important;
+  margin:8px 0 !important;
+  color:#70404a !important;
+  font-family:"Fredoka",sans-serif !important;
+  font-size:clamp(14px,3.8vw,17px) !important;
+  line-height:1.45 !important;
+}
+.nota-paper .nota-meta span::after { content:" :"; }
+.nota-paper .nota-meta b {
+  min-width:0 !important;
+  max-width:none !important;
+  text-align:left !important;
+  font-size:inherit !important;
+  font-weight:600 !important;
+  overflow-wrap:anywhere !important;
+}
+.nota-paper .nota-detail-title {
+  margin:20px 0 17px !important;
+  text-align:center !important;
+  color:#70404a !important;
+  font-family:"Fredoka",sans-serif !important;
+  font-size:16px !important;
+  font-weight:700 !important;
+  letter-spacing:1px !important;
+}
+.nota-paper .nota-detail-title span {
+  display:inline-block;
+  min-width:72%;
+  padding:7px 18px;
+  border-radius:999px;
+  background:#fbd9e0;
+}
+.nota-paper .nota-line-item {
+  display:grid !important;
+  grid-template-columns:minmax(0,1fr) auto !important;
+  align-items:start !important;
+  gap:9px !important;
+  margin:14px 0 !important;
+  color:#70404a !important;
+  font-family:"Fredoka",sans-serif !important;
+  font-size:clamp(15px,4vw,18px) !important;
+  line-height:1.42 !important;
+}
+.nota-paper .nota-line-item > div { min-width:0 !important; }
+.nota-paper .nota-line-item b { font-size:inherit !important; font-weight:600 !important; overflow-wrap:anywhere !important; }
+.nota-paper .nota-line-item small { display:block !important; margin-top:3px !important; color:#956e76 !important; font-size:14px !important; line-height:1.35 !important; }
+.nota-paper .nota-line-item > strong { white-space:nowrap !important; font-size:inherit !important; font-weight:700 !important; }
+.nota-paper .nota-total {
+  display:grid !important;
+  grid-template-columns:1fr 1fr !important;
+  align-items:start !important;
+  gap:12px !important;
+  margin:20px 0 !important;
+  text-align:center !important;
+}
+.nota-paper .nota-total > div {
+  display:flex !important;
+  min-width:0 !important;
+  flex-direction:column !important;
+  align-items:center !important;
+  gap:7px !important;
+}
+.nota-paper .nota-total > div + div { border-left:2px dashed #f0aeba; }
+.nota-paper .nota-total b {
+  display:block !important;
+  width:100% !important;
+  padding:6px 3px !important;
+  border-radius:999px !important;
+  background:#fbd9e0 !important;
+  color:#70404a !important;
+  font-size:clamp(13px,3.4vw,16px) !important;
+  font-weight:700 !important;
+}
+.nota-paper .nota-total span { color:#70404a !important; font-size:19px !important; }
+.nota-paper .nota-total strong { color:#70404a !important; font-size:clamp(23px,6vw,30px) !important; font-weight:700 !important; overflow-wrap:anywhere; }
+.nota-paper .nota-note {
+  margin:12px 0 !important;
+  padding:9px 11px !important;
+  border-radius:14px !important;
+  background:#fff0f3 !important;
+  color:#70404a !important;
+  font-size:13px !important;
+  overflow-wrap:anywhere !important;
+}
+.nota-paper .nota-thanks {
+  margin:18px 0 0 !important;
+  padding:14px 8px 0 !important;
+  border-radius:28px 28px 0 0 !important;
+  background:#fde8ed !important;
+  text-align:center !important;
+  color:#70404a !important;
+  font-family:"Fredoka",sans-serif !important;
+  font-size:clamp(18px,4.7vw,22px) !important;
+  font-weight:700 !important;
+}
+.nota-paper .nota-footer {
+  margin:0 !important;
+  padding:5px 8px 14px !important;
+  border-radius:0 0 28px 28px !important;
+  background:#fde8ed !important;
+  text-align:center !important;
+  color:#70404a !important;
+  font-family:"Fredoka",sans-serif !important;
+  font-size:clamp(13px,3.6vw,16px) !important;
+}
+.nota-ribbon { display:flex; align-items:center; justify-content:center; gap:7px; margin:12px 0 0; color:#ed9bab; font-size:13px; letter-spacing:-1px; }
+.nota-ribbon b { color:#e87991; font-size:28px; line-height:1; }
+@media(max-width:380px) {
+  .nota-paper { width:95vw !important; padding:18px 17px 27px !important; }
+  .nota-paper .nota-line-item { font-size:14px !important; }
+  .nota-paper .nota-total strong { font-size:21px !important; }
+}
+@media print { .nota-paper { height:auto !important; overflow:visible !important; } }
